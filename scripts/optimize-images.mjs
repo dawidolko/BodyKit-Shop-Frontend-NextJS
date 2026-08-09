@@ -12,7 +12,7 @@
  *
  * Uruchomienie: npm run images:optimize
  */
-import { mkdir, readdir, writeFile, rm } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
 import sharp from 'sharp';
 import { SOURCES } from './fetch-images.mjs';
@@ -116,7 +116,23 @@ async function main() {
   }
 
   await writeCredits(results);
+  await writeBlurMap(names);
   console.log(`\nGotowe. Wygenerowano ${results.length * 2} wariantow + LQIP.`);
+}
+
+/**
+ * Zbiera wszystkie LQIP w jeden modul JSON importowany przez komponent Picture.
+ * Dzieki temu placeholder jest w HTML od pierwszego renderu, bez dodatkowego zadania.
+ */
+async function writeBlurMap(names) {
+  const entries = {};
+  for (const name of names) {
+    entries[name] = await readFile(path.join(OUT_DIR, `${name}-blur.txt`), 'utf8');
+  }
+  const target = path.resolve('src/lib/blur-map.json');
+  await mkdir(path.dirname(target), { recursive: true });
+  await writeFile(target, `${JSON.stringify(entries, null, 2)}\n`, 'utf8');
+  console.log(`  -> src/lib/blur-map.json (${names.length} wpisow)`);
 }
 
 /** Zapisuje liste autorow - licencja Unsplash tego nie wymaga, ale wypada. */

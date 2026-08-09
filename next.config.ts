@@ -24,9 +24,10 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
 
-  // Blad typow lub lintu ma zatrzymac build produkcyjny.
+  // Blad typow ma zatrzymac build produkcyjny.
+  // Lint uruchamiamy osobno (npm run lint) - Next 16 nie przyjmuje juz
+  // klucza `eslint` w konfiguracji.
   typescript: { ignoreBuildErrors: false },
-  eslint: { ignoreDuringBuilds: false },
 
   productionBrowserSourceMaps: false,
   reactStrictMode: true,

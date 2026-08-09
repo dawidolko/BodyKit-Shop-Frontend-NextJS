@@ -69,6 +69,17 @@ export function plural(count: number, one: string, few: string, many: string): s
   return many;
 }
 
+/**
+ * Etykieta ceny na listingu. Gdy warianty roznia sie cena, pokazujemy
+ * najnizsza z przedrostkiem "od", zeby nie obiecywac ceny, ktorej nie ma.
+ */
+export function getMinPriceLabel(product: Product): string {
+  const prices = product.variants.map((variant) => product.price + variant.priceDelta);
+  const min = Math.min(...prices);
+  const hasRange = prices.some((price) => price !== min);
+  return hasRange ? `od ${formatPrice(min)}` : formatPrice(min);
+}
+
 /** Czas dostawy jako czytelny tekst. */
 export function shippingLabel(days: number): string {
   if (days <= 2) return 'Wysyłka w 24-48 h';
