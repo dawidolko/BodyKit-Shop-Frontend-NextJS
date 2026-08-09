@@ -43,6 +43,8 @@ export const metadata: Metadata = {
     'felgi',
   ],
   alternates: { canonical: '/' },
+  // Sciezki w metadanych sa rozwiazywane wzgledem metadataBase, ktory juz
+  // zawiera basePath. Dodanie asset() zdublowaloby prefiks w adresie.
   openGraph: {
     type: 'website',
     locale: site.locale,
@@ -52,7 +54,7 @@ export const metadata: Metadata = {
     url: absoluteUrl('/'),
     images: [
       {
-        url: asset('/og-default.png'),
+        url: '/og-default.png',
         width: 1200,
         height: 630,
         alt: `${site.name} — sklep z częściami do tuningu karoserii`,
@@ -63,8 +65,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `${site.name} — dokładki, spoilery i tuning karoserii`,
     description: site.description,
-    images: [asset('/og-default.png')],
+    images: ['/og-default.png'],
   },
+  // Ikony i manifest trafiaja do atrybutu href jako sciezki wzgledne
+  // dokumentu, wiec tutaj basePath trzeba dodac jawnie.
   icons: {
     icon: [
       { url: asset('/favicon.svg'), type: 'image/svg+xml' },

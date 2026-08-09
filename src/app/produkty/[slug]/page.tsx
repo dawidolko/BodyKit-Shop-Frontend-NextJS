@@ -13,7 +13,6 @@ import { getCategory } from '@/lib/categories';
 import { getProduct, getRelatedProducts, products } from '@/lib/products';
 import { absoluteUrl, site } from '@/lib/site';
 import {
-  asset,
   badgeLabels,
   discountPercent,
   formatPrice,
@@ -44,9 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       title: `${product.name} — BodyKit Shop`,
       description: product.shortDescription,
       url: absoluteUrl(`/produkty/${product.slug}/`),
-      images: [
-        { url: asset(`/images/${cover}-900.webp`), width: 900, height: 900, alt: product.name },
-      ],
+      images: [{ url: `/images/${cover}-900.webp`, width: 900, height: 900, alt: product.name }],
     },
   };
 }
@@ -69,7 +66,7 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
     description: product.description,
     sku: product.slug,
     category: category?.name,
-    image: product.images.map((image) => absoluteUrl(asset(`/images/${image}-900.webp`))),
+    image: product.images.map((image) => absoluteUrl(`/images/${image}-900.webp`)),
     brand: { '@type': 'Brand', name: site.name },
     aggregateRating: {
       '@type': 'AggregateRating',

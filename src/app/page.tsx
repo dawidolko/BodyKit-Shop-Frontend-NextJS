@@ -5,7 +5,6 @@ import { ProcessSection } from '@/components/home/ProcessSection';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { site, absoluteUrl } from '@/lib/site';
-import { asset } from '@/lib/utils';
 
 export default function HomePage() {
   const organization = {
@@ -15,8 +14,8 @@ export default function HomePage() {
     name: site.name,
     description: site.description,
     url: absoluteUrl('/'),
-    image: absoluteUrl(asset('/og-default.png')),
-    logo: absoluteUrl(asset('/icon-512.png')),
+    image: absoluteUrl('/og-default.png'),
+    logo: absoluteUrl('/icon-512.png'),
     telephone: site.phone,
     email: site.email,
     priceRange: '$$',

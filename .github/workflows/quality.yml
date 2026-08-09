@@ -1,0 +1,119 @@
+name: Quality checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Types, lint and format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: static-export
+          path: out
+          retention-days: 3
+
+  accessibility:
+    name: Accessibility (axe-core)
+    needs: static
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Download build output
+        uses: actions/download-artifact@v4
+        with:
+          name: static-export
+          path: out
+
+      - name: Install audit tooling
+        run: npm ci --no-audit --no-fund && npm i --no-save @axe-core/playwright axe-core playwright
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Serve static export
+        run: npx --yes serve@latest out -l 4321 &
+
+      - name: Wait for server
+        run: npx --yes wait-on@latest http://localhost:4321 --timeout 60000
+
+      - name: Run accessibility audit
+        run: node scripts/a11y-audit.mjs
+
+  docker:
+    name: Docker image builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -f .tools/docker/Dockerfile -t bodykit-shop:ci .
+
+      - name: Start container
+        run: |
+          docker run -d --name bodykit-ci -p 8080:8080 \
+            --read-only \
+            --tmpfs /var/cache/nginx:uid=101,gid=101 \
+            --tmpfs /var/run:uid=101,gid=101 \
+            --tmpfs /tmp \
+            bodykit-shop:ci
+
+      - name: Verify routes and headers
+        run: |
+          npx --yes wait-on@latest http://localhost:8080 --timeout 60000
+          set -e
+          for path in / /kategorie/ /produkty/splitter-przedni-street-gt/ /sitemap.xml /robots.txt; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:8080$path")
+            echo "$path -> $code"
+            [ "$code" = "200" ] || { echo "Oczekiwano 200 dla $path"; exit 1; }
+          done
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/nie-ma-takiej-strony/)
+          echo "/nie-ma-takiej-strony/ -> $code"
+          [ "$code" = "404" ] || { echo "Oczekiwano 404"; exit 1; }
+          curl -sI http://localhost:8080/ | grep -qi 'content-security-policy' \
+            || { echo "Brak naglowka Content-Security-Policy"; exit 1; }
+          echo "Wszystkie sprawdzenia przeszly."
+
+      - name: Container logs on failure
+        if: failure()
+        run: docker logs bodykit-ci
