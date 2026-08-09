@@ -121,11 +121,11 @@ export default function StyleGuidePage() {
                 Znak marki
               </h2>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                <div className="flex items-center justify-center rounded-md border border-border-subtle bg-surface p-8">
-                  <Logo className="h-12 w-auto text-text-primary" />
+                <div className="flex items-center justify-center overflow-hidden rounded-md border border-border-subtle bg-surface p-6 sm:p-8">
+                  <Logo className="h-10 w-auto max-w-full text-text-primary sm:h-12" />
                 </div>
-                <div className="flex items-center justify-center rounded-md border border-border-subtle bg-carbon-950 p-8">
-                  <Logo className="h-12 w-auto text-carbon-50" />
+                <div className="flex items-center justify-center overflow-hidden rounded-md border border-border-subtle bg-carbon-950 p-6 sm:p-8">
+                  <Logo className="h-10 w-auto max-w-full text-carbon-50 sm:h-12" />
                 </div>
               </div>
               <p className="mt-3 text-sm leading-relaxed text-text-muted">
@@ -178,8 +178,10 @@ export default function StyleGuidePage() {
               <h3 className="mt-8 text-sm font-bold uppercase tracking-wider text-text-muted">
                 Tokeny semantyczne
               </h3>
-              <div className="mt-3 overflow-x-auto">
-                <table className="w-full min-w-[32rem] border-collapse text-sm">
+              {/* max-w-full jest konieczne: bez niego szeroka tabela rozpycha
+                  kontener zamiast przewijac sie wewnatrz niego. */}
+              <div className="mt-3 max-w-full overflow-x-auto">
+                <table className="w-full min-w-lg border-collapse text-sm">
                   <caption className="sr-only">Tokeny semantyczne i ich zastosowanie</caption>
                   <thead>
                     <tr className="border-b border-border-default text-left">

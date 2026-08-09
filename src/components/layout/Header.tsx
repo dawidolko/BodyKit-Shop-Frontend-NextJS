@@ -92,13 +92,16 @@ export function Header() {
         </div>
       </div>
 
-      <div className="container-page flex items-center gap-4 py-3">
+      <div className="container-page flex items-center gap-2 py-3 sm:gap-4">
         <Link
           href="/"
-          className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-ring)]"
+          className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--focus-ring)"
           aria-label="BodyKit Shop - strona główna"
         >
-          <Logo className="h-9 w-auto text-text-primary" decorative />
+          {/* Ponizej 380 px pelne logo z nazwa nie zmiescilby sie obok ikon,
+              wiec pokazujemy sam monogram. */}
+          <Logo variant="mark" className="h-9 w-auto text-text-primary min-[380px]:hidden" decorative />
+          <Logo className="hidden h-9 w-auto text-text-primary min-[380px]:block" decorative />
         </Link>
 
         {/* Nawigacja desktopowa */}
@@ -171,7 +174,7 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
           <Link
             href="/szukaj/"
             aria-label="Szukaj produktów"
