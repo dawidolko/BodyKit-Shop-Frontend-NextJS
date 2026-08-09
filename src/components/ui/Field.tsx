@@ -91,7 +91,7 @@ export function Checkbox({
         id={id}
         className={cn(
           'mt-0.5 size-5 shrink-0 cursor-pointer rounded-xs border border-border-default',
-          'accent-[var(--accent)]',
+          'accent-accent',
           'focus-ring',
         )}
         {...rest}
