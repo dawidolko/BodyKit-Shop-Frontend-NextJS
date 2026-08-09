@@ -1,0 +1,64 @@
+# =============================================================================
+# BodyKit Shop - uruchamianie lokalne przez Docker Compose.
+#
+#   Produkcja (nginx + statyczny eksport) na http://localhost:8080
+#     docker compose -f .tools/docker/docker-compose.yml up --build
+#
+#   Tryb deweloperski z przeladowaniem na http://localhost:3000
+#     docker compose -f .tools/docker/docker-compose.yml --profile dev up
+# =============================================================================
+
+name: bodykit-shop
+
+services:
+  web:
+    build:
+      # Kontekst to katalog glowny repozytorium - Dockerfile kopiuje caly projekt.
+      context: ../..
+      dockerfile: .tools/docker/Dockerfile
+      args:
+        NEXT_PUBLIC_BASE_PATH: ''
+        NEXT_PUBLIC_SITE_URL: 'http://localhost:8080'
+    image: bodykit-shop:latest
+    container_name: bodykit-shop-web
+    ports:
+      - '8080:8080'
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      # nginx potrzebuje zapisu tylko na pliki tymczasowe - reszta systemu
+      # plikow moze pozostac w trybie tylko do odczytu.
+      - /var/cache/nginx:uid=101,gid=101
+      - /var/run:uid=101,gid=101
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://127.0.0.1:8080/']
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # Serwer deweloperski - uruchamiany tylko z profilem `dev`.
+  dev:
+    profiles: ['dev']
+    image: node:22-alpine
+    container_name: bodykit-shop-dev
+    working_dir: /app
+    command: sh -c "npm ci --no-audit --no-fund && npm run dev -- --hostname 0.0.0.0"
+    ports:
+      - '3000:3000'
+    volumes:
+      - ../..:/app
+      # Nazwany wolumen na node_modules - inaczej katalog z hosta (zbudowany
+      # pod inny system) przeslonilby zaleznosci zainstalowane w kontenerze.
+      - bodykit-node-modules:/app/node_modules
+      - bodykit-next-cache:/app/.next
+    environment:
+      NEXT_TELEMETRY_DISABLED: '1'
+      WATCHPACK_POLLING: 'true'
+
+volumes:
+  bodykit-node-modules:
+  bodykit-next-cache:

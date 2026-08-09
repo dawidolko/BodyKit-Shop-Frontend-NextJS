@@ -1,0 +1,26 @@
+# Zaleznosci instalowane sa w obrazie - kopiowanie ich z hosta bywa niezgodne
+# z architektura kontenera i niepotrzebnie powieksza kontekst budowania.
+node_modules
+.next
+out
+
+# Historia i metadane
+.git
+.github
+.gitignore
+
+# Zrodla obrazow (kilkanascie MB) - w repozytorium sa juz warianty zoptymalizowane
+.image-cache
+
+# Lokalne i tymczasowe
+.env
+.env*.local
+*.log
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+
+# Dokumentacja nie wplywa na wynik budowania
+README.md
+LICENSE
