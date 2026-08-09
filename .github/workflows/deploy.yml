@@ -47,12 +47,11 @@ jobs:
 
       - name: Build
         env:
-          # Repozytorium publikowane jako <user>.github.io/<repo> wymaga
-          # basePath rownego nazwie repozytorium. Dla domeny wlasnej albo
-          # repozytorium <user>.github.io basePath musi pozostac pusty -
-          # wykrywamy to po nazwie repozytorium.
-          NEXT_PUBLIC_BASE_PATH: ${{ endsWith(github.repository, format('{0}.github.io', github.repository_owner)) && '' || format('/{0}', github.event.repository.name) }}
-          NEXT_PUBLIC_SITE_URL: ${{ steps.pages.outputs.origin }}${{ endsWith(github.repository, format('{0}.github.io', github.repository_owner)) && '' || format('/{0}', github.event.repository.name) }}
+          # Serwis dziala pod wlasna domena (public/CNAME), wiec jest
+          # serwowany z korzenia - basePath musi pozostac pusty. Gdyby
+          # domena zostala kiedys usunieta, trzeba tu wpisac /<nazwa-repo>.
+          NEXT_PUBLIC_BASE_PATH: ''
+          NEXT_PUBLIC_SITE_URL: https://bodykit.dawidolko.pl
           NEXT_TELEMETRY_DISABLED: '1'
         run: npm run build
 
@@ -61,6 +60,13 @@ jobs:
         # ktory pomija katalogi zaczynajace sie od podkreslenia - a tam
         # Next.js trzyma cale _next/static.
         run: touch out/.nojekyll
+
+      - name: Verify CNAME
+        # Plik CNAME z public/ musi trafic do wyniku budowania, inaczej
+        # GitHub Pages przy kazdym wdrozeniu gubi ustawienie domeny.
+        run: |
+          test -f out/CNAME || { echo "Brak out/CNAME"; exit 1; }
+          echo "Domena: $(cat out/CNAME)"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

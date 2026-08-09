@@ -8,8 +8,8 @@
 
 Next.js 16 · React 19 · Tailwind CSS 4 · TypeScript · statyczny eksport
 
-[Demo](https://dawidolko.github.io/BodyKit-Shop-Frontend-NextJS/) ·
-[Design system](https://dawidolko.github.io/BodyKit-Shop-Frontend-NextJS/style-guide/) ·
+[Demo](https://bodykit.dawidolko.pl/) ·
+[Design system](https://bodykit.dawidolko.pl/style-guide/) ·
 [Docker](#uruchomienie-w-dockerze)
 
 </div>
@@ -117,7 +117,7 @@ Barlow (tekst) i Barlow Condensed (nagłówki), ładowane lokalnie przez
 `next/font` — bez zapytań do Google i bez przeskoku typografii przy wczytywaniu.
 
 Pełna dokumentacja tokenów, komponentów i zasad dostępności:
-[`/style-guide`](https://dawidolko.github.io/BodyKit-Shop-Frontend-NextJS/style-guide/).
+[`/style-guide`](https://bodykit.dawidolko.pl/style-guide/).
 
 ---
 
@@ -194,21 +194,43 @@ odczytu, i wysyła komplet nagłówków bezpieczeństwa (CSP, `X-Content-Type-Op
 
 ## Wdrożenie na GitHub Pages
 
-Repozytorium zawiera gotowy workflow. Wystarczy w ustawieniach repozytorium
-wybrać **Settings → Pages → Source: GitHub Actions**. Każdy push na `main`
-uruchamia budowanie i wdrożenie.
+Serwis działa pod własną domeną **[bodykit.dawidolko.pl](https://bodykit.dawidolko.pl/)**.
 
-`basePath` ustawiany jest automatycznie: dla zwykłego repozytorium przyjmuje
-jego nazwę, a dla repozytorium `<user>.github.io` pozostaje pusty. Workflow
-dokłada też plik `.nojekyll`, bez którego Pages ukryłoby katalog `_next`.
+### Konfiguracja po stronie GitHuba
 
-Ręczne budowanie pod podkatalog:
+1. **Settings → Pages → Source: GitHub Actions**.
+2. **Settings → Pages → Custom domain**: `bodykit.dawidolko.pl`, następnie zaznacz **Enforce HTTPS**.
+
+Plik [`public/CNAME`](public/CNAME) trafia do wyniku budowania, więc ustawienie
+domeny przetrwa każde kolejne wdrożenie. Workflow sprawdza jego obecność
+i przerywa, jeśli go zabraknie.
+
+### Konfiguracja DNS
+
+W panelu domeny `dawidolko.pl` dodaj rekord:
+
+| Typ     | Nazwa     | Wartość                |
+| ------- | --------- | ---------------------- |
+| `CNAME` | `bodykit` | `dawidolko.github.io.` |
+
+Propagacja zwykle trwa kilkanaście minut. Do czasu wydania certyfikatu opcja
+„Enforce HTTPS" może być niedostępna — pojawi się sama.
+
+### Budowanie
+
+Każdy push na `main` uruchamia budowanie i wdrożenie. Ponieważ serwis stoi
+w korzeniu domeny, `basePath` pozostaje pusty. Workflow dokłada plik
+`.nojekyll`, bez którego Pages ukryłoby katalog `_next`.
+
+Odtworzenie buildu produkcyjnego lokalnie:
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/BodyKit-Shop-Frontend-NextJS \
-NEXT_PUBLIC_SITE_URL=https://dawidolko.github.io/BodyKit-Shop-Frontend-NextJS \
-npm run build
+NEXT_PUBLIC_SITE_URL=https://bodykit.dawidolko.pl npm run build
 ```
+
+Gdybyś kiedyś zrezygnował z własnej domeny i wrócił na
+`<user>.github.io/<repo>`, ustaw w `deploy.yml` zmienną
+`NEXT_PUBLIC_BASE_PATH` na `/<nazwa-repozytorium>` i usuń `public/CNAME`.
 
 Drugi workflow (`quality.yml`) sprawdza typy, lint, formatowanie, uruchamia
 audyt dostępności i weryfikuje, że obraz Dockera buduje się i poprawnie serwuje

@@ -100,7 +100,11 @@ export function Header() {
         >
           {/* Ponizej 380 px pelne logo z nazwa nie zmiescilby sie obok ikon,
               wiec pokazujemy sam monogram. */}
-          <Logo variant="mark" className="h-9 w-auto text-text-primary min-[380px]:hidden" decorative />
+          <Logo
+            variant="mark"
+            className="h-9 w-auto text-text-primary min-[380px]:hidden"
+            decorative
+          />
           <Logo className="hidden h-9 w-auto text-text-primary min-[380px]:block" decorative />
         </Link>
 
