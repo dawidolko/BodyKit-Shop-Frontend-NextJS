@@ -59,7 +59,7 @@
     var(--font-barlow-condensed), var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* ---- Promienie: ostre, techniczne (kontra do 2px Iwoniczanki) ---- */
+  /* ---- Promienie: ostre, techniczne ---- */
   --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 6px;
