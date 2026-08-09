@@ -12,17 +12,23 @@ const controlBase =
 type FieldWrapperProps = {
   label: string;
   htmlFor: string;
-  /** Komunikat bledu - wiaze sie z polem przez aria-describedby. */
+  /** Error message - linked to the field through aria-describedby. */
   error?: string;
   hint?: string;
   required?: boolean;
+  /**
+   * Screen-reader-only text appended after the required marker. The asterisk
+   * alone is not announced meaningfully, so the wording has to be translatable.
+   */
+  requiredLabel?: string;
   children: ReactNode;
   className?: string;
 };
 
 /**
- * Etykieta + pole + opis/blad, powiazane identyfikatorami.
- * Blad ma role="alert", wiec czytnik ekranu oglosi go od razu po pojawieniu.
+ * Label + control + hint/error, wired together by id.
+ * The error carries role="alert", so a screen reader announces it as soon as
+ * it appears.
  */
 export function Field({
   label,
@@ -30,6 +36,7 @@ export function Field({
   error,
   hint,
   required,
+  requiredLabel,
   children,
   className,
 }: FieldWrapperProps) {
@@ -42,7 +49,7 @@ export function Field({
             <span aria-hidden="true" className="ml-1 text-danger">
               *
             </span>
-            <span className="sr-only"> (pole wymagane)</span>
+            {requiredLabel && <span className="sr-only"> {requiredLabel}</span>}
           </>
         )}
       </label>
@@ -81,7 +88,7 @@ export function Select({ className, children, ...rest }: ComponentPropsWithoutRe
   );
 }
 
-/** Checkbox z etykieta - caly obszar jest klikalny. */
+/** Checkbox with a label - the whole row is clickable. */
 export function Checkbox({
   label,
   id,

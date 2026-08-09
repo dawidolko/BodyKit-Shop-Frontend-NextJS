@@ -1,32 +1,33 @@
 import type { NextConfig } from 'next';
 
 /**
- * Bazowa sciezka dla GitHub Pages.
- * Repo publikowane jako https://<user>.github.io/<repo>/ wymaga basePath.
- * Workflow ustawia NEXT_PUBLIC_BASE_PATH automatycznie; lokalnie jest pusty.
+ * Base path for GitHub Pages.
+ * A repository published at https://<user>.github.io/<repo>/ needs a basePath.
+ * The site runs on a custom domain, so this stays empty unless overridden.
  */
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 
 const nextConfig: NextConfig = {
-  // Pelny static export - zero serwera, dziala na GitHub Pages.
+  // Full static export - no server, runs anywhere including GitHub Pages.
   output: 'export',
 
   basePath: basePath || undefined,
   assetPrefix: basePath || undefined,
 
-  // GitHub Pages serwuje katalogi z index.html, wiec trailing slash jest wymagany,
-  // inaczej /produkty zwraca 404 zamiast /produkty/index.html.
+  // GitHub Pages serves directories through their index.html, so trailing
+  // slashes are required; without them /products would 404 instead of
+  // resolving to /products/index.html.
   trailingSlash: true,
 
   images: {
-    // next/image nie ma serwera przy output:'export' - obrazy sa juz zoptymalizowane
-    // przez scripts/optimize-images.mjs do AVIF/WebP.
+    // next/image has no optimizer under output:'export' - images are already
+    // pre-processed into AVIF/WebP by scripts/optimize-images.mjs.
     unoptimized: true,
   },
 
-  // Blad typow ma zatrzymac build produkcyjny.
-  // Lint uruchamiamy osobno (npm run lint) - Next 16 nie przyjmuje juz
-  // klucza `eslint` w konfiguracji.
+  // A type error must stop the production build.
+  // Linting runs separately (npm run lint) - Next 16 no longer accepts an
+  // `eslint` key in this config.
   typescript: { ignoreBuildErrors: false },
 
   productionBrowserSourceMaps: false,

@@ -1,51 +1,67 @@
-/** Materiał, z ktorego wykonana jest czesc - wplywa na cene i montaz. */
+import type { Locale } from '@/i18n/config';
+
+/** A string that exists in every supported locale. */
+export type Localized<T = string> = Record<Locale, T>;
+
+/** Material a part is made from — drives price and fitting method. */
 export type Material = 'abs' | 'carbon' | 'frp' | 'pu' | 'aluminium';
 
-/** Wykonczenie powierzchni. */
+/** Surface finish of the part. */
 export type Finish = 'gloss-black' | 'matte-black' | 'carbon-gloss' | 'carbon-matte' | 'primed';
+
+/** Marketing labels shown on product cards. */
+export type BadgeKey = 'new' | 'bestseller' | 'sale' | 'lastUnits';
 
 export type Category = {
   slug: string;
-  name: string;
-  /** Krotki opis pod naglowkiem kategorii. */
-  tagline: string;
-  description: string;
+  name: Localized;
+  /** Short line under the category heading. */
+  tagline: Localized;
+  description: Localized;
   image: string;
-  /** Ikona SVG renderowana w kaflach - klucz z CategoryIcon. */
-  icon:
-    'splitter' | 'spoiler' | 'diffuser' | 'skirt' | 'wheel' | 'exhaust' | 'suspension' | 'carbon';
 };
 
 export type ProductVariant = {
   id: string;
   material: Material;
   finish: Finish;
-  /** Dopłata do ceny bazowej w groszach. */
+  /** Surcharge over the base price, in grosz. */
   priceDelta: number;
   inStock: boolean;
 };
 
+/** Which cars a part fits. Make and model are brand names, so not translated. */
+export type Fitment = {
+  make: string;
+  model: string;
+  years: string;
+};
+
+export type Spec = {
+  label: Localized;
+  value: Localized;
+};
+
 export type Product = {
   slug: string;
-  name: string;
+  name: Localized;
   categorySlug: string;
-  /** Cena bazowa w groszach - liczby calkowite eliminuja bledy zaokraglen. */
+  /** Base price in grosz — integers avoid floating point rounding errors. */
   price: number;
-  /** Cena przed obnizka, jesli produkt jest w promocji. */
+  /** Price before the discount, when the product is on sale. */
   compareAtPrice?: number;
-  shortDescription: string;
-  description: string;
-  /** Dopasowanie: marka -> modele z rocznikami. */
-  fitment: { make: string; model: string; years: string }[];
+  shortDescription: Localized;
+  description: Localized;
+  fitment: Fitment[];
   images: string[];
   variants: ProductVariant[];
-  specs: { label: string; value: string }[];
-  /** Zawartosc zestawu montazowego. */
-  included: string[];
+  specs: Spec[];
+  /** Contents of the fitting kit. */
+  included: Localized<string[]>;
   rating: number;
   reviewCount: number;
-  badges: ('nowosc' | 'bestseller' | 'promocja' | 'ostatnie-sztuki')[];
-  /** Czas wysylki w dniach roboczych. */
+  badges: BadgeKey[];
+  /** Dispatch time in business days. */
   shippingDays: number;
 };
 
@@ -58,7 +74,7 @@ export type CartLine = {
 export type CartLineDetailed = CartLine & {
   product: Product;
   variant: ProductVariant;
-  /** Cena jednostkowa z uwzglednieniem wariantu, w groszach. */
+  /** Unit price including the variant surcharge, in grosz. */
   unitPrice: number;
   lineTotal: number;
 };

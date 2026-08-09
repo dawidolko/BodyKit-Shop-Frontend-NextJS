@@ -1,16 +1,16 @@
 /**
- * Przerabia zrodla z .image-cache/ na zoptymalizowane zasoby w public/images/.
+ * Turns the sources in .image-cache/ into optimized assets in public/images/.
  *
- * Dla kazdego zdjecia powstaje:
- *   - <nazwa>-<szerokosc>.avif  (glowny format, najlepsza kompresja)
- *   - <nazwa>-<szerokosc>.webp  (fallback dla starszych przegladarek)
- *   - <nazwa>-blur.txt          (base64 LQIP - placeholder przed zaladowaniem)
+ * For every photo it produces:
+ *   - <name>-<width>.avif  (primary format, best compression)
+ *   - <name>-<width>.webp  (fallback for older browsers)
+ *   - <name>-blur.txt      (base64 LQIP - placeholder shown before loading)
  *
- * Kadrowanie do zadanego formatu uzywa `attention`, wiec sharp wybiera
- * najbardziej wyrazisty fragment zamiast slepego srodka - wazne, bo czesc
- * zrodel jest pionowa, a potrzebujemy panoram.
+ * Cropping to the target aspect ratio uses the `attention` strategy, so sharp
+ * picks the most salient region instead of a blind centre crop - that matters
+ * because some of the sources are portrait while we need panoramas.
  *
- * Uruchomienie: npm run images:optimize
+ * Run with: npm run images:optimize
  */
 import { mkdir, readdir, readFile, writeFile, rm } from 'node:fs/promises';
 import path from 'node:path';
@@ -21,8 +21,8 @@ const CACHE_DIR = path.resolve('.image-cache');
 const OUT_DIR = path.resolve('public/images');
 
 /**
- * Profile docelowe. `ratio` wymusza format kadru, `widths` to szerokosci
- * generowane pod srcset.
+ * Target profiles. `ratio` forces the crop aspect ratio, `widths` are the
+ * widths generated for the srcset.
  */
 const PROFILES = {
   hero: { ratio: 21 / 9, widths: [960, 1440, 1920] },
@@ -32,7 +32,7 @@ const PROFILES = {
   editorial: { ratio: 3 / 2, widths: [600, 900, 1200] },
 };
 
-/** Przypisanie pliku zrodlowego do profilu kadrowania. */
+/** Maps a source file to its cropping profile. */
 const PROFILE_BY_FILE = {
   'hero-main': 'hero',
   'hero-garage': 'editorial',
@@ -58,7 +58,7 @@ async function processOne(name) {
   const maxWidth = metadata.width ?? Math.max(...profile.widths);
 
   for (const width of profile.widths) {
-    // Nie skalujemy w gore - lepiej wydac mniejszy plik niz rozmyty.
+    // Never upscale - shipping a smaller file beats shipping a blurry one.
     if (width > maxWidth * 1.15) continue;
 
     const height = Math.round(width / profile.ratio);
@@ -79,7 +79,7 @@ async function processOne(name) {
     generated.push(width);
   }
 
-  // LQIP: maleńki rozmyty podglad wstawiany inline jako data URI.
+  // LQIP: a tiny blurred preview inlined as a data URI.
   const lqip = await sharp(src)
     .resize(20, Math.max(1, Math.round(20 / profile.ratio)), { fit: 'cover' })
     .blur(1.2)
@@ -100,13 +100,13 @@ async function main() {
   try {
     cached = (await readdir(CACHE_DIR)).filter((f) => f.endsWith('.jpg'));
   } catch {
-    console.error('Brak .image-cache/ - uruchom najpierw: npm run images:fetch');
+    console.error('No .image-cache/ directory - run this first: npm run images:fetch');
     process.exitCode = 1;
     return;
   }
 
   const names = cached.map((f) => path.basename(f, '.jpg'));
-  console.log(`Optymalizacja ${names.length} zdjec -> public/images/\n`);
+  console.log(`Optimizing ${names.length} photos -> public/images/\n`);
 
   const results = [];
   for (const name of names) {
@@ -117,16 +117,16 @@ async function main() {
 
   await writeCredits(results);
   await writeBlurMap(results);
-  console.log(`\nGotowe. Wygenerowano ${results.length * 2} wariantow + LQIP.`);
+  console.log(`\nDone. Generated ${results.length * 2} variants + LQIP.`);
 }
 
 /**
- * Zapisuje manifest obrazow: dla kazdego pliku LQIP, faktycznie wygenerowane
- * szerokosci i proporcje kadru.
+ * Writes the image manifest: for every file its LQIP, the widths that were
+ * actually generated and the crop aspect ratio.
  *
- * Komponent Picture buduje srcset wylacznie z tej mapy, dzieki czemu nie moze
- * poprosic o wariant, ktorego nie ma na dysku - a taki blad daje 404 dopiero
- * w przegladarce, nie przy budowaniu.
+ * The Picture component builds its srcset exclusively from this map, which
+ * means it can never ask for a variant that is not on disk - and that kind of
+ * mistake only shows up as a 404 in the browser, not at build time.
  */
 async function writeBlurMap(results) {
   const entries = {};
@@ -140,10 +140,10 @@ async function writeBlurMap(results) {
   const target = path.resolve('src/lib/image-manifest.json');
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, `${JSON.stringify(entries, null, 2)}\n`, 'utf8');
-  console.log(`  -> src/lib/image-manifest.json (${results.length} wpisow)`);
+  console.log(`  -> src/lib/image-manifest.json (${results.length} entries)`);
 }
 
-/** Zapisuje liste autorow - licencja Unsplash tego nie wymaga, ale wypada. */
+/** Writes the author list - the Unsplash licence does not require it, but it is the decent thing to do. */
 async function writeCredits(results) {
   const byFile = new Map(SOURCES.map((s) => [s.file, s]));
   const rows = results
@@ -152,22 +152,23 @@ async function writeCredits(results) {
     .sort((a, b) => a.file.localeCompare(b.file))
     .map((s) => `| \`${s.file}\` | ${s.author} | [unsplash.com/photos/${s.id}](https://unsplash.com/photos/${s.id}) |`);
 
-  const content = `# Zrodla zdjec
+  const content = `# Photo credits
 
-Wszystkie fotografie pochodza z [Unsplash](https://unsplash.com) i sa objete
-[licencja Unsplash](https://unsplash.com/license): mozna z nich korzystac
-bezplatnie, takze komercyjnie, bez pytania o zgode i bez obowiazkowej
-atrybucji. Ponizsza lista jest dobrowolnym podziekowaniem dla autorow.
+All photographs come from [Unsplash](https://unsplash.com) and are covered by
+the [Unsplash licence](https://unsplash.com/license): they may be used free of
+charge, including commercially, without asking for permission and without
+mandatory attribution. The list below is a voluntary thank-you to the authors.
 
-Pliki w tym katalogu sa pochodnymi (kadrowanie, skalowanie, konwersja do
-AVIF/WebP) wygenerowanymi przez \`scripts/optimize-images.mjs\`.
+The files in this directory are derivatives (cropping, resizing, conversion to
+AVIF/WebP) generated by \`scripts/optimize-images.mjs\`.
 
-| Plik | Autor | Zrodlo |
+| File | Author | Source |
 | --- | --- | --- |
 ${rows.join('\n')}
 
-Rendery czesci (splittery, spoilery, dyfuzory) w \`src/components/product/PartRender.tsx\`
-sa autorska grafika wektorowa stworzona na potrzeby tego projektu.
+Everything that is not a photograph - the brand mark and the Open Graph card
+generated by \`scripts/generate-brand-assets.mjs\` - is original vector artwork
+created for this project.
 `;
 
   await writeFile(path.join(OUT_DIR, 'CREDITS.md'), content, 'utf8');

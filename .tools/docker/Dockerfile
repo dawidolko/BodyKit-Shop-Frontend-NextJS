@@ -1,33 +1,35 @@
 # syntax=docker/dockerfile:1.7
 
 # =============================================================================
-# BodyKit Shop - obraz produkcyjny
+# BodyKit Shop - production image
 #
-# Budowanie wieloetapowe: Node kompiluje statyczny eksport, nginx go serwuje.
-# Obraz koncowy nie zawiera Node'a ani zaleznosci - wazy kilkadziesiat MB.
+# Multi-stage build: Node compiles the static export, nginx serves it.
+# The final image contains neither Node nor the dependencies - it weighs
+# a few dozen MB.
 #
-# Budowanie z katalogu glownego repozytorium:
+# Build from the repository root:
 #   docker build -f .tools/docker/Dockerfile -t bodykit-shop .
 # =============================================================================
 
-# ---------- Etap 1: zaleznosci ----------
+# ---------- Stage 1: dependencies ----------
 FROM node:22-alpine AS deps
 WORKDIR /app
 
-# Instalujemy wylacznie na podstawie manifestow, zeby warstwa trafiala
-# do cache i nie unewazniala sie przy kazdej zmianie kodu.
+# Install from the manifests only, so the layer lands in the cache and is
+# not invalidated by every change to the source code.
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
-# ---------- Etap 2: budowanie ----------
+# ---------- Stage 2: build ----------
 FROM node:22-alpine AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Adres publiczny i basePath moga sie roznic zaleznie od miejsca wdrozenia.
-# Domyslnie pusty basePath - obraz serwuje aplikacje z korzenia domeny.
+# The public address and basePath can differ depending on where the app is
+# deployed. The basePath defaults to empty - the image serves the application
+# from the root of the domain.
 ARG NEXT_PUBLIC_BASE_PATH=""
 ARG NEXT_PUBLIC_SITE_URL="http://localhost:8080"
 ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH \
@@ -36,21 +38,23 @@ ENV NEXT_PUBLIC_BASE_PATH=$NEXT_PUBLIC_BASE_PATH \
 
 RUN npm run build
 
-# ---------- Etap 3: serwowanie ----------
+# ---------- Stage 3: serve ----------
 FROM nginx:1.27-alpine AS runner
 
-# Usun domyslna konfiguracje, zeby nie nadpisywala naszej.
+# Remove the default configuration so it cannot override ours.
 RUN rm -f /etc/nginx/conf.d/default.conf
 COPY .tools/docker/nginx.conf /etc/nginx/conf.d/bodykit.conf
-# Snippet poza conf.d - katalog conf.d jest wciagany wzorcem *.conf do
-# kontekstu http, gdzie add_header ma inne znaczenie i psulby konfiguracje.
+# The snippet lives outside conf.d - that directory is pulled in with a *.conf
+# glob into the http context, where add_header means something different and
+# would break the configuration.
 RUN mkdir -p /etc/nginx/snippets
 COPY .tools/docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
 
 COPY --from=builder /app/out /usr/share/nginx/html
 
-# nginx:alpine zawiera juz uzytkownika nginx (uid 101) - proces roboczy
-# dziala na nim, wiec katalogi tymczasowe musza byc dla niego zapisywalne.
+# nginx:alpine already ships the unprivileged nginx user (uid 101) - the worker
+# process runs as that user, so the temporary directories have to be writable
+# for it.
 RUN chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx \
     && touch /var/run/nginx.pid \
     && chown nginx:nginx /var/run/nginx.pid

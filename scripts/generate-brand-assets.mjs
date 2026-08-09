@@ -1,9 +1,9 @@
 /**
- * Generuje rastrowe zasoby marki z pojedynczego zrodla SVG:
+ * Generates the raster brand assets from a single SVG source:
  *   - favicon-96.png, apple-touch-icon.png, icon-192/512.png (PWA)
  *   - og-default.png (Open Graph 1200x630)
  *
- * Uruchomienie: node scripts/generate-brand-assets.mjs
+ * Run with: node scripts/generate-brand-assets.mjs
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -21,7 +21,7 @@ const MARK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
   <path d="M22.2 12.5h2.7v4.8l4.2-4.8h3.2l-4.6 5.2 4.8 6.5h-3.3l-3.4-4.7-.9 1v3.7h-2.7V12.5Z" fill="#f6f7f9"/>
 </svg>`;
 
-/** Karta Open Graph - ciemna, z siatka carbonowa i pomaranczowym akcentem. */
+/** Open Graph card - dark, with a carbon grid and an orange accent. */
 const OG_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
@@ -46,7 +46,7 @@ const OG_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630
     <path d="M22.2 12.5h2.7v4.8l4.2-4.8h3.2l-4.6 5.2 4.8 6.5h-3.3l-3.4-4.7-.9 1v3.7h-2.7V12.5Z" fill="#f6f7f9"/>
   </g>
   <text x="96" y="380" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-size="92" font-weight="800" fill="#f6f7f9" letter-spacing="-2">BODYKIT SHOP</text>
-  <text x="96" y="440" font-family="Barlow, Arial, sans-serif" font-size="32" font-weight="500" fill="#aeb5c4">Dok&#322;adki, spoilery i body kity do Twojego auta</text>
+  <text x="96" y="440" font-family="Barlow, Arial, sans-serif" font-size="32" font-weight="500" fill="#aeb5c4">Body kits, spoilers and styling parts for your car</text>
   <rect x="96" y="486" width="150" height="6" fill="#ff6b1a"/>
 </svg>`;
 
@@ -74,8 +74,8 @@ async function main() {
     .toFile(path.join(publicDir, 'og-default.png'));
   console.log('  og-default.png (1200x630)');
 
-  // favicon.ico jako kontener PNG 32x32 - akceptowany przez wszystkie
-  // wspolczesne przegladarki, a nie wymaga zaleznosci do formatu ICO.
+  // favicon.ico is emitted as a 32x32 PNG container - accepted by every
+  // modern browser and it avoids pulling in a dependency for the ICO format.
   const ico32 = await sharp(markBuffer, { density: 384 }).resize(32, 32).png().toBuffer();
   await writeFile(path.join(publicDir, 'favicon.ico'), ico32);
   console.log('  favicon.ico (32x32)');

@@ -1,36 +1,20 @@
 import { Picture } from '@/components/ui/Picture';
 import { LinkButton } from '@/components/ui/Button';
+import type { Dictionary } from '@/i18n';
+import { localePath, type Locale } from '@/i18n/config';
 
-const steps = [
-  {
-    number: '01',
-    title: 'Podaj model i rocznik',
-    text: 'Filtr dopasowania pokazuje wyłącznie części pasujące do Twojej wersji nadwozia — bez zgadywania.',
-  },
-  {
-    number: '02',
-    title: 'Wybierz materiał',
-    text: 'ABS pod lakier, lekkie FRP albo pełny karbon. Przy każdym wariancie podajemy wagę i sposób montażu.',
-  },
-  {
-    number: '03',
-    title: 'Zamontuj według instrukcji',
-    text: 'W zestawie znajdziesz komplet mocowań, taśmę przyciętą na wymiar i instrukcję krok po kroku.',
-  },
-];
-
-export function ProcessSection() {
+export function ProcessSection({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   return (
-    <section aria-labelledby="proces-heading" className="container-page py-20">
+    <section aria-labelledby="process-heading" className="container-page py-20">
       <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <div className="relative">
           <Picture
             name="hero-garage"
-            alt="Samochód sportowy w hali warsztatowej przygotowany do montażu elementów karoserii"
+            alt={dict.home.processImageAlt}
             sizes="(min-width: 1024px) 40rem, 90vw"
             className="rounded-lg border border-border-subtle"
           />
-          {/* Ukosny akcent nawiazujacy do ksztaltu splittera w logo */}
+          {/* Slanted accent echoing the splitter shape in the logo. */}
           <div
             aria-hidden="true"
             className="absolute -bottom-4 -right-4 -z-10 h-32 w-32 bg-accent/20 clip-slant"
@@ -39,19 +23,17 @@ export function ProcessSection() {
 
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-text-brand">
-            Jak to działa
+            {dict.home.processEyebrow}
           </p>
-          <h2 id="proces-heading" className="mt-2 text-3xl font-extrabold uppercase sm:text-4xl">
-            Trzy kroki do nowej sylwetki auta
+          <h2 id="process-heading" className="mt-2 text-3xl font-extrabold uppercase sm:text-4xl">
+            {dict.home.processHeading}
           </h2>
           <p className="mt-4 text-base leading-relaxed text-text-secondary">
-            Najczęstszy problem z dokładkami to montaż: element nie przylega, trzeba szpachlować
-            albo dowiercać otwory. Dlatego każdy produkt opisujemy przez konkretne roczniki, a nie
-            „uniwersalne dopasowanie”.
+            {dict.home.processLead}
           </p>
 
           <ol className="mt-8 flex flex-col gap-6">
-            {steps.map((step) => (
+            {dict.home.processSteps.map((step) => (
               <li key={step.number} className="flex gap-5">
                 <span
                   aria-hidden="true"
@@ -67,8 +49,8 @@ export function ProcessSection() {
             ))}
           </ol>
 
-          <LinkButton href="/pomoc/" variant="secondary" className="mt-8">
-            Sprawdź poradnik montażu
+          <LinkButton href={localePath(locale, '/help')} variant="secondary" className="mt-8">
+            {dict.home.processCta}
           </LinkButton>
         </div>
       </div>

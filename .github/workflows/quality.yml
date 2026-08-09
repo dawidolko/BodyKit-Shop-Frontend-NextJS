@@ -102,17 +102,17 @@ jobs:
         run: |
           npx --yes wait-on@latest http://localhost:8080 --timeout 60000
           set -e
-          for path in / /kategorie/ /produkty/splitter-przedni-street-gt/ /sitemap.xml /robots.txt; do
+          for path in / /en/ /pl/ /en/categories/ /en/products/street-gt-front-splitter/ /sitemap.xml /robots.txt; do
             code=$(curl -s -o /dev/null -w '%{http_code}' "http://localhost:8080$path")
             echo "$path -> $code"
-            [ "$code" = "200" ] || { echo "Oczekiwano 200 dla $path"; exit 1; }
+            [ "$code" = "200" ] || { echo "Expected 200 for $path"; exit 1; }
           done
-          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/nie-ma-takiej-strony/)
-          echo "/nie-ma-takiej-strony/ -> $code"
-          [ "$code" = "404" ] || { echo "Oczekiwano 404"; exit 1; }
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/en/this-page-does-not-exist/)
+          echo "/en/this-page-does-not-exist/ -> $code"
+          [ "$code" = "404" ] || { echo "Expected 404"; exit 1; }
           curl -sI http://localhost:8080/ | grep -qi 'content-security-policy' \
-            || { echo "Brak naglowka Content-Security-Policy"; exit 1; }
-          echo "Wszystkie sprawdzenia przeszly."
+            || { echo "Missing Content-Security-Policy header"; exit 1; }
+          echo "All checks passed."
 
       - name: Container logs on failure
         if: failure()

@@ -1,7 +1,9 @@
 import { LinkButton } from '@/components/ui/Button';
 import { Picture } from '@/components/ui/Picture';
+import type { Dictionary } from '@/i18n';
+import { localePath, type Locale } from '@/i18n/config';
 
-export function CtaBanner() {
+export function CtaBanner({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   return (
     <section aria-labelledby="cta-heading" className="container-page pb-20">
       <div className="relative overflow-hidden rounded-lg border border-border-subtle">
@@ -22,14 +24,13 @@ export function CtaBanner() {
               id="cta-heading"
               className="text-2xl font-extrabold uppercase leading-tight text-carbon-50 sm:text-3xl"
             >
-              Nie wiesz, co pasuje do Twojego auta?
+              {dict.home.ctaBannerHeading}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-carbon-300 sm:text-base">
-              Napisz markę, model i rocznik — odpiszemy z listą pasujących elementów i podpowiemy,
-              co ma sens montować razem.
+              {dict.home.ctaBannerText}
             </p>
-            <LinkButton href="/kontakt/" className="mt-6">
-              Zapytaj o dopasowanie
+            <LinkButton href={localePath(locale, '/contact')} className="mt-6">
+              {dict.home.ctaBannerButton}
             </LinkButton>
           </div>
         </div>

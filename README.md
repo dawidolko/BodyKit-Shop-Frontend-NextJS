@@ -4,127 +4,178 @@
 
 # BodyKit Shop
 
-**Frontendowy sklep z dokładkami i częściami do tuningu karoserii.**
+**A front-end shop for car body kits and styling parts.**
 
-Next.js 16 · React 19 · Tailwind CSS 4 · TypeScript · statyczny eksport
+Next.js 16 · React 19 · Tailwind CSS 4 · TypeScript · bilingual · static export
 
-[Demo](https://bodykit.dawidolko.pl/) ·
-[Design system](https://bodykit.dawidolko.pl/style-guide/) ·
-[Docker](#uruchomienie-w-dockerze)
+[Live demo](https://bodykit.dawidolko.pl/) ·
+[Design system](https://bodykit.dawidolko.pl/en/style-guide/) ·
+[Docker](#running-with-docker)
 
 </div>
 
 ---
 
-## O projekcie
+## About
 
-BodyKit Shop to kompletny, w pełni frontendowy sklep internetowy z częściami do
-modyfikacji nadwozia: splitterami, spoilerami, dyfuzorami, felgami i elementami
-karbonowymi. Aplikacja nie ma backendu — całość kompiluje się do statycznych
-plików HTML, które można postawić na GitHub Pages, dowolnym CDN-ie albo za nginxem
-w kontenerze.
+BodyKit Shop is a complete front-end store selling body modification parts:
+front splitters, spoilers, diffusers, wheels and carbon fibre components. There
+is no backend — the whole thing compiles to static HTML that can be hosted on
+GitHub Pages, any CDN, or behind nginx in a container.
 
-Stan koszyka żyje w `localStorage`, katalog jest wbudowany w kod, a wszystkie
-podstrony są generowane w czasie budowania.
+Cart state lives in `localStorage`, the catalog is compiled into the bundle, and
+every page is generated at build time in both languages.
 
-### Co jest w środku
+### What is inside
 
-| Obszar         | Realizacja                                                                                      |
-| -------------- | ----------------------------------------------------------------------------------------------- |
-| **Strony**     | 17 tras + 8 kategorii + 19 produktów generowanych statycznie                                    |
-| **Motywy**     | Jasny i ciemny z przełącznikiem, zapisem wyboru i wykrywaniem ustawień systemu                  |
-| **Dostępność** | WCAG 2.2 AA — 0 naruszeń axe-core na 19 trasach × 2 motywy                                      |
-| **SEO**        | Metadane per strona, `sitemap.xml`, `robots.txt`, JSON-LD (Store, Product, FAQ, BreadcrumbList) |
-| **Obrazy**     | AVIF + WebP w trzech szerokościach, placeholdery LQIP, `srcset` z manifestu                     |
-| **Wydajność**  | Fonty lokalne, zero zewnętrznych zapytań, hero 1920 px w AVIF waży 112 kB                       |
-| **Jakość**     | TypeScript `strict`, ESLint, Prettier, audyt dostępności w CI                                   |
+| Area              | Implementation                                                                                                         |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Languages**     | English and Polish, each with its own URL prefix, `hreflang` pairs and a switcher that keeps you on the same page      |
+| **Pages**         | 17 routes × 8 categories × 19 products, generated statically per locale                                                |
+| **Themes**        | Light and dark, with a toggle, persisted choice and system preference detection                                        |
+| **Accessibility** | WCAG 2.2 AA — zero axe-core violations across every route in both locales and both themes                              |
+| **SEO**           | Per-page metadata, `sitemap.xml` with language alternates, `robots.txt`, JSON-LD (Store, Product, FAQ, BreadcrumbList) |
+| **Images**        | AVIF + WebP at three widths, LQIP placeholders, `srcset` driven by a build-time manifest                               |
+| **Performance**   | Self-hosted fonts, no third-party requests, a 1920 px hero at 112 kB in AVIF                                           |
+| **Quality**       | TypeScript `strict`, ESLint, Prettier, accessibility audit in CI                                                       |
 
 ---
 
-## Szybki start
+## Quick start
 
-Wymagania: **Node.js 20.9+** (zalecane 22) i npm.
+Requires **Node.js 20.9+** (22 recommended) and npm.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Aplikacja ruszy na [http://localhost:3000](http://localhost:3000).
+The app starts at [http://localhost:3000](http://localhost:3000) and redirects
+to `/en/`.
 
-Budowanie wersji produkcyjnej:
+Production build:
 
 ```bash
-npm run build     # statyczny eksport do out/
-npm run serve     # podgląd zbudowanej wersji na :3000
+npm run build     # static export into out/
+npm run serve     # preview the built output on :3000
 ```
 
 ---
 
-## Struktura projektu
+## Internationalisation
+
+Every page lives under a locale segment: `/en/products/gt-wing-1400/` and
+`/pl/products/gt-wing-1400/`. English is the default.
+
+**Why separate paths rather than a client-side toggle.** A static export has no
+server to negotiate languages, so a runtime switch would leave search engines
+seeing a single language and would flash the wrong copy on first paint.
+Prefixed routes give each language a real, indexable URL, work without
+JavaScript, and let `hreflang` pair the two versions properly.
+
+**URL slugs stay English in both languages.** `/pl/products/carbon-mirror-caps/`
+rather than `/pl/produkty/nakladki-lusterek/`. One set of slugs means links,
+`generateStaticParams` and the language switcher never need a translation
+table — swapping the locale segment is enough to land on the same page.
+
+### Where the strings live
+
+```
+src/i18n/
+├── config.ts               # locales, localePath(), switchLocaleInPath()
+├── index.ts                # getDictionary()
+└── dictionaries/
+    ├── en.ts               # source of truth; its shape defines the contract
+    └── pl.ts               # typed against en.ts
+```
+
+`pl.ts` is typed as `Dictionary`, a widened version of the English object. Add a
+key to `en.ts` and the Polish file fails to compile until it catches up — a
+missing translation is a build error, not a silent English fallback.
+
+Product and category content is bilingual in the data layer itself: text fields
+are `Localized<T>` (`{ en, pl }`) and are read through `t(field, locale)`.
+
+Plural rules that Polish needs and English does not are handled inside the
+dictionary, as functions: `dict.product.reviews(3)` returns `3 reviews` or
+`3 opinie` depending on the locale.
+
+### Adding a language
+
+1. Add the code to `locales` in `src/i18n/config.ts` and fill in `localeNames`,
+   `localeTags`, `ogLocales`.
+2. Create `src/i18n/dictionaries/<code>.ts` typed as `Dictionary`.
+3. Add the language key to every `Localized` field in `categories.ts` and
+   `products.ts`.
+
+TypeScript will point at each spot that still needs attention.
+
+---
+
+## Project structure
 
 ```
 .
-├── .github/workflows/     # deploy na Pages + kontrola jakości
-├── .tools/docker/         # Dockerfile, compose, konfiguracja nginx
+├── .github/workflows/     # Pages deployment + quality checks
+├── .tools/docker/         # Dockerfile, compose, nginx configuration
 ├── public/
-│   ├── images/            # warianty AVIF/WebP + CREDITS.md
-│   └── favicon.svg, og-default.png, site.webmanifest
+│   ├── images/            # AVIF/WebP variants + CREDITS.md
+│   └── CNAME, favicon.svg, og-default.png, site.webmanifest
 ├── scripts/
-│   ├── fetch-images.mjs        # pobiera źródła zdjęć z Unsplash
-│   ├── optimize-images.mjs     # kadruje, konwertuje, buduje manifest
-│   ├── generate-brand-assets.mjs  # favicony i karta Open Graph
-│   └── a11y-audit.mjs          # audyt axe-core
+│   ├── fetch-images.mjs           # downloads photo sources from Unsplash
+│   ├── optimize-images.mjs        # crops, converts, writes the manifest
+│   ├── generate-brand-assets.mjs  # favicons and the Open Graph card
+│   └── a11y-audit.mjs             # axe-core audit across both locales
 └── src/
-    ├── app/               # trasy (App Router)
+    ├── app/
+    │   ├── page.tsx       # language redirect stub at the root
+    │   └── [locale]/      # every real route
     ├── components/
     │   ├── brand/         # logo
-    │   ├── layout/        # nagłówek, stopka, przełącznik motywu
-    │   ├── product/       # karta, galeria, filtry, koszyk
-    │   ├── seo/           # dane strukturalne
-    │   └── ui/            # przyciski, pola, plakietki, ikony, obrazy
-    └── lib/               # katalog, typy, stan koszyka, narzędzia
+    │   ├── layout/        # header, footer, theme and language switchers
+    │   ├── product/       # card, gallery, filters, add-to-cart
+    │   ├── seo/           # structured data
+    │   └── ui/            # buttons, fields, badges, icons, images
+    ├── i18n/              # locale config and dictionaries
+    └── lib/               # catalog, types, cart state, helpers
 ```
 
 ---
 
 ## Design system
 
-Kierunek wizualny: **carbon + elektryczny pomarańcz**. Ciemna, techniczna baza
-z jednym mocnym akcentem, ostre promienie (2–10 px) i kondensowana typografia
-nagłówkowa.
+The visual direction is **carbon plus electric orange**: a dark technical base
+with a single strong accent, tight radii (2–10 px) and condensed display type.
 
-### Kolory
+### Colour
 
-| Rola                | Jasny                               | Ciemny               |
-| ------------------- | ----------------------------------- | -------------------- |
-| Tekst główny        | `carbon-900` — 16.8:1               | `carbon-50` — 17.6:1 |
-| Tekst uzupełniający | `carbon-600` — 7.2:1                | `carbon-300` — 9.2:1 |
-| Tekst przygaszony   | `carbon-500` — 5.1:1                | `carbon-400` — 5.6:1 |
-| Link / akcent       | `brand-700` — 5.5:1                 | `brand-400` — 6.9:1  |
-| Tekst na akcencie   | `carbon-950` na `brand-500` — 6.6:1 | ta sama para         |
+| Role           | Light                               | Dark                 |
+| -------------- | ----------------------------------- | -------------------- |
+| Primary text   | `carbon-900` — 16.8:1               | `carbon-50` — 17.6:1 |
+| Secondary text | `carbon-600` — 7.2:1                | `carbon-300` — 9.2:1 |
+| Muted text     | `carbon-500` — 5.1:1                | `carbon-400` — 5.6:1 |
+| Link / accent  | `brand-700` — 5.5:1                 | `brand-400` — 6.9:1  |
+| Text on accent | `carbon-950` on `brand-500` — 6.6:1 | same pair            |
 
-Jedna decyzja warta wyjaśnienia: **na pomarańczowym tle używamy ciemnego
-atramentu, nie bieli**. Biały tekst na `brand-500` daje tylko 2.8:1, co nie
-przechodzi nawet dla dużego tekstu. Ciemny carbon na tym samym tle daje 6.6:1
-i przy okazji wygląda ostrzej.
+One decision worth explaining: **brand surfaces use dark ink, not white.** White
+on `brand-500` measures 2.8:1, which fails even the large-text threshold. Dark
+carbon on the same orange reaches 6.6:1 — and reads sharper.
 
-Wszystkie wartości zweryfikowano obliczeniowo i potwierdzono skanem axe-core.
+Every value was computed and then confirmed by an axe-core scan.
 
-### Typografia
+### Typography
 
-Barlow (tekst) i Barlow Condensed (nagłówki), ładowane lokalnie przez
-`next/font` — bez zapytań do Google i bez przeskoku typografii przy wczytywaniu.
+Barlow for body text, Barlow Condensed for headings, both self-hosted through
+`next/font` — no requests to Google and no layout shift while fonts load.
 
-Pełna dokumentacja tokenów, komponentów i zasad dostępności:
-[`/style-guide`](https://bodykit.dawidolko.pl/style-guide/).
+Full token and component documentation: [`/en/style-guide`](https://bodykit.dawidolko.pl/en/style-guide/).
 
 ---
 
-## Dostępność
+## Accessibility
 
-Projekt przechodzi audyt axe-core (WCAG 2.2 A/AA + best practices) **bez ani
-jednego naruszenia** na 19 trasach w obu motywach.
+The project passes an axe-core audit (WCAG 2.2 A/AA plus best practices) with
+**zero violations** across every route, in both locales and both themes.
 
 ```bash
 npm run build
@@ -132,142 +183,144 @@ npx serve out -l 4321 &
 npm run audit:a11y
 ```
 
-Co konkretnie zostało zrobione:
+What that covers in practice:
 
-- **Kontrast** — każda para tekst/tło ≥ 4.5:1, elementy interfejsu ≥ 3:1, w obu motywach.
-- **Fokus** — wspólna klasa `.focus-ring`, pierścień 2 px z odstępem, tylko dla `:focus-visible`.
-- **Klawiatura** — link pomijający nawigację, `Escape` zamyka panele i przywraca fokus, `aria-expanded` na przełącznikach.
-- **Formularze** — etykiety powiązane z polami, błędy z `role="alert"`, po nieudanej wysyłce fokus wędruje na podsumowanie błędów z linkami do konkretnych pól.
-- **Ruch** — `prefers-reduced-motion` skraca wszystkie animacje do 0.01 ms.
-- **Kontrast systemowy** — `prefers-contrast: more` wzmacnia obramowania i przygaszony tekst.
-- **Struktura** — jeden `h1` na stronę, poziomy nagłówków bez przeskoków (karta produktu przyjmuje poziom przez `headingLevel`).
+- **Contrast** — every text/background pair at 4.5:1 or better, UI elements at 3:1, in both themes.
+- **Focus** — one shared `.focus-ring` class, a 2 px ring with a 2 px offset, shown only for `:focus-visible`.
+- **Keyboard** — skip link, `Escape` closes panels and restores focus, disclosures expose `aria-expanded`.
+- **Forms** — labels bound to controls, errors announced through `role="alert"`, and a failed submit moves focus to a summary that links to each broken field.
+- **Language** — `<html lang>` matches the rendered locale, and `hreflang` links pair the two versions.
+- **Motion** — `prefers-reduced-motion` collapses every animation to 0.01 ms.
+- **High contrast** — `prefers-contrast: more` strengthens borders and muted text.
+- **Structure** — one `h1` per page and no skipped heading levels (`ProductCard` takes its level from context).
 
 ---
 
-## Obrazy
+## Images
 
-Zdjęcia pochodzą z [Unsplash](https://unsplash.com) i są objęte licencją
-pozwalającą na użycie komercyjne. Lista autorów: [`public/images/CREDITS.md`](public/images/CREDITS.md).
+Photographs come from [Unsplash](https://unsplash.com) under a licence that
+permits commercial use. Credits: [`public/images/CREDITS.md`](public/images/CREDITS.md).
 
 ```bash
-npm run images:fetch      # pobiera źródła do .image-cache/ (poza repozytorium)
-npm run images:optimize   # kadruje, konwertuje i generuje manifest
+npm run images:fetch      # downloads sources into .image-cache/ (git-ignored)
+npm run images:optimize   # crops, converts and writes the manifest
 ```
 
-Skrypt optymalizacji kadruje z użyciem strategii `attention` (sharp wybiera
-najbardziej wyrazisty fragment, co ma znaczenie przy pionowych źródłach),
-produkuje AVIF i WebP w trzech szerokościach, zapisuje placeholder LQIP
-i buduje `src/lib/image-manifest.json`.
+Cropping uses sharp's `attention` strategy, which picks the most salient region
+instead of a blind centre crop — it matters because several sources are portrait
+while the layout needs panoramas. The script emits AVIF and WebP at three widths,
+an LQIP placeholder, and `src/lib/image-manifest.json`.
 
-Komponent `Picture` czyta wyłącznie z tego manifestu — dzięki temu `srcset`
-nie może wskazać wariantu, którego nie ma na dysku.
+The `Picture` component reads only from that manifest, so a `srcset` can never
+point at a variant that is missing from disk — a mistake that would otherwise
+surface as a 404 in the browser rather than at build time.
 
 ---
 
-## Uruchomienie w Dockerze
+## Running with Docker
 
-Obraz jest wieloetapowy: Node buduje statyczny eksport, nginx go serwuje.
-Warstwa końcowa nie zawiera Node'a ani zależności.
+The image is multi-stage: Node builds the static export, nginx serves it. The
+final layer contains neither Node nor any dependencies.
 
 ```bash
-# Produkcja na http://localhost:8080
+# Production on http://localhost:8080
 npm run docker:up
 
-# albo bez compose
+# or without compose
 docker build -f .tools/docker/Dockerfile -t bodykit-shop .
 docker run -p 8080:8080 bodykit-shop
 
-# Tryb deweloperski z przeładowaniem na http://localhost:3000
+# Development with hot reload on http://localhost:3000
 docker compose -f .tools/docker/docker-compose.yml --profile dev up
 ```
 
-Kontener działa jako użytkownik nieuprzywilejowany, z systemem plików tylko do
-odczytu, i wysyła komplet nagłówków bezpieczeństwa (CSP, `X-Content-Type-Options`,
+The container runs as an unprivileged user with a read-only filesystem and
+sends a full set of security headers (CSP, `X-Content-Type-Options`,
 `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`).
 
-> **Uwaga o nginx:** nagłówki bezpieczeństwa siedzą w osobnym snippecie
-> dołączanym w każdym bloku `location`. To nie jest ozdobnik — `add_header`
-> z poziomu `server` przestaje działać w momencie, gdy blok `location`
-> zdefiniuje własny nagłówek.
+> **A note on nginx:** the security headers live in a snippet that is included
+> in every `location` block. That is not decoration — nginx only inherits
+> `add_header` into blocks that declare none of their own, so a single
+> `add_header` inside a `location` silently drops every server-level header.
 
 ---
 
-## Wdrożenie na GitHub Pages
+## Deploying to GitHub Pages
 
-Serwis działa pod własną domeną **[bodykit.dawidolko.pl](https://bodykit.dawidolko.pl/)**.
+The site runs on a custom domain: **[bodykit.dawidolko.pl](https://bodykit.dawidolko.pl/)**.
 
-### Konfiguracja po stronie GitHuba
+### GitHub configuration
 
 1. **Settings → Pages → Source: GitHub Actions**.
-2. **Settings → Pages → Custom domain**: `bodykit.dawidolko.pl`, następnie zaznacz **Enforce HTTPS**.
+2. **Settings → Pages → Custom domain**: `bodykit.dawidolko.pl`, then tick **Enforce HTTPS**.
 
-Plik [`public/CNAME`](public/CNAME) trafia do wyniku budowania, więc ustawienie
-domeny przetrwa każde kolejne wdrożenie. Workflow sprawdza jego obecność
-i przerywa, jeśli go zabraknie.
+[`public/CNAME`](public/CNAME) is copied into the build output, so the domain
+setting survives every deployment. The workflow verifies the file is present and
+fails the build if it is missing.
 
-### Konfiguracja DNS
+### DNS
 
-W panelu domeny `dawidolko.pl` dodaj rekord:
+Add this record for `dawidolko.pl`:
 
-| Typ     | Nazwa     | Wartość                |
+| Type    | Name      | Value                  |
 | ------- | --------- | ---------------------- |
 | `CNAME` | `bodykit` | `dawidolko.github.io.` |
 
-Propagacja zwykle trwa kilkanaście minut. Do czasu wydania certyfikatu opcja
-„Enforce HTTPS" może być niedostępna — pojawi się sama.
+Propagation usually takes a few minutes. "Enforce HTTPS" stays greyed out until
+the certificate is issued.
 
-### Budowanie
+### Builds
 
-Każdy push na `main` uruchamia budowanie i wdrożenie. Ponieważ serwis stoi
-w korzeniu domeny, `basePath` pozostaje pusty. Workflow dokłada plik
-`.nojekyll`, bez którego Pages ukryłoby katalog `_next`.
+Every push to `main` builds and deploys. Because the site is served from the
+root of a custom domain, `basePath` stays empty. The workflow also writes
+`.nojekyll`, without which Pages would hide the `_next` directory.
 
-Odtworzenie buildu produkcyjnego lokalnie:
+Reproducing the production build locally:
 
 ```bash
 NEXT_PUBLIC_SITE_URL=https://bodykit.dawidolko.pl npm run build
 ```
 
-Gdybyś kiedyś zrezygnował z własnej domeny i wrócił na
-`<user>.github.io/<repo>`, ustaw w `deploy.yml` zmienną
-`NEXT_PUBLIC_BASE_PATH` na `/<nazwa-repozytorium>` i usuń `public/CNAME`.
+If you ever drop the custom domain and go back to `<user>.github.io/<repo>`,
+set `NEXT_PUBLIC_BASE_PATH` to `/<repository-name>` in `deploy.yml` and delete
+`public/CNAME`.
 
-Drugi workflow (`quality.yml`) sprawdza typy, lint, formatowanie, uruchamia
-audyt dostępności i weryfikuje, że obraz Dockera buduje się i poprawnie serwuje
-trasy oraz nagłówki.
-
----
-
-## Dostępne polecenia
-
-| Polecenie                           | Opis                                         |
-| ----------------------------------- | -------------------------------------------- |
-| `npm run dev`                       | Serwer deweloperski                          |
-| `npm run build`                     | Statyczny eksport do `out/`                  |
-| `npm run serve`                     | Podgląd zbudowanej wersji                    |
-| `npm run verify`                    | Typy + lint + format + build                 |
-| `npm run typecheck`                 | Sprawdzenie typów                            |
-| `npm run lint` / `lint:fix`         | ESLint                                       |
-| `npm run format` / `format:check`   | Prettier                                     |
-| `npm run audit:a11y`                | Audyt axe-core (wymaga działającego serwera) |
-| `npm run images:fetch`              | Pobranie źródeł zdjęć                        |
-| `npm run images:optimize`           | Optymalizacja i manifest obrazów             |
-| `npm run brand:assets`              | Favicony i karta Open Graph                  |
-| `npm run docker:up` / `docker:down` | Docker Compose                               |
+A second workflow (`quality.yml`) checks types, linting and formatting, runs the
+accessibility audit, and verifies that the Docker image builds and serves its
+routes and headers correctly.
 
 ---
 
-## Uwagi
+## Available scripts
 
-To jest **projekt demonstracyjny**. Zamówienia nie są realizowane, płatności nie
-są pobierane, a formularze nie wysyłają danych na żaden serwer — walidacja działa
-w pełni, ale wynik pozostaje w przeglądarce. Regulamin i polityka prywatności
-zostały napisane na potrzeby makiety i nie stanowią wzorca umownego.
-
-Katalog produktów, opisy techniczne i dane firmy są fikcyjne.
+| Command                             | Purpose                                 |
+| ----------------------------------- | --------------------------------------- |
+| `npm run dev`                       | Development server                      |
+| `npm run build`                     | Static export into `out/`               |
+| `npm run serve`                     | Preview the built output                |
+| `npm run verify`                    | Types + lint + format + build           |
+| `npm run typecheck`                 | TypeScript only                         |
+| `npm run lint` / `lint:fix`         | ESLint                                  |
+| `npm run format` / `format:check`   | Prettier                                |
+| `npm run audit:a11y`                | axe-core audit (needs a running server) |
+| `npm run images:fetch`              | Download photo sources                  |
+| `npm run images:optimize`           | Optimize images and write the manifest  |
+| `npm run brand:assets`              | Favicons and Open Graph card            |
+| `npm run docker:up` / `docker:down` | Docker Compose                          |
 
 ---
 
-## Licencja
+## Notes
+
+This is a **demonstration project**. Orders are not fulfilled, no payments are
+taken, and no form sends data anywhere — validation runs in full, but the result
+stays in the browser. The terms and privacy policy were written for a mock-up
+and are not a contractual template.
+
+The catalog, technical descriptions and company details are fictional.
+
+---
+
+## Licence
 
 [MIT](LICENSE)

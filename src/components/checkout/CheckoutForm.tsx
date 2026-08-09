@@ -6,40 +6,50 @@ import { Button } from '@/components/ui/Button';
 import { Checkbox, Field, Input } from '@/components/ui/Field';
 import { Picture } from '@/components/ui/Picture';
 import { useCart } from '@/lib/cart';
-import { formatPrice, plural } from '@/lib/utils';
+import { formatPrice, t } from '@/lib/utils';
+import { getDictionary, type Dictionary } from '@/i18n';
+import { localePath, type Locale } from '@/i18n/config';
 
 type Errors = Partial<Record<string, string>>;
 
-const deliveryOptions = [
-  { id: 'kurier', label: 'Kurier DPD', time: '1-2 dni robocze', price: 2490 },
-  { id: 'paczkomat', label: 'Paczkomat InPost', time: '1-2 dni robocze', price: 1690 },
-  { id: 'odbior', label: 'Odbiór osobisty (Rzeszów)', time: 'Po potwierdzeniu', price: 0 },
+/** Delivery option ids are stable identifiers - only the labels are translated. */
+type DeliveryId = 'courier' | 'locker' | 'pickup';
+
+const deliveryOptions: { id: DeliveryId; price: number }[] = [
+  { id: 'courier', price: 2490 },
+  { id: 'locker', price: 1690 },
+  { id: 'pickup', price: 0 },
 ];
 
-/** Weryfikacja pojedynczego pola - jedno miejsce dla regul walidacji. */
-function validateField(name: string, value: string, required = true): string | undefined {
+/** Validation of a single field - one place for all the rules. */
+function validateField(
+  name: string,
+  value: string,
+  dict: Dictionary,
+  required = true,
+): string | undefined {
   const trimmed = value.trim();
-  if (required && !trimmed) return 'To pole jest wymagane';
+  if (required && !trimmed) return dict.checkout.validation.required;
 
   switch (name) {
     case 'email':
       if (trimmed && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(trimmed)) {
-        return 'Podaj poprawny adres e-mail, np. jan@example.pl';
+        return dict.checkout.validation.email;
       }
       break;
     case 'phone':
       if (trimmed && !/^(\+48\s?)?(\d\s?){9}$/.test(trimmed)) {
-        return 'Podaj 9-cyfrowy numer telefonu';
+        return dict.checkout.validation.phone;
       }
       break;
     case 'postalCode':
       if (trimmed && !/^\d{2}-\d{3}$/.test(trimmed)) {
-        return 'Kod pocztowy w formacie 00-000';
+        return dict.checkout.validation.postalCode;
       }
       break;
     case 'nip':
       if (trimmed && !/^\d{10}$/.test(trimmed.replace(/[\s-]/g, ''))) {
-        return 'NIP powinien mieć 10 cyfr';
+        return dict.checkout.validation.taxId;
       }
       break;
   }
@@ -47,18 +57,19 @@ function validateField(name: string, value: string, required = true): string | u
 }
 
 /**
- * Formularz zamowienia z walidacja po stronie klienta.
+ * Checkout form with client-side validation.
  *
- * Bledy sa zbierane do podsumowania nad formularzem, ktore po nieudanej probie
- * wysylki przejmuje fokus - dzieki temu osoba korzystajaca z czytnika ekranu
- * od razu wie, co poprawic, zamiast szukac bledow po omacku.
+ * Errors are collected into a summary above the form which takes focus after a
+ * failed submit - that way a person using a screen reader immediately learns
+ * what to fix, instead of hunting for errors blindly.
  */
-export function CheckoutForm() {
+export function CheckoutForm({ locale }: { locale: Locale }) {
+  const dict = getDictionary(locale);
   const router = useRouter();
   const { detailedLines, subtotal, isHydrated, clear } = useCart();
   const [errors, setErrors] = useState<Errors>({});
   const [submitted, setSubmitted] = useState(false);
-  const [delivery, setDelivery] = useState(deliveryOptions[0]!.id);
+  const [delivery, setDelivery] = useState<DeliveryId>(deliveryOptions[0]!.id);
   const [wantsInvoice, setWantsInvoice] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
 
@@ -68,7 +79,7 @@ export function CheckoutForm() {
 
   function handleBlur(event: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value, required } = event.target;
-    const error = validateField(name, value, required);
+    const error = validateField(name, value, dict, required);
     setErrors((current) => ({ ...current, [name]: error }));
   }
 
@@ -85,25 +96,25 @@ export function CheckoutForm() {
         element instanceof HTMLInputElement || element instanceof HTMLSelectElement
           ? element.required
           : false;
-      const error = validateField(name, value, required);
+      const error = validateField(name, value, dict, required);
       if (error) nextErrors[name] = error;
     }
 
     if (!data.get('terms')) {
-      nextErrors.terms = 'Musisz zaakceptować regulamin, żeby złożyć zamówienie';
+      nextErrors.terms = dict.checkout.validation.terms;
     }
 
     setErrors(nextErrors);
     setSubmitted(true);
 
     if (Object.keys(nextErrors).length > 0) {
-      // Fokus na podsumowanie bledow - czytnik odczyta liste od razu.
+      // Focus the error summary - the screen reader reads the list right away.
       window.requestAnimationFrame(() => summaryRef.current?.focus());
       return;
     }
 
     clear();
-    router.push('/zamowienie/dziekujemy/');
+    router.push(localePath(locale, '/checkout/thank-you'));
   }
 
   const errorEntries = Object.entries(errors).filter(([, message]) => Boolean(message));
@@ -112,12 +123,14 @@ export function CheckoutForm() {
     return (
       <div className="container-page pb-16">
         <div className="rounded-md border border-dashed border-border-default px-6 py-16 text-center">
-          <p className="text-lg font-bold text-text-primary">Koszyk jest pusty</p>
-          <p className="mt-2 text-sm text-text-muted">
-            Dodaj produkty do koszyka, żeby złożyć zamówienie.
-          </p>
-          <Button variant="primary" className="mt-6" onClick={() => router.push('/kategorie/')}>
-            Przeglądaj katalog
+          <p className="text-lg font-bold text-text-primary">{dict.checkout.emptyCart}</p>
+          <p className="mt-2 text-sm text-text-muted">{dict.checkout.emptyCartHint}</p>
+          <Button
+            variant="primary"
+            className="mt-6"
+            onClick={() => router.push(localePath(locale, '/categories'))}
+          >
+            {dict.cart.browse}
           </Button>
         </div>
       </div>
@@ -136,8 +149,7 @@ export function CheckoutForm() {
               className="rounded-sm border border-danger bg-danger/5 p-4 focus-ring"
             >
               <p className="text-sm font-bold text-danger">
-                Formularz zawiera {errorEntries.length}{' '}
-                {plural(errorEntries.length, 'błąd', 'błędy', 'błędów')} do poprawienia:
+                {dict.checkout.errorSummary(errorEntries.length)}
               </p>
               <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm text-text-secondary">
                 {errorEntries.map(([name, message]) => (
@@ -153,10 +165,15 @@ export function CheckoutForm() {
 
           <fieldset className="flex flex-col gap-5">
             <legend className="mb-2 text-lg font-bold uppercase tracking-wide">
-              1. Dane kontaktowe
+              {dict.checkout.step1}
             </legend>
             <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="Imię" htmlFor="firstName" required error={errors.firstName}>
+              <Field
+                label={dict.checkout.firstName}
+                htmlFor="firstName"
+                required
+                error={errors.firstName}
+              >
                 <Input
                   id="firstName"
                   name="firstName"
@@ -167,7 +184,12 @@ export function CheckoutForm() {
                   aria-describedby={errors.firstName ? 'firstName-error' : undefined}
                 />
               </Field>
-              <Field label="Nazwisko" htmlFor="lastName" required error={errors.lastName}>
+              <Field
+                label={dict.checkout.lastName}
+                htmlFor="lastName"
+                required
+                error={errors.lastName}
+              >
                 <Input
                   id="lastName"
                   name="lastName"
@@ -178,7 +200,7 @@ export function CheckoutForm() {
                   aria-describedby={errors.lastName ? 'lastName-error' : undefined}
                 />
               </Field>
-              <Field label="E-mail" htmlFor="email" required error={errors.email}>
+              <Field label={dict.checkout.email} htmlFor="email" required error={errors.email}>
                 <Input
                   id="email"
                   name="email"
@@ -192,10 +214,10 @@ export function CheckoutForm() {
                 />
               </Field>
               <Field
-                label="Telefon"
+                label={dict.checkout.phone}
                 htmlFor="phone"
                 required
-                hint="Kurier zadzwoni przed dostawą"
+                hint={dict.checkout.phoneHint}
                 error={errors.phone}
               >
                 <Input
@@ -215,9 +237,9 @@ export function CheckoutForm() {
 
           <fieldset className="flex flex-col gap-5">
             <legend className="mb-2 text-lg font-bold uppercase tracking-wide">
-              2. Adres dostawy
+              {dict.checkout.step2}
             </legend>
-            <Field label="Ulica i numer" htmlFor="street" required error={errors.street}>
+            <Field label={dict.checkout.street} htmlFor="street" required error={errors.street}>
               <Input
                 id="street"
                 name="street"
@@ -229,7 +251,12 @@ export function CheckoutForm() {
               />
             </Field>
             <div className="grid gap-5 sm:grid-cols-[10rem_1fr]">
-              <Field label="Kod pocztowy" htmlFor="postalCode" required error={errors.postalCode}>
+              <Field
+                label={dict.checkout.postalCode}
+                htmlFor="postalCode"
+                required
+                error={errors.postalCode}
+              >
                 <Input
                   id="postalCode"
                   name="postalCode"
@@ -241,7 +268,7 @@ export function CheckoutForm() {
                   aria-describedby={errors.postalCode ? 'postalCode-error' : undefined}
                 />
               </Field>
-              <Field label="Miejscowość" htmlFor="city" required error={errors.city}>
+              <Field label={dict.checkout.city} htmlFor="city" required error={errors.city}>
                 <Input
                   id="city"
                   name="city"
@@ -257,7 +284,7 @@ export function CheckoutForm() {
 
           <fieldset className="flex flex-col gap-4">
             <legend className="mb-2 text-lg font-bold uppercase tracking-wide">
-              3. Sposób dostawy
+              {dict.checkout.step3}
             </legend>
             {deliveryOptions.map((option) => (
               <label
@@ -278,12 +305,14 @@ export function CheckoutForm() {
                 />
                 <span className="flex-1">
                   <span className="block text-sm font-semibold text-text-primary">
-                    {option.label}
+                    {dict.checkout.deliveryOptions[option.id].label}
                   </span>
-                  <span className="block text-xs text-text-muted">{option.time}</span>
+                  <span className="block text-xs text-text-muted">
+                    {dict.checkout.deliveryOptions[option.id].time}
+                  </span>
                 </span>
                 <span className="text-sm font-bold text-text-primary">
-                  {option.price === 0 ? 'Gratis' : formatPrice(option.price)}
+                  {option.price === 0 ? dict.cart.free : formatPrice(option.price, locale)}
                 </span>
               </label>
             ))}
@@ -291,7 +320,7 @@ export function CheckoutForm() {
 
           <fieldset className="flex flex-col gap-4">
             <legend className="mb-2 text-lg font-bold uppercase tracking-wide">
-              4. Podsumowanie
+              {dict.checkout.step4}
             </legend>
 
             <Checkbox
@@ -299,12 +328,17 @@ export function CheckoutForm() {
               name="invoice"
               checked={wantsInvoice}
               onChange={(event) => setWantsInvoice(event.target.checked)}
-              label="Chcę fakturę VAT na firmę"
+              label={dict.checkout.wantInvoice}
             />
 
             {wantsInvoice && (
               <div className="grid gap-5 rounded-sm border border-border-subtle p-4 sm:grid-cols-2">
-                <Field label="Nazwa firmy" htmlFor="company" required error={errors.company}>
+                <Field
+                  label={dict.checkout.company}
+                  htmlFor="company"
+                  required
+                  error={errors.company}
+                >
                   <Input
                     id="company"
                     name="company"
@@ -315,7 +349,7 @@ export function CheckoutForm() {
                     aria-describedby={errors.company ? 'company-error' : undefined}
                   />
                 </Field>
-                <Field label="NIP" htmlFor="nip" required error={errors.nip}>
+                <Field label={dict.checkout.taxId} htmlFor="nip" required error={errors.nip}>
                   <Input
                     id="nip"
                     name="nip"
@@ -338,14 +372,14 @@ export function CheckoutForm() {
                 aria-describedby={errors.terms ? 'terms-error' : undefined}
                 label={
                   <>
-                    Akceptuję{' '}
+                    {dict.checkout.acceptTerms}{' '}
                     <a
-                      href="/regulamin/"
+                      href={localePath(locale, '/terms')}
                       className="font-medium text-text-brand underline focus-ring"
                     >
-                      regulamin
+                      {dict.checkout.termsLink}
                     </a>{' '}
-                    i politykę prywatności
+                    {dict.checkout.andPrivacy}
                     <span aria-hidden="true" className="ml-1 text-danger">
                       *
                     </span>
@@ -360,18 +394,18 @@ export function CheckoutForm() {
             </div>
 
             <Button type="submit" size="lg" className="mt-2 w-full sm:w-auto">
-              Złóż zamówienie
+              {dict.checkout.submit}
             </Button>
           </fieldset>
         </form>
 
-        {/* Podsumowanie zamowienia */}
+        {/* Order summary */}
         <aside
           aria-labelledby="order-summary"
           className="rounded-md border border-border-subtle bg-surface p-6 lg:sticky lg:top-28"
         >
           <h2 id="order-summary" className="text-lg font-bold uppercase tracking-wide">
-            Twoje zamówienie
+            {dict.checkout.yourOrder}
           </h2>
 
           <ul className="mt-5 flex flex-col gap-4">
@@ -387,12 +421,14 @@ export function CheckoutForm() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-text-primary">
-                    {line.product.name}
+                    {t(line.product.name, locale)}
                   </p>
-                  <p className="text-xs text-text-muted">{line.quantity} szt.</p>
+                  <p className="text-xs text-text-muted">
+                    {dict.cart.quantityLabel(line.quantity)}
+                  </p>
                 </div>
                 <p className="text-sm font-semibold text-text-primary">
-                  {formatPrice(line.lineTotal)}
+                  {formatPrice(line.lineTotal, locale)}
                 </p>
               </li>
             ))}
@@ -400,29 +436,28 @@ export function CheckoutForm() {
 
           <dl className="mt-6 flex flex-col gap-2.5 border-t border-border-subtle pt-5 text-sm">
             <div className="flex justify-between">
-              <dt className="text-text-secondary">Produkty</dt>
-              <dd className="text-text-primary">{formatPrice(subtotal)}</dd>
+              <dt className="text-text-secondary">{dict.cart.products(detailedLines.length)}</dt>
+              <dd className="text-text-primary">{formatPrice(subtotal, locale)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-text-secondary">Dostawa</dt>
+              <dt className="text-text-secondary">{dict.cart.delivery}</dt>
               <dd className="text-text-primary">
                 {shippingCost === 0 ? (
-                  <span className="text-success">Gratis</span>
+                  <span className="text-success">{dict.cart.free}</span>
                 ) : (
-                  formatPrice(shippingCost)
+                  formatPrice(shippingCost, locale)
                 )}
               </dd>
             </div>
             <div className="mt-1 flex justify-between border-t border-border-subtle pt-3">
-              <dt className="text-base font-bold text-text-primary">Razem</dt>
-              <dd className="text-xl font-extrabold text-text-primary">{formatPrice(total)}</dd>
+              <dt className="text-base font-bold text-text-primary">{dict.cart.grandTotal}</dt>
+              <dd className="text-xl font-extrabold text-text-primary">
+                {formatPrice(total, locale)}
+              </dd>
             </div>
           </dl>
 
-          <p className="mt-5 text-xs leading-relaxed text-text-muted">
-            Sklep demonstracyjny — zamówienie nie zostanie zrealizowane, a dane nie są nigdzie
-            wysyłane.
-          </p>
+          <p className="mt-5 text-xs leading-relaxed text-text-muted">{dict.checkout.demoNote}</p>
         </aside>
       </div>
     </div>

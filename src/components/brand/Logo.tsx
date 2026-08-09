@@ -1,17 +1,18 @@
 type LogoProps = {
-  /** Wariant: pelne logo z nazwa lub sam monogram (np. do mobilnego headera). */
+  /** Variant: full wordmark, or just the monogram (e.g. for a mobile header). */
   variant?: 'full' | 'mark';
   className?: string;
-  /** Gdy logo stoi obok tekstowej nazwy strony, oznacz je jako dekoracyjne. */
+  /** Mark it decorative when the logo sits next to the site name in text. */
   decorative?: boolean;
 };
 
 /**
- * Logo BodyKit Shop.
+ * BodyKit Shop logo.
  *
- * Znak to monogram "BK" wpisany w ukosny splitter - ten sam kat 12 stopni wraca
- * w .clip-slant i w kaflach kategorii, wiec marka trzyma sie jednego gestu.
- * Kolory dziedziczy z currentColor + tokenu akcentu, wiec dziala w obu motywach.
+ * The mark is a "BK" monogram set into an angled splitter - the same 12 degree
+ * angle returns in .clip-slant and in the category tiles, so the brand keeps to
+ * a single gesture. Colours come from currentColor plus the accent token, so it
+ * works in both themes.
  */
 export function Logo({ variant = 'full', className, decorative = false }: LogoProps) {
   const a11y = decorative
@@ -56,15 +57,15 @@ export function Logo({ variant = 'full', className, decorative = false }: LogoPr
   );
 }
 
-/** Sam symbol - wspoldzielony przez oba warianty. */
+/** The symbol alone - shared by both variants. */
 function LogoMark() {
   return (
     <g>
-      {/* Bryla znaku: ukosny splitter, sciety pod tym samym katem co .clip-slant */}
+      {/* Body of the mark: an angled splitter, cut at the same angle as .clip-slant */}
       <path d="M3 6h27l7 9-7 19H3V6Z" className="fill-carbon-900 dark:fill-carbon-50" />
-      {/* Pomaranczowa krawedz natarcia */}
+      {/* Orange leading edge */}
       <path d="M30 6l7 9-7 19-3.5-4 5-15-5-9H30Z" fill="var(--accent)" />
-      {/* Monogram BK wyciety w bryle */}
+      {/* BK monogram cut into the body */}
       <path
         d="M9.5 12.5h6.2c2.2 0 3.6 1.1 3.6 2.9 0 1.2-.6 2.1-1.7 2.5 1.4.4 2.2 1.4 2.2 2.9 0 2.1-1.6 3.4-4.1 3.4H9.5V12.5Zm5.6 4.6c.9 0 1.5-.5 1.5-1.3s-.6-1.2-1.5-1.2h-2.9v2.5h2.9Zm.3 5c1 0 1.7-.5 1.7-1.4s-.7-1.4-1.7-1.4h-3.2v2.8h3.2Z"
         fill="var(--accent)"

@@ -8,12 +8,12 @@ type Size = 'sm' | 'md' | 'lg';
 const base =
   'inline-flex items-center justify-center gap-2 font-semibold tracking-wide uppercase ' +
   'transition-[background-color,color,border-color,translate,box-shadow] duration-200 ' +
-  'ease-(--ease-out-quint) rounded-sm focus-ring ' +
+  'ease-out-quint rounded-sm focus-ring ' +
   'disabled:pointer-events-none disabled:opacity-50 ' +
   'active:translate-y-px';
 
 const variants: Record<Variant, string> = {
-  // Ciemny atrament na pomaranczu - 6.63:1, sprawdzone dla obu motywow.
+  // Dark ink on orange - 6.63:1, verified for both themes.
   primary:
     'bg-accent text-text-on-brand hover:bg-accent-hover active:bg-accent-active ' +
     'shadow-[0_2px_0_0_var(--accent-active)] hover:shadow-[0_1px_0_0_var(--accent-active)]',
@@ -21,13 +21,13 @@ const variants: Record<Variant, string> = {
     'border border-border-default bg-surface text-text-primary ' +
     'hover:border-border-brand hover:text-text-brand',
   ghost: 'text-text-secondary hover:bg-bg-muted hover:text-text-primary',
-  // Do uzycia na sekcjach z ciemnym tlem (hero, banery) - kolory nie zaleza
-  // od motywu, bo tlo pod przyciskiem jest ciemne w obu.
+  // For sections with a dark background (hero, banners) - the colours do not
+  // depend on the theme, because the surface behind is dark either way.
   'on-dark':
     'border border-carbon-600 bg-carbon-950/40 text-carbon-50 backdrop-blur-sm ' +
     'hover:border-brand-500 hover:bg-carbon-950/70 hover:text-brand-400',
-  // Stale ciemne tlo w obu motywach - token --danger-text rozjasnia sie w dark,
-  // przez co bialy napis spadalby do 2.8:1.
+  // A fixed dark surface in both themes - the --danger-text token lightens in
+  // dark mode, which would drop white text to 2.8:1.
   danger: 'bg-danger-600 text-white hover:bg-danger-700',
   inverse: 'bg-bg-inverse text-text-inverse hover:bg-carbon-700 dark:hover:bg-carbon-200',
 };
@@ -63,7 +63,7 @@ export function Button({
   );
 }
 
-/** Wariant linkowy - wizualnie identyczny, ale semantycznie nawigacja. */
+/** Link variant - visually identical, but semantically navigation. */
 export function LinkButton({
   variant = 'primary',
   size = 'md',

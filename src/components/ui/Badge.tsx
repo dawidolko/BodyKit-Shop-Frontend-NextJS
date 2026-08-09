@@ -9,8 +9,8 @@ const tones: Record<BadgeTone, string> = {
   success: 'bg-bg-muted text-success',
   danger: 'bg-danger-600 text-white',
   outline: 'border border-border-default text-text-secondary',
-  // Na zdjeciu produktowym nie wiemy, czy tlo jest jasne czy ciemne,
-  // wiec plakietka niesie wlasne, stale kontrastowe tlo.
+  // Over a product photo we cannot know whether the backdrop is light or dark,
+  // so the badge carries its own consistently contrasting surface.
   'on-image': 'bg-carbon-950/85 text-carbon-50 backdrop-blur-sm',
 };
 

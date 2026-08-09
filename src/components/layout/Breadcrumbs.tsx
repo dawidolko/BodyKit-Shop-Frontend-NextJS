@@ -1,15 +1,25 @@
 import Link from 'next/link';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { absoluteUrl } from '@/lib/site';
+import { absoluteLocaleUrl } from '@/lib/site';
+import type { Dictionary } from '@/i18n';
+import { localePath, type Locale } from '@/i18n/config';
 
 export type Crumb = { href: string; label: string };
 
 /**
- * Sciezka nawigacyjna z danymi strukturalnymi BreadcrumbList.
- * Ostatni element jest biezaca strona - nie jest linkiem i ma aria-current.
+ * Breadcrumb trail with BreadcrumbList structured data.
+ * The last entry is the current page: not a link, and marked aria-current.
  */
-export function Breadcrumbs({ items }: { items: Crumb[] }) {
-  const all: Crumb[] = [{ href: '/', label: 'Strona główna' }, ...items];
+export function Breadcrumbs({
+  items,
+  locale,
+  dict,
+}: {
+  items: Crumb[];
+  locale: Locale;
+  dict: Dictionary;
+}) {
+  const all: Crumb[] = [{ href: '/', label: dict.nav.homeLabel }, ...items];
 
   const schema = {
     '@context': 'https://schema.org',
@@ -18,14 +28,14 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
       '@type': 'ListItem',
       position: index + 1,
       name: crumb.label,
-      item: absoluteUrl(crumb.href),
+      item: absoluteLocaleUrl(locale, crumb.href),
     })),
   };
 
   return (
     <>
       <JsonLd data={schema} />
-      <nav aria-label="Ścieżka nawigacyjna" className="container-page pt-6">
+      <nav aria-label={dict.nav.breadcrumb} className="container-page pt-6">
         <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-text-muted">
           {all.map((crumb, index) => {
             const isLast = index === all.length - 1;
@@ -38,7 +48,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
                 ) : (
                   <>
                     <Link
-                      href={crumb.href}
+                      href={localePath(locale, crumb.href)}
                       className="rounded-xs transition-colors hover:text-text-brand focus-ring"
                     >
                       {crumb.label}
@@ -57,7 +67,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
   );
 }
 
-/** Naglowek strony - tytul, opis i opcjonalny slot na akcje. */
+/** Page header — title, description and an optional slot for actions. */
 export function PageHeader({
   title,
   description,

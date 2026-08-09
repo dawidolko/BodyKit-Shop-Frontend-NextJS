@@ -2,15 +2,17 @@
 
 import { useSyncExternalStore } from 'react';
 import { MoonIcon, SunIcon } from '@/components/ui/Icon';
+import { getDictionary } from '@/i18n';
+import type { Locale } from '@/i18n/config';
 
 const STORAGE_KEY = 'bodykit-theme';
 
 type Theme = 'light' | 'dark';
 
 /**
- * Skrypt wstawiany do <head> i wykonywany synchronicznie przed pierwszym
- * malowaniem. Bez niego strona mrugnelaby jasnym motywem, zanim React
- * zdazylby ustawic klase - efekt szczegolnie drazniacy w ciemnym motywie.
+ * Injected into <head> and executed synchronously before first paint. Without
+ * it the page would flash the light theme before React could apply the class —
+ * especially jarring for someone who chose dark mode.
  */
 export const themeInitScript = `
 (function() {
@@ -25,9 +27,9 @@ export const themeInitScript = `
 `.trim();
 
 /**
- * Motyw zyje poza Reactem - jako klasa na <html> ustawiana przez skrypt
- * inicjalizujacy. useSyncExternalStore czyta go bezposrednio ze zrodla,
- * dzieki czemu nie potrzebujemy setState w efekcie ani osobnej kopii stanu.
+ * The theme lives outside React, as a class on <html> set by the init script.
+ * useSyncExternalStore reads it straight from the source, so we need neither a
+ * setState inside an effect nor a duplicate copy of the state.
  */
 function subscribeToTheme(onChange: () => void): () => void {
   const observer = new MutationObserver(onChange);
@@ -36,8 +38,8 @@ function subscribeToTheme(onChange: () => void): () => void {
     attributeFilter: ['class'],
   });
 
-  // Zmiana ustawien systemowych wplywa na motyw tylko wtedy, gdy uzytkownik
-  // nie dokonal wlasnego wyboru.
+  // A change in system settings only affects the theme when the visitor has
+  // not made an explicit choice.
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   const onMediaChange = (event: MediaQueryListEvent) => {
     try {
@@ -58,10 +60,11 @@ function subscribeToTheme(onChange: () => void): () => void {
 const getTheme = (): Theme =>
   document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
-/** Podczas prerenderu nie ma DOM - zakladamy motyw jasny i korygujemy po hydracji. */
+/** There is no DOM during prerender — assume light and correct after hydration. */
 const getServerTheme = (): Theme => 'light';
 
-export function ThemeToggle({ className }: { className?: string }) {
+export function ThemeToggle({ locale, className }: { locale: Locale; className?: string }) {
+  const dict = getDictionary(locale);
   const theme = useSyncExternalStore(subscribeToTheme, getTheme, getServerTheme);
 
   function toggle() {
@@ -70,11 +73,11 @@ export function ThemeToggle({ className }: { className?: string }) {
     try {
       localStorage.setItem(STORAGE_KEY, next);
     } catch {
-      // Brak dostepu do storage - motyw zmieni sie tylko na czas sesji.
+      // No storage access — the theme changes for this session only.
     }
   }
 
-  const label = theme === 'dark' ? 'Włącz motyw jasny' : 'Włącz motyw ciemny';
+  const label = theme === 'dark' ? dict.theme.toLight : dict.theme.toDark;
 
   return (
     <button
@@ -89,8 +92,8 @@ export function ThemeToggle({ className }: { className?: string }) {
         (className ?? '')
       }
     >
-      {/* getServerTheme zwraca 'light', wiec markup serwera i klienta
-          zgadzaja sie przy pierwszym renderze. */}
+      {/* getServerTheme returns 'light', so server and client markup agree on
+          the first render. */}
       {theme === 'light' ? <MoonIcon className="size-5" /> : <SunIcon className="size-5" />}
     </button>
   );

@@ -1,14 +1,10 @@
 import { LinkButton } from '@/components/ui/Button';
 import { Picture } from '@/components/ui/Picture';
 import { ArrowRightIcon } from '@/components/ui/Icon';
+import type { Dictionary } from '@/i18n';
+import { localePath, type Locale } from '@/i18n/config';
 
-const stats = [
-  { value: '2 400+', label: 'zrealizowanych zamówień' },
-  { value: '38', label: 'obsługiwanych modeli aut' },
-  { value: '24 h', label: 'wysyłka z magazynu' },
-];
-
-export function Hero() {
+export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   return (
     <section className="relative overflow-hidden border-b border-border-subtle bg-bg-inset">
       <div className="absolute inset-0">
@@ -20,7 +16,8 @@ export function Hero() {
           className="h-full w-full"
           imgClassName="object-cover"
         />
-        {/* Przyciemnienie zapewnia kontrast tekstu niezaleznie od jasnosci zdjecia */}
+        {/* The darkening layer keeps text contrast regardless of how bright the
+            photo underneath happens to be. */}
         <div
           aria-hidden="true"
           className="absolute inset-0 bg-linear-to-r from-carbon-950 via-carbon-950/85 to-carbon-950/40"
@@ -31,32 +28,30 @@ export function Hero() {
         <div className="max-w-2xl">
           <p className="inline-flex items-center gap-2 rounded-xs border border-brand-500/40 bg-carbon-950/60 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-brand-400">
             <span className="size-1.5 rounded-full bg-brand-500" aria-hidden="true" />
-            Nowa kolekcja 2026
+            {dict.home.badge}
           </p>
 
           <h1 className="mt-6 text-4xl font-extrabold uppercase leading-[0.95] tracking-tight text-carbon-50 sm:text-5xl lg:text-6xl">
-            Dokładki, które
-            <span className="block text-brand-500">pasują za pierwszym razem</span>
+            {dict.home.headlineTop}
+            <span className="block text-brand-500">{dict.home.headlineAccent}</span>
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-carbon-300 sm:text-lg">
-            Splittery, spoilery i dyfuzory projektowane pod konkretne roczniki i wersje nadwozia. Do
-            każdego elementu dostajesz komplet montażowy i instrukcję po polsku — bez dopasowywania
-            na miejscu.
+            {dict.home.lead}
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <LinkButton href="/kategorie/" size="lg">
-              Przeglądaj katalog
+            <LinkButton href={localePath(locale, '/categories')} size="lg">
+              {dict.home.ctaPrimary}
               <ArrowRightIcon className="size-4" />
             </LinkButton>
-            <LinkButton href="/pomoc/" size="lg" variant="on-dark">
-              Jak dobrać część?
+            <LinkButton href={localePath(locale, '/help')} size="lg" variant="on-dark">
+              {dict.home.ctaSecondary}
             </LinkButton>
           </div>
 
           <dl className="mt-14 grid grid-cols-3 gap-4 border-t border-carbon-700/60 pt-8">
-            {stats.map((stat) => (
+            {dict.home.stats.map((stat) => (
               <div key={stat.label}>
                 <dt className="sr-only">{stat.label}</dt>
                 <dd>

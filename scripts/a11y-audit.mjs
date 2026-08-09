@@ -1,40 +1,48 @@
 /**
- * Audyt dostepnosci: uruchamia axe-core na kazdej podstronie w obu motywach.
+ * Accessibility audit: runs axe-core on every subpage in both themes.
  *
- * Wymaga dzialajacego serwera ze statycznym eksportem:
+ * Requires a running server with the static export:
  *   npm run build && npx serve out -l 4321
  *   node scripts/a11y-audit.mjs
  *
- * Adres mozna nadpisac zmienna AUDIT_URL.
- * Kod wyjscia rozny od zera oznacza wykryte naruszenia - dzieki temu
- * krok w CI zatrzymuje sie na regresji dostepnosci.
+ * The address can be overridden with the AUDIT_URL variable.
+ * A non-zero exit code means violations were found - that is what makes the
+ * CI step fail on an accessibility regression.
  */
 import { chromium } from 'playwright';
 import { AxeBuilder } from '@axe-core/playwright';
 
 const BASE_URL = process.env.AUDIT_URL ?? 'http://localhost:4321';
 
+/** Path suffixes checked under every locale prefix. */
+const PATHS = [
+  '', // home
+  '/categories',
+  '/categories/front-splitters',
+  '/categories/carbon-parts',
+  '/products/street-gt-front-splitter',
+  '/products/rs01-forged-wheels-19',
+  '/packages',
+  '/about',
+  '/business',
+  '/help',
+  '/contact',
+  '/account',
+  '/cart',
+  '/search',
+  '/terms',
+  '/style-guide',
+  '/checkout',
+  '/checkout/thank-you',
+  // Deliberately missing address - exercises the 404 page.
+  '/this-page-does-not-exist',
+];
+
+// The site is built with trailingSlash: true, so every URL must end with a
+// slash. The bare root '/' is the language-redirect stub and is checked once.
 const ROUTES = [
   '/',
-  '/kategorie/',
-  '/kategorie/splittery/',
-  '/kategorie/karbon/',
-  '/produkty/splitter-przedni-street-gt/',
-  '/produkty/felgi-forged-rs01-19/',
-  '/pakiety/',
-  '/o-nas/',
-  '/dla-firm/',
-  '/pomoc/',
-  '/kontakt/',
-  '/konto/',
-  '/koszyk/',
-  '/szukaj/',
-  '/regulamin/',
-  '/style-guide/',
-  '/zamowienie/',
-  '/zamowienie/dziekujemy/',
-  // Adres nieistniejacy - sprawdza strone 404.
-  '/tej-strony-nie-ma/',
+  ...['en', 'pl'].flatMap((l) => PATHS.map((p) => '/' + l + p + (p.endsWith('/') ? '' : '/'))),
 ];
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
@@ -53,7 +61,7 @@ async function main() {
 
     for (const route of ROUTES) {
       await page.goto(BASE_URL + route, { waitUntil: 'networkidle' });
-      // Chwila na ustabilizowanie sie interfejsu po hydracji.
+      // A moment for the interface to settle down after hydration.
       await page.waitForTimeout(250);
       checks += 1;
 
@@ -76,24 +84,24 @@ async function main() {
 
   await browser.close();
 
-  console.log(`Sprawdzono ${checks} kombinacji strona/motyw (${ROUTES.length} tras x 2).`);
+  console.log(`Checked ${checks} page/theme combinations (${ROUTES.length} routes x 2).`);
 
   if (findings.size === 0) {
-    console.log('Brak naruszen WCAG.');
+    console.log('No WCAG violations.');
     return;
   }
 
-  console.log(`\nZnaleziono ${findings.size} typow naruszen:\n`);
+  console.log(`\nFound ${findings.size} violation types:\n`);
   const sorted = [...findings.values()].sort((a, b) => b.occurrences - a.occurrences);
 
   for (const violation of sorted) {
     console.log(`[${violation.impact}] ${violation.id} - ${violation.occurrences}x`);
     console.log(`  ${violation.help}`);
-    console.log(`  Dokumentacja: ${violation.helpUrl}`);
-    console.log(`  Strony: ${[...violation.routes].join(', ')}`);
+    console.log(`  Documentation: ${violation.helpUrl}`);
+    console.log(`  Pages: ${[...violation.routes].join(', ')}`);
     const first = violation.nodes[0];
     if (first) {
-      console.log(`  Przyklad: ${first.html.slice(0, 160)}`);
+      console.log(`  Example: ${first.html.slice(0, 160)}`);
       if (first.failureSummary) {
         console.log(`  ${first.failureSummary.replace(/\n/g, ' | ')}`);
       }

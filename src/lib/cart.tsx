@@ -15,7 +15,7 @@ import { getProduct } from './products';
 
 const STORAGE_KEY = 'bodykit-cart-v1';
 
-/** Darmowa dostawa od tej kwoty (w groszach). */
+/** Free delivery threshold, in grosz. */
 export const FREE_SHIPPING_THRESHOLD = 50000;
 export const SHIPPING_COST = 2490;
 
@@ -77,7 +77,7 @@ type CartContextValue = {
   subtotal: number;
   shipping: number;
   total: number;
-  /** false do czasu odczytania localStorage - blokuje bledne renderowanie pustego koszyka. */
+  /** False until localStorage has been read — prevents rendering a false empty cart. */
   isHydrated: boolean;
   addItem: (productSlug: string, variantId: string, quantity?: number) => void;
   removeItem: (productSlug: string, variantId: string) => void;
@@ -87,7 +87,7 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-/** Odczytuje i waliduje koszyk z localStorage. Zwraca pusty przy jakimkolwiek bledzie. */
+/** Reads and validates the cart from localStorage. Returns empty on any failure. */
 function readStoredCart(): CartLine[] {
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY);
@@ -95,7 +95,7 @@ function readStoredCart(): CartLine[] {
     const parsed: unknown = JSON.parse(stored);
     if (!Array.isArray(parsed)) return [];
 
-    // Odfiltruj pozycje wskazujace na produkty, ktorych juz nie ma w katalogu.
+    // Drop lines pointing at products that no longer exist in the catalog.
     return parsed.filter(
       (line): line is CartLine =>
         typeof line === 'object' &&
@@ -106,15 +106,15 @@ function readStoredCart(): CartLine[] {
         getProduct((line as CartLine).productSlug) !== undefined,
     );
   } catch {
-    // Uszkodzony wpis albo zablokowany storage - startujemy z pustym koszykiem.
+    // Corrupted entry or blocked storage — start from an empty cart.
     return [];
   }
 }
 
 /**
- * Wykrywa zakonczenie hydracji bez setState w efekcie: na serwerze zwraca
- * false, w przegladarce true. Pozwala odroznic "koszyk jeszcze nieodczytany"
- * od "koszyk pusty", co decyduje o tym, czy pokazac szkielet czy komunikat.
+ * Detects the end of hydration without calling setState inside an effect:
+ * false on the server, true in the browser. This distinguishes "cart not read
+ * yet" from "cart is empty", which decides between a skeleton and a message.
  */
 const subscribeNoop = () => () => {};
 const getHydratedClient = () => true;
@@ -124,8 +124,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, dispatch] = useReducer(reducer, []);
   const isHydrated = useSyncExternalStore(subscribeNoop, getHydratedClient, getHydratedServer);
 
-  // Odczyt po zamontowaniu - localStorage nie istnieje podczas prerenderu.
-  // dispatch nie jest setState, wiec nie wywoluje kaskady renderow.
+  // Read after mount — localStorage does not exist during prerender.
+  // dispatch is not setState, so it does not trigger a render cascade.
   useEffect(() => {
     const stored = readStoredCart();
     if (stored.length > 0) {
@@ -133,13 +133,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // Zapis dopiero po hydracji, zeby nie nadpisac zawartosci pusta tablica.
+  // Write only after hydration, so we never overwrite storage with an empty array.
   useEffect(() => {
     if (!isHydrated) return;
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
     } catch {
-      // Tryb prywatny lub brak miejsca - koszyk dziala, tylko bez trwalosci.
+      // Private mode or quota exceeded — the cart still works, just without persistence.
     }
   }, [lines, isHydrated]);
 
@@ -202,7 +202,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 export function useCart(): CartContextValue {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart musi byc uzyty wewnatrz <CartProvider>');
+    throw new Error('useCart must be used inside a <CartProvider>');
   }
   return context;
 }

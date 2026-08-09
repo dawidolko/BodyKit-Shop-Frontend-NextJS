@@ -3,17 +3,17 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  # Pozwala wdrozyc recznie z zakladki Actions, np. po zmianie ustawien Pages.
+  # Allows a manual deploy from the Actions tab, e.g. after changing the Pages settings.
   workflow_dispatch:
 
-# Uprawnienia wymagane przez oficjalne akcje GitHub Pages.
+# Permissions required by the official GitHub Pages actions.
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Jedno wdrozenie naraz. Nie przerywamy trwajacego - wdrozenie w polowie
-# drogi zostawiloby serwis w niespojnym stanie.
+# One deployment at a time. We do not cancel a running one - a deployment
+# stopped halfway would leave the site in an inconsistent state.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -47,26 +47,27 @@ jobs:
 
       - name: Build
         env:
-          # Serwis dziala pod wlasna domena (public/CNAME), wiec jest
-          # serwowany z korzenia - basePath musi pozostac pusty. Gdyby
-          # domena zostala kiedys usunieta, trzeba tu wpisac /<nazwa-repo>.
+          # The site runs on a custom domain (public/CNAME), so it is served
+          # from the root - basePath has to stay empty. If the domain were
+          # ever removed, /<repo-name> would have to go here.
           NEXT_PUBLIC_BASE_PATH: ''
           NEXT_PUBLIC_SITE_URL: https://bodykit.dawidolko.pl
           NEXT_TELEMETRY_DISABLED: '1'
         run: npm run build
 
       - name: Add .nojekyll
-        # Bez tego pliku GitHub Pages przepuszcza katalog przez Jekylla,
-        # ktory pomija katalogi zaczynajace sie od podkreslenia - a tam
-        # Next.js trzyma cale _next/static.
+        # Without this file GitHub Pages runs the directory through Jekyll,
+        # which skips directories starting with an underscore - and that is
+        # exactly where Next.js keeps all of _next/static.
         run: touch out/.nojekyll
 
       - name: Verify CNAME
-        # Plik CNAME z public/ musi trafic do wyniku budowania, inaczej
-        # GitHub Pages przy kazdym wdrozeniu gubi ustawienie domeny.
+        # The CNAME file from public/ has to end up in the build output,
+        # otherwise GitHub Pages loses the custom-domain setting on every
+        # deployment.
         run: |
-          test -f out/CNAME || { echo "Brak out/CNAME"; exit 1; }
-          echo "Domena: $(cat out/CNAME)"
+          test -f out/CNAME || { echo "Missing out/CNAME"; exit 1; }
+          echo "Domain: $(cat out/CNAME)"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

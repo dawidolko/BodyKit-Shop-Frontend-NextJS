@@ -2,110 +2,108 @@ import Link from 'next/link';
 import { Logo } from '@/components/brand/Logo';
 import { categories } from '@/lib/categories';
 import { MailIcon, PhoneIcon, ShieldIcon, TruckIcon, WrenchIcon } from '@/components/ui/Icon';
+import { site } from '@/lib/site';
+import { t } from '@/lib/utils';
+import type { Dictionary } from '@/i18n';
+import { localePath, type Locale } from '@/i18n/config';
 
-const columns = [
-  {
-    title: 'Sklep',
-    links: [
-      { href: '/kategorie/', label: 'Wszystkie kategorie' },
-      { href: '/szukaj/', label: 'Wyszukiwarka' },
-      { href: '/pakiety/', label: 'Pakiety montażowe' },
-      { href: '/dla-firm/', label: 'Oferta dla warsztatów' },
-    ],
-  },
-  {
-    title: 'Obsługa klienta',
-    links: [
-      { href: '/pomoc/', label: 'Centrum pomocy' },
-      { href: '/kontakt/', label: 'Kontakt' },
-      { href: '/konto/', label: 'Panel klienta' },
-      { href: '/regulamin/', label: 'Regulamin i zwroty' },
-    ],
-  },
-  {
-    title: 'Firma',
-    links: [
-      { href: '/o-nas/', label: 'O BodyKit Shop' },
-      { href: '/dla-firm/', label: 'Współpraca B2B' },
-      { href: '/style-guide/', label: 'Design system' },
-    ],
-  },
-];
+const guaranteeIcons = [TruckIcon, ShieldIcon, WrenchIcon];
 
-const guarantees = [
-  {
-    icon: TruckIcon,
-    title: 'Wysyłka w 24 h',
-    text: 'Produkty z magazynu wysyłamy tego samego dnia.',
-  },
-  { icon: ShieldIcon, title: '24 miesiące gwarancji', text: 'Na wady materiałowe i wykonanie.' },
-  {
-    icon: WrenchIcon,
-    title: 'Wsparcie montażu',
-    text: 'Instrukcje PL i pomoc techniczna telefoniczna.',
-  },
-];
+export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+  const href = (path: string) => localePath(locale, path);
 
-export function Footer() {
+  const columns = [
+    {
+      title: dict.footer.columns.shop,
+      links: [
+        { href: '/categories', label: dict.footer.links.allCategories },
+        { href: '/search', label: dict.footer.links.search },
+        { href: '/packages', label: dict.footer.links.packages },
+        { href: '/business', label: dict.footer.links.businessOffer },
+      ],
+    },
+    {
+      title: dict.footer.columns.customerService,
+      links: [
+        { href: '/help', label: dict.footer.links.help },
+        { href: '/contact', label: dict.footer.links.contact },
+        { href: '/account', label: dict.footer.links.account },
+        { href: '/terms', label: dict.footer.links.terms },
+      ],
+    },
+    {
+      title: dict.footer.columns.company,
+      links: [
+        { href: '/about', label: dict.footer.links.about },
+        { href: '/business', label: dict.footer.links.business },
+        { href: '/style-guide', label: dict.footer.links.styleGuide },
+      ],
+    },
+  ];
+
   return (
     <footer className="mt-24 border-t border-border-subtle bg-bg-subtle">
-      {/* Pas gwarancji */}
+      {/* Guarantee strip */}
       <div className="border-b border-border-subtle">
         <div className="container-page grid gap-6 py-10 sm:grid-cols-3">
-          {guarantees.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="flex gap-4">
-              <span className="flex size-11 shrink-0 items-center justify-center rounded-sm bg-accent-subtle text-accent-fg">
-                <Icon className="size-5" />
-              </span>
-              <div>
-                <p className="text-sm font-bold text-text-primary">{title}</p>
-                <p className="mt-0.5 text-sm text-text-muted">{text}</p>
+          {dict.footer.guarantees.map((guarantee, index) => {
+            const Icon = guaranteeIcons[index] ?? TruckIcon;
+            return (
+              <div key={guarantee.title} className="flex gap-4">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-sm bg-accent-subtle text-accent-fg">
+                  <Icon className="size-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-bold text-text-primary">{guarantee.title}</p>
+                  <p className="mt-0.5 text-sm text-text-muted">{guarantee.text}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* 6 kolumn: blok marki zajmuje 2, cztery nawigacje po jednej */}
+      {/* 6 columns: the brand block spans 2, each navigation column takes 1 */}
       <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-6">
         <div className="lg:col-span-2">
           <Logo className="h-10 w-auto text-text-primary" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-text-secondary">
-            Dokładki, spoilery i elementy karbonowe dopasowane do konkretnych modeli aut. Każdy
-            produkt opisujemy tak, żebyś wiedział, co dostajesz, zanim klikniesz „do koszyka”.
+            {dict.footer.tagline}
           </p>
 
           <address className="mt-6 flex flex-col gap-2 text-sm not-italic text-text-secondary">
             <a
-              href="tel:+48178123456"
-              className="flex items-center gap-2.5 hover:text-text-brand focus-ring rounded-xs"
+              href={`tel:${site.phoneHref}`}
+              className="flex items-center gap-2.5 rounded-xs hover:text-text-brand focus-ring"
             >
               <PhoneIcon className="size-4 text-text-muted" />
-              +48 17 812 34 56
+              {site.phone}
             </a>
             <a
-              href="mailto:kontakt@bodykitshop.pl"
-              className="flex items-center gap-2.5 hover:text-text-brand focus-ring rounded-xs"
+              href={`mailto:${site.email}`}
+              className="flex items-center gap-2.5 rounded-xs hover:text-text-brand focus-ring"
             >
               <MailIcon className="size-4 text-text-muted" />
-              kontakt@bodykitshop.pl
+              {site.email}
             </a>
-            <p className="mt-1 text-text-muted">ul. Warsztatowa 12, 35-001 Rzeszów</p>
+            <p className="mt-1 text-text-muted">
+              {site.address.street}, {site.address.postalCode} {site.address.city}
+            </p>
           </address>
         </div>
 
-        <nav aria-label="Kategorie produktów">
+        <nav aria-label={dict.nav.categoriesLabel}>
           <h2 className="text-xs font-bold uppercase tracking-wider text-text-primary">
-            Kategorie
+            {dict.nav.categoriesLabel}
           </h2>
           <ul className="mt-4 flex flex-col gap-2.5">
             {categories.slice(0, 6).map((category) => (
               <li key={category.slug}>
                 <Link
-                  href={`/kategorie/${category.slug}/`}
+                  href={href(`/categories/${category.slug}`)}
                   className="rounded-xs text-sm text-text-secondary transition-colors hover:text-text-brand focus-ring"
                 >
-                  {category.name}
+                  {t(category.name, locale)}
                 </Link>
               </li>
             ))}
@@ -121,7 +119,7 @@ export function Footer() {
               {column.links.map((link) => (
                 <li key={link.href + link.label}>
                   <Link
-                    href={link.href}
+                    href={href(link.href)}
                     className="rounded-xs text-sm text-text-secondary transition-colors hover:text-text-brand focus-ring"
                   >
                     {link.label}
@@ -135,8 +133,8 @@ export function Footer() {
 
       <div className="border-t border-border-subtle">
         <div className="container-page flex flex-col gap-3 py-6 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} BodyKit Shop. Projekt demonstracyjny.</p>
-          <p>Sklep prezentacyjny — zamówienia nie są realizowane, a płatności nie są pobierane.</p>
+          <p>{dict.footer.copyright(new Date().getFullYear())}</p>
+          <p>{dict.footer.demoNote}</p>
         </div>
       </div>
     </footer>

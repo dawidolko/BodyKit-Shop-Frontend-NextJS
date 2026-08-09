@@ -1,18 +1,20 @@
-# Zaleznosci instalowane sa w obrazie - kopiowanie ich z hosta bywa niezgodne
-# z architektura kontenera i niepotrzebnie powieksza kontekst budowania.
+# Dependencies are installed inside the image - copying them from the host is
+# often incompatible with the container architecture and needlessly inflates
+# the build context.
 node_modules
 .next
 out
 
-# Historia i metadane
+# History and metadata
 .git
 .github
 .gitignore
 
-# Zrodla obrazow (kilkanascie MB) - w repozytorium sa juz warianty zoptymalizowane
+# Image sources (a dozen or so MB) - the repository already holds the
+# optimized variants
 .image-cache
 
-# Lokalne i tymczasowe
+# Local and temporary
 .env
 .env*.local
 *.log
@@ -21,6 +23,6 @@ Thumbs.db
 .idea
 .vscode
 
-# Dokumentacja nie wplywa na wynik budowania
+# Documentation does not affect the build result
 README.md
 LICENSE

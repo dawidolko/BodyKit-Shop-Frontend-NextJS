@@ -5,28 +5,26 @@ import { ProductCard } from './ProductCard';
 import { Button } from '@/components/ui/Button';
 import { FilterIcon } from '@/components/ui/Icon';
 import type { Material, Product } from '@/lib/types';
-import { cn, formatPrice, materialLabels, plural } from '@/lib/utils';
+import { cn, formatPrice, t } from '@/lib/utils';
+import { getDictionary } from '@/i18n';
+import { localeTags, type Locale } from '@/i18n/config';
 
-type SortKey = 'polecane' | 'cena-rosnaco' | 'cena-malejaco' | 'ocena' | 'nazwa';
+/** Sort keys are stable English identifiers - only the labels are translated. */
+type SortKey = 'featured' | 'priceAsc' | 'priceDesc' | 'rating' | 'name';
 
-const sortOptions: { value: SortKey; label: string }[] = [
-  { value: 'polecane', label: 'Polecane' },
-  { value: 'cena-rosnaco', label: 'Cena: od najniższej' },
-  { value: 'cena-malejaco', label: 'Cena: od najwyższej' },
-  { value: 'ocena', label: 'Najwyżej oceniane' },
-  { value: 'nazwa', label: 'Nazwa A-Z' },
-];
+const sortKeys: SortKey[] = ['featured', 'priceAsc', 'priceDesc', 'rating', 'name'];
 
 /**
- * Listing produktow z filtrami materialu, marki i dostepnosci.
+ * Product listing with material, make and availability filters.
  *
- * Filtrowanie dzieje sie w pamieci - katalog jest statyczny i niewielki,
- * wiec nie ma potrzeby siegac po adres URL ani zapytania sieciowe.
- * Liczba wynikow jest ogloszana przez aria-live, zeby zmiana byla slyszalna
- * dla osob korzystajacych z czytnika ekranu.
+ * Filtering happens in memory - the catalog is static and small, so there is
+ * no need to reach for the URL or network requests.
+ * The result count is announced through aria-live, so the change is audible
+ * for people using a screen reader.
  */
-export function ProductFilters({ products }: { products: Product[] }) {
-  const [sort, setSort] = useState<SortKey>('polecane');
+export function ProductFilters({ products, locale }: { products: Product[]; locale: Locale }) {
+  const dict = getDictionary(locale);
+  const [sort, setSort] = useState<SortKey>('featured');
   const [materials, setMaterials] = useState<Material[]>([]);
   const [makes, setMakes] = useState<string[]>([]);
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -60,24 +58,26 @@ export function ProductFilters({ products }: { products: Product[] }) {
 
     result = [...result];
     switch (sort) {
-      case 'cena-rosnaco':
+      case 'priceAsc':
         result.sort((a, b) => a.price - b.price);
         break;
-      case 'cena-malejaco':
+      case 'priceDesc':
         result.sort((a, b) => b.price - a.price);
         break;
-      case 'ocena':
+      case 'rating':
         result.sort((a, b) => b.rating - a.rating);
         break;
-      case 'nazwa':
-        result.sort((a, b) => a.name.localeCompare(b.name, 'pl'));
+      case 'name':
+        result.sort((a, b) =>
+          t(a.name, locale).localeCompare(t(b.name, locale), localeTags[locale]),
+        );
         break;
-      case 'polecane':
+      case 'featured':
         result.sort((a, b) => b.badges.length - a.badges.length || b.rating - a.rating);
         break;
     }
     return result;
-  }, [products, materials, makes, inStockOnly, sort]);
+  }, [products, materials, makes, inStockOnly, sort, locale]);
 
   const activeCount = materials.length + makes.length + (inStockOnly ? 1 : 0);
 
@@ -109,7 +109,7 @@ export function ProductFilters({ products }: { products: Product[] }) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
-      {/* Filtry */}
+      {/* Filters */}
       <div>
         <div className="flex items-center justify-between lg:hidden">
           <Button
@@ -119,7 +119,7 @@ export function ProductFilters({ products }: { products: Product[] }) {
             aria-controls="filter-panel"
           >
             <FilterIcon className="size-4" />
-            Filtry
+            {dict.catalog.filters}
             {activeCount > 0 && (
               <span className="ml-1 rounded-full bg-accent px-1.5 text-[0.6875rem] text-text-on-brand">
                 {activeCount}
@@ -134,7 +134,7 @@ export function ProductFilters({ products }: { products: Product[] }) {
         >
           <fieldset>
             <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">
-              Materiał
+              {dict.catalog.material}
             </legend>
             <div className="mt-3 flex flex-col gap-2.5">
               {availableMaterials.map((material) => (
@@ -145,7 +145,7 @@ export function ProductFilters({ products }: { products: Product[] }) {
                     onChange={() => toggleMaterial(material)}
                     className="size-4.5 rounded-xs accent-accent focus-ring"
                   />
-                  <span className="text-text-secondary">{materialLabels[material]}</span>
+                  <span className="text-text-secondary">{dict.materials[material]}</span>
                 </label>
               ))}
             </div>
@@ -153,7 +153,7 @@ export function ProductFilters({ products }: { products: Product[] }) {
 
           <fieldset>
             <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">
-              Marka auta
+              {dict.catalog.carMake}
             </legend>
             <div className="mt-3 flex flex-col gap-2.5">
               {availableMakes.map((make) => (
@@ -172,7 +172,7 @@ export function ProductFilters({ products }: { products: Product[] }) {
 
           <fieldset>
             <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">
-              Dostępność
+              {dict.catalog.availability}
             </legend>
             <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm">
               <input
@@ -181,35 +181,36 @@ export function ProductFilters({ products }: { products: Product[] }) {
                 onChange={(event) => setInStockOnly(event.target.checked)}
                 className="size-4.5 rounded-xs accent-accent focus-ring"
               />
-              <span className="text-text-secondary">Tylko dostępne od ręki</span>
+              <span className="text-text-secondary">{dict.catalog.inStockOnly}</span>
             </label>
           </fieldset>
 
           {activeCount > 0 && (
             <Button variant="ghost" size="sm" onClick={reset} className="self-start">
-              Wyczyść filtry ({activeCount})
+              {dict.catalog.clearFilters} ({activeCount})
             </Button>
           )}
         </div>
       </div>
 
-      {/* Wyniki */}
+      {/* Results */}
       <div>
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-subtle pb-4">
           <p aria-live="polite" className="text-sm text-text-secondary">
-            <span className="font-semibold text-text-primary">{filtered.length}</span>{' '}
-            {plural(filtered.length, 'produkt', 'produkty', 'produktów')}
+            <span className="font-semibold text-text-primary">
+              {dict.catalog.productCount(filtered.length)}
+            </span>
             {priceRange && (
               <span className="text-text-muted">
                 {' '}
-                · {formatPrice(priceRange.min)} – {formatPrice(priceRange.max)}
+                · {formatPrice(priceRange.min, locale)} – {formatPrice(priceRange.max, locale)}
               </span>
             )}
           </p>
 
           <div className="flex items-center gap-2">
             <label htmlFor="sort" className="text-sm text-text-muted">
-              Sortuj:
+              {dict.catalog.sortBy}
             </label>
             <select
               id="sort"
@@ -217,9 +218,9 @@ export function ProductFilters({ products }: { products: Product[] }) {
               onChange={(event) => setSort(event.target.value as SortKey)}
               className="h-9 rounded-sm border border-border-default bg-surface px-3 text-sm text-text-primary focus-ring"
             >
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+              {sortKeys.map((key) => (
+                <option key={key} value={key}>
+                  {dict.catalog.sortOptions[key]}
                 </option>
               ))}
             </select>
@@ -232,6 +233,8 @@ export function ProductFilters({ products }: { products: Product[] }) {
               <li key={product.slug} className="flex">
                 <ProductCard
                   product={product}
+                  locale={locale}
+                  dict={dict}
                   priority={index < 3}
                   headingLevel={2}
                   className="w-full"
@@ -241,14 +244,10 @@ export function ProductFilters({ products }: { products: Product[] }) {
           </ul>
         ) : (
           <div className="mt-10 rounded-md border border-dashed border-border-default p-10 text-center">
-            <p className="text-base font-semibold text-text-primary">
-              Żaden produkt nie pasuje do wybranych filtrów
-            </p>
-            <p className="mt-2 text-sm text-text-muted">
-              Spróbuj usunąć część kryteriów albo zajrzyj do innej kategorii.
-            </p>
+            <p className="text-base font-semibold text-text-primary">{dict.catalog.noResults}</p>
+            <p className="mt-2 text-sm text-text-muted">{dict.catalog.noResultsHint}</p>
             <Button variant="secondary" onClick={reset} className="mt-5">
-              Wyczyść filtry
+              {dict.catalog.clearFilters}
             </Button>
           </div>
         )}

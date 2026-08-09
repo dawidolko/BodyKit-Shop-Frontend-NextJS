@@ -4,39 +4,38 @@ import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Checkbox, Field, Input, Select, Textarea } from '@/components/ui/Field';
 import { CheckIcon } from '@/components/ui/Icon';
-import { plural } from '@/lib/utils';
+import { site } from '@/lib/site';
+import { getDictionary, type Dictionary } from '@/i18n';
+import type { Locale } from '@/i18n/config';
 
 type Errors = Partial<Record<string, string>>;
 
-const topics = [
-  'Dobór części do mojego auta',
-  'Pytanie o dostępność i termin',
-  'Montaż i instrukcja',
-  'Reklamacja lub zwrot',
-  'Współpraca B2B',
-  'Inne',
-];
-
-function validate(name: string, value: string, required: boolean): string | undefined {
+function validate(
+  name: string,
+  value: string,
+  required: boolean,
+  dict: Dictionary,
+): string | undefined {
   const trimmed = value.trim();
-  if (required && !trimmed) return 'To pole jest wymagane';
+  if (required && !trimmed) return dict.contact.validation.required;
   if (name === 'email' && trimmed && !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(trimmed)) {
-    return 'Podaj poprawny adres e-mail';
+    return dict.contact.validation.email;
   }
   if (name === 'message' && trimmed && trimmed.length < 20) {
-    return `Opisz sprawę nieco szerzej (min. 20 znaków, masz ${trimmed.length})`;
+    return dict.contact.validation.message(trimmed.length);
   }
   return undefined;
 }
 
 /**
- * Formularz kontaktowy.
+ * Contact form.
  *
- * Nie ma backendu - to sklep statyczny - wiec po walidacji pokazujemy
- * potwierdzenie i jasno zaznaczamy, ze wiadomosc nie zostala wyslana.
- * Udawanie wysylki byloby wprowadzaniem uzytkownika w blad.
+ * There is no backend - this is a static shop - so after validation we show a
+ * confirmation and state plainly that the message was not sent. Faking a
+ * submission would mislead the user.
  */
-export function ContactForm() {
+export function ContactForm({ locale }: { locale: Locale }) {
+  const dict = getDictionary(locale);
   const [errors, setErrors] = useState<Errors>({});
   const [sent, setSent] = useState(false);
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -46,7 +45,7 @@ export function ContactForm() {
     event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) {
     const { name, value, required } = event.target;
-    setErrors((current) => ({ ...current, [name]: validate(name, value, required) }));
+    setErrors((current) => ({ ...current, [name]: validate(name, value, required, dict) }));
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -64,12 +63,12 @@ export function ContactForm() {
         element instanceof HTMLSelectElement
           ? element.required
           : false;
-      const error = validate(name, value, required);
+      const error = validate(name, value, required, dict);
       if (error) next[name] = error;
     }
 
     if (!data.get('privacy')) {
-      next.privacy = 'Zgoda na przetwarzanie danych jest wymagana';
+      next.privacy = dict.contact.validation.privacy;
     }
 
     setErrors(next);
@@ -97,23 +96,20 @@ export function ContactForm() {
         <span className="flex size-12 items-center justify-center rounded-full bg-accent-subtle text-success">
           <CheckIcon className="size-6" />
         </span>
-        <h2 className="mt-4 text-lg font-bold text-text-primary">Formularz wypełniony poprawnie</h2>
-        <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-          To jest sklep demonstracyjny, więc wiadomość nie została nigdzie wysłana ani zapisana. W
-          działającym sklepie w tym miejscu pojawiłoby się potwierdzenie z numerem zgłoszenia.
-        </p>
+        <h2 className="mt-4 text-lg font-bold text-text-primary">{dict.contact.sentHeading}</h2>
+        <p className="mt-2 text-sm leading-relaxed text-text-secondary">{dict.contact.sentText}</p>
         <p className="mt-4 text-sm text-text-secondary">
-          Jeśli chcesz się z nami skontaktować naprawdę, napisz na{' '}
+          {dict.contact.sentContactPrefix}{' '}
           <a
-            href="mailto:kontakt@bodykitshop.pl"
+            href={`mailto:${site.email}`}
             className="font-medium text-text-brand underline focus-ring"
           >
-            kontakt@bodykitshop.pl
+            {site.email}
           </a>
           .
         </p>
         <Button variant="secondary" className="mt-6" onClick={() => setSent(false)}>
-          Wypełnij ponownie
+          {dict.contact.fillAgain}
         </Button>
       </div>
     );
@@ -129,7 +125,7 @@ export function ContactForm() {
           className="rounded-sm border border-danger bg-danger/5 p-4 focus-ring"
         >
           <p className="text-sm font-bold text-danger">
-            Popraw {errorEntries.length} {plural(errorEntries.length, 'pole', 'pola', 'pól')}:
+            {dict.contact.fixFields(errorEntries.length)}
           </p>
           <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm text-text-secondary">
             {errorEntries.map(([name, message]) => (
@@ -144,7 +140,7 @@ export function ContactForm() {
       )}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Imię i nazwisko" htmlFor="contact-name" required error={errors.name}>
+        <Field label={dict.contact.name} htmlFor="contact-name" required error={errors.name}>
           <Input
             id="contact-name"
             name="name"
@@ -155,7 +151,7 @@ export function ContactForm() {
             aria-describedby={errors.name ? 'contact-name-error' : undefined}
           />
         </Field>
-        <Field label="E-mail" htmlFor="contact-email" required error={errors.email}>
+        <Field label={dict.contact.email} htmlFor="contact-email" required error={errors.email}>
           <Input
             id="contact-email"
             name="email"
@@ -169,7 +165,7 @@ export function ContactForm() {
         </Field>
       </div>
 
-      <Field label="Temat" htmlFor="contact-topic" required error={errors.topic}>
+      <Field label={dict.contact.topic} htmlFor="contact-topic" required error={errors.topic}>
         <Select
           id="contact-topic"
           name="topic"
@@ -179,9 +175,9 @@ export function ContactForm() {
           aria-invalid={Boolean(errors.topic)}
         >
           <option value="" disabled>
-            Wybierz temat…
+            {dict.contact.topicPlaceholder}
           </option>
-          {topics.map((topic) => (
+          {dict.contact.topics.map((topic) => (
             <option key={topic} value={topic}>
               {topic}
             </option>
@@ -189,11 +185,7 @@ export function ContactForm() {
         </Select>
       </Field>
 
-      <Field
-        label="Auto (marka, model, rocznik)"
-        htmlFor="contact-car"
-        hint="Np. BMW Seria 3 G20, 2021, M-Pakiet — pomoże nam odpowiedzieć precyzyjnie"
-      >
+      <Field label={dict.contact.car} htmlFor="contact-car" hint={dict.contact.carHint}>
         <Input
           id="contact-car"
           name="car"
@@ -202,7 +194,7 @@ export function ContactForm() {
         />
       </Field>
 
-      <Field label="Wiadomość" htmlFor="contact-message" required error={errors.message}>
+      <Field label={dict.contact.message} htmlFor="contact-message" required error={errors.message}>
         <Textarea
           id="contact-message"
           name="message"
@@ -222,7 +214,7 @@ export function ContactForm() {
           aria-describedby={errors.privacy ? 'contact-privacy-error' : undefined}
           label={
             <>
-              Zgadzam się na przetwarzanie moich danych w celu udzielenia odpowiedzi
+              {dict.contact.privacy}
               <span aria-hidden="true" className="ml-1 text-danger">
                 *
               </span>
@@ -241,7 +233,7 @@ export function ContactForm() {
       </div>
 
       <Button type="submit" size="lg" className="self-start">
-        Wyślij wiadomość
+        {dict.contact.submit}
       </Button>
     </form>
   );

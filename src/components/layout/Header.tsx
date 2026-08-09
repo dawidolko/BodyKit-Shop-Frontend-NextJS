@@ -5,20 +5,17 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Logo } from '@/components/brand/Logo';
 import { ThemeToggle } from './ThemeToggle';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { CartIcon, CloseIcon, MenuIcon, SearchIcon, UserIcon } from '@/components/ui/Icon';
 import { useCart } from '@/lib/cart';
 import { categories } from '@/lib/categories';
-import { cn } from '@/lib/utils';
+import { cn, t } from '@/lib/utils';
+import { getDictionary } from '@/i18n';
+import { localePath, type Locale } from '@/i18n/config';
+import { site } from '@/lib/site';
 
-const navLinks = [
-  { href: '/kategorie/', label: 'Katalog' },
-  { href: '/o-nas/', label: 'O nas' },
-  { href: '/dla-firm/', label: 'Dla firm' },
-  { href: '/pomoc/', label: 'Pomoc' },
-  { href: '/kontakt/', label: 'Kontakt' },
-];
-
-export function Header() {
+export function Header({ locale }: { locale: Locale }) {
+  const dict = getDictionary(locale);
   const pathname = usePathname();
   const { itemCount, isHydrated } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,9 +23,17 @@ export function Header() {
   const catalogRef = useRef<HTMLLIElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Zamkniecie paneli przy zmianie trasy. Robimy to w trakcie renderu,
-  // a nie w efekcie - to zalecany przez React sposob resetowania stanu
-  // przy zmianie wartosci wejsciowej, bez dodatkowego przebiegu renderu.
+  const navLinks = [
+    { href: '/categories', label: dict.nav.catalog },
+    { href: '/about', label: dict.nav.about },
+    { href: '/business', label: dict.nav.business },
+    { href: '/help', label: dict.nav.help },
+    { href: '/contact', label: dict.nav.contact },
+  ];
+
+  // Close both panels on navigation. Done during render rather than in an
+  // effect — this is React's recommended way to reset state when an input
+  // changes, and it avoids an extra render pass.
   const [lastPathname, setLastPathname] = useState(pathname);
   if (pathname !== lastPathname) {
     setLastPathname(pathname);
@@ -36,7 +41,7 @@ export function Header() {
     setCatalogOpen(false);
   }
 
-  // Escape zamyka panele, a fokus wraca na przycisk, ktory je otworzyl.
+  // Escape closes the panels and returns focus to the button that opened them.
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key !== 'Escape') return;
@@ -50,7 +55,7 @@ export function Header() {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [menuOpen, catalogOpen]);
 
-  // Klikniecie poza rozwinieta liste kategorii ja zamyka.
+  // A click outside the expanded category list dismisses it.
   useEffect(() => {
     if (!catalogOpen) return;
     function onPointerDown(event: PointerEvent) {
@@ -62,7 +67,7 @@ export function Header() {
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [catalogOpen]);
 
-  // Zablokuj przewijanie tla, gdy otwarte jest menu mobilne.
+  // Lock background scrolling while the mobile menu is open.
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => {
@@ -70,36 +75,42 @@ export function Header() {
     };
   }, [menuOpen]);
 
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href.replace(/\/$/, '') + '/');
+  const href = (path: string) => localePath(locale, path);
+  const isActive = (path: string) => {
+    const full = href(path);
+    return pathname === full || pathname.startsWith(full);
+  };
+
+  const cartLabel =
+    isHydrated && itemCount > 0 ? dict.nav.cartCount(itemCount) : dict.nav.cartEmpty;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border-subtle bg-bg-base/85 backdrop-blur-md">
-      {/* Pasek informacyjny - stale ciemny w obu motywach, wiec kolory sa
-          wpisane bezposrednio zamiast tokenow odwracajacych sie w dark. */}
+      {/* Info bar — permanently dark in both themes, so colours are written
+          out directly instead of tokens that invert in dark mode. */}
       <div className="hidden bg-carbon-950 text-carbon-300 md:block">
         <div className="container-page flex items-center justify-between py-2 text-xs">
-          <p>Darmowa dostawa od 500 zł · Wysyłka w 24 h</p>
+          <p>{dict.topBar.shipping}</p>
           <p className="flex items-center gap-4">
-            <a href="tel:+48178123456" className="hover:text-accent-fg">
-              +48 17 812 34 56
+            <a href={`tel:${site.phoneHref}`} className="hover:text-accent-fg">
+              {site.phone}
             </a>
             <span aria-hidden="true" className="opacity-40">
               |
             </span>
-            <span>pn-pt 8:00-17:00</span>
+            <span>{dict.topBar.hours}</span>
           </p>
         </div>
       </div>
 
       <div className="container-page flex items-center gap-2 py-3 sm:gap-4">
         <Link
-          href="/"
+          href={href('/')}
           className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--focus-ring)"
-          aria-label="BodyKit Shop - strona główna"
+          aria-label={dict.nav.home}
         >
-          {/* Ponizej 380 px pelne logo z nazwa nie zmiescilby sie obok ikon,
-              wiec pokazujemy sam monogram. */}
+          {/* Below 380 px the full wordmark would not fit next to the icons,
+              so only the monogram is shown. */}
           <Logo
             variant="mark"
             className="h-9 w-auto text-text-primary min-[380px]:hidden"
@@ -108,8 +119,8 @@ export function Header() {
           <Logo className="hidden h-9 w-auto text-text-primary min-[380px]:block" decorative />
         </Link>
 
-        {/* Nawigacja desktopowa */}
-        <nav aria-label="Nawigacja główna" className="ml-6 hidden lg:block">
+        {/* Desktop navigation */}
+        <nav aria-label={dict.nav.mainNav} className="ml-6 hidden lg:block">
           <ul className="flex items-center gap-1">
             <li ref={catalogRef} className="relative">
               <button
@@ -120,10 +131,10 @@ export function Header() {
                 className={cn(
                   'flex h-10 items-center gap-1.5 rounded-sm px-4 text-sm font-semibold uppercase tracking-wide transition-colors',
                   'hover:bg-bg-muted focus-ring',
-                  isActive('/kategorie/') ? 'text-text-brand' : 'text-text-secondary',
+                  isActive('/categories') ? 'text-text-brand' : 'text-text-secondary',
                 )}
               >
-                Katalog
+                {dict.nav.catalog}
                 <svg
                   viewBox="0 0 24 24"
                   className={cn('size-4 transition-transform', catalogOpen && 'rotate-180')}
@@ -145,13 +156,15 @@ export function Header() {
                     {categories.map((category) => (
                       <li key={category.slug}>
                         <Link
-                          href={`/kategorie/${category.slug}/`}
+                          href={href(`/categories/${category.slug}`)}
                           className="block rounded-sm px-3 py-2.5 transition-colors hover:bg-bg-muted focus-ring"
                         >
                           <span className="block text-sm font-semibold text-text-primary">
-                            {category.name}
+                            {t(category.name, locale)}
                           </span>
-                          <span className="block text-xs text-text-muted">{category.tagline}</span>
+                          <span className="block text-xs text-text-muted">
+                            {t(category.tagline, locale)}
+                          </span>
                         </Link>
                       </li>
                     ))}
@@ -163,7 +176,7 @@ export function Header() {
             {navLinks.slice(1).map((link) => (
               <li key={link.href}>
                 <Link
-                  href={link.href}
+                  href={href(link.href)}
                   aria-current={isActive(link.href) ? 'page' : undefined}
                   className={cn(
                     'flex h-10 items-center rounded-sm px-4 text-sm font-semibold uppercase tracking-wide transition-colors',
@@ -179,30 +192,30 @@ export function Header() {
         </nav>
 
         <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-1">
+          <LanguageSwitcher locale={locale} className="mr-1 hidden sm:flex" />
+
           <Link
-            href="/szukaj/"
-            aria-label="Szukaj produktów"
+            href={href('/search')}
+            aria-label={dict.nav.search}
             className="inline-flex size-10 items-center justify-center rounded-sm text-text-secondary transition-colors hover:bg-bg-muted hover:text-text-primary focus-ring"
           >
             <SearchIcon className="size-5" />
           </Link>
 
-          <ThemeToggle />
+          <ThemeToggle locale={locale} />
 
           <Link
-            href="/konto/"
-            aria-label="Panel klienta"
+            href={href('/account')}
+            aria-label={dict.nav.account}
             className="hidden size-10 items-center justify-center rounded-sm text-text-secondary transition-colors hover:bg-bg-muted hover:text-text-primary focus-ring sm:inline-flex"
           >
             <UserIcon className="size-5" />
           </Link>
 
           <Link
-            href="/koszyk/"
+            href={href('/cart')}
             className="relative inline-flex size-10 items-center justify-center rounded-sm text-text-secondary transition-colors hover:bg-bg-muted hover:text-text-primary focus-ring"
-            aria-label={
-              isHydrated && itemCount > 0 ? `Koszyk, produktów: ${itemCount}` : 'Koszyk, pusty'
-            }
+            aria-label={cartLabel}
           >
             <CartIcon className="size-5" />
             {isHydrated && itemCount > 0 && (
@@ -221,7 +234,7 @@ export function Header() {
             onClick={() => setMenuOpen((open) => !open)}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
-            aria-label={menuOpen ? 'Zamknij menu' : 'Otwórz menu'}
+            aria-label={menuOpen ? dict.nav.closeMenu : dict.nav.openMenu}
             className="inline-flex size-10 items-center justify-center rounded-sm text-text-secondary transition-colors hover:bg-bg-muted hover:text-text-primary focus-ring lg:hidden"
           >
             {menuOpen ? <CloseIcon className="size-6" /> : <MenuIcon className="size-6" />}
@@ -229,18 +242,22 @@ export function Header() {
         </div>
       </div>
 
-      {/* Menu mobilne */}
+      {/* Mobile menu */}
       {menuOpen && (
         <div id="mobile-menu" className="border-t border-border-subtle bg-bg-base lg:hidden">
           <nav
-            aria-label="Nawigacja mobilna"
+            aria-label={dict.nav.mobileNav}
             className="max-h-[calc(100dvh-8rem)] overflow-y-auto px-4 py-4"
           >
+            <div className="mb-4 sm:hidden">
+              <LanguageSwitcher locale={locale} className="w-fit" />
+            </div>
+
             <ul className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <Link
-                    href={link.href}
+                    href={href(link.href)}
                     aria-current={isActive(link.href) ? 'page' : undefined}
                     className={cn(
                       'flex h-12 items-center rounded-sm px-4 text-sm font-semibold uppercase tracking-wide',
@@ -255,17 +272,17 @@ export function Header() {
               ))}
             </ul>
 
-            <p className="mt-6 mb-2 px-4 text-xs font-bold uppercase tracking-wider text-text-muted">
-              Kategorie
+            <p className="mb-2 mt-6 px-4 text-xs font-bold uppercase tracking-wider text-text-muted">
+              {dict.nav.categoriesLabel}
             </p>
             <ul className="flex flex-col gap-0.5">
               {categories.map((category) => (
                 <li key={category.slug}>
                   <Link
-                    href={`/kategorie/${category.slug}/`}
+                    href={href(`/categories/${category.slug}`)}
                     className="flex h-11 items-center rounded-sm px-4 text-sm text-text-secondary hover:bg-bg-muted"
                   >
-                    {category.name}
+                    {t(category.name, locale)}
                   </Link>
                 </li>
               ))}
@@ -273,17 +290,17 @@ export function Header() {
 
             <div className="mt-6 border-t border-border-subtle px-4 pt-4">
               <Link
-                href="/konto/"
+                href={href('/account')}
                 className="flex h-11 items-center gap-3 text-sm text-text-secondary"
               >
                 <UserIcon className="size-5" />
-                Panel klienta
+                {dict.nav.account}
               </Link>
               <a
-                href="tel:+48178123456"
+                href={`tel:${site.phoneHref}`}
                 className="flex h-11 items-center gap-3 text-sm text-text-secondary"
               >
-                +48 17 812 34 56
+                {site.phone}
               </a>
             </div>
           </nav>

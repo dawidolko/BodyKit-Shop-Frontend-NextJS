@@ -6,14 +6,17 @@ import { Button } from '@/components/ui/Button';
 import { CheckIcon } from '@/components/ui/Icon';
 import { useCart } from '@/lib/cart';
 import type { Product } from '@/lib/types';
-import { cn, finishLabels, formatPrice, materialLabels } from '@/lib/utils';
+import { cn, formatPrice, t } from '@/lib/utils';
+import { getDictionary } from '@/i18n';
+import { localePath, type Locale } from '@/i18n/config';
 
 /**
- * Wybor wariantu, ilosci i dodanie do koszyka.
- * Po dodaniu pojawia sie potwierdzenie w regionie aria-live, wiec informacja
- * dociera takze do osob, ktore nie widza zmiany licznika w naglowku.
+ * Variant and quantity picker plus the add-to-cart action.
+ * After adding, a confirmation appears in an aria-live region, so the message
+ * also reaches people who cannot see the header counter change.
  */
-export function AddToCart({ product }: { product: Product }) {
+export function AddToCart({ product, locale }: { product: Product; locale: Locale }) {
+  const dict = getDictionary(locale);
   const { addItem } = useCart();
   const firstAvailable =
     product.variants.find((variant) => variant.inStock) ?? product.variants[0]!;
@@ -23,6 +26,7 @@ export function AddToCart({ product }: { product: Product }) {
 
   const variant = product.variants.find((item) => item.id === variantId) ?? firstAvailable;
   const unitPrice = product.price + variant.priceDelta;
+  const name = t(product.name, locale);
 
   function handleAdd() {
     addItem(product.slug, variant.id, quantity);
@@ -34,7 +38,7 @@ export function AddToCart({ product }: { product: Product }) {
     <div className="flex flex-col gap-6">
       <fieldset>
         <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">
-          Materiał i wykończenie
+          {dict.product.materialAndFinish}
         </legend>
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {product.variants.map((item) => {
@@ -62,14 +66,18 @@ export function AddToCart({ product }: { product: Product }) {
                 />
                 <span className="flex-1">
                   <span className="block text-sm font-semibold text-text-primary">
-                    {materialLabels[item.material]}
+                    {dict.materials[item.material]}
                   </span>
-                  <span className="block text-xs text-text-muted">{finishLabels[item.finish]}</span>
+                  <span className="block text-xs text-text-muted">
+                    {dict.finishes[item.finish]}
+                  </span>
                   <span className="mt-1 block text-sm font-bold text-text-primary">
-                    {formatPrice(price)}
+                    {formatPrice(price, locale)}
                   </span>
                   {!item.inStock && (
-                    <span className="mt-1 block text-xs font-medium text-danger">Niedostępny</span>
+                    <span className="mt-1 block text-xs font-medium text-danger">
+                      {dict.product.outOfStockShort}
+                    </span>
                   )}
                 </span>
               </label>
@@ -84,14 +92,14 @@ export function AddToCart({ product }: { product: Product }) {
             htmlFor="quantity"
             className="block text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Ilość
+            {dict.product.quantity}
           </label>
           <div className="mt-2 flex items-center rounded-sm border border-border-default">
             <button
               type="button"
               onClick={() => setQuantity((value) => Math.max(1, value - 1))}
               disabled={quantity <= 1}
-              aria-label="Zmniejsz ilość"
+              aria-label={dict.product.decrease}
               className="flex size-11 items-center justify-center text-lg text-text-secondary transition-colors hover:bg-bg-muted disabled:opacity-40 focus-ring"
             >
               −
@@ -112,7 +120,7 @@ export function AddToCart({ product }: { product: Product }) {
               type="button"
               onClick={() => setQuantity((value) => Math.min(99, value + 1))}
               disabled={quantity >= 99}
-              aria-label="Zwiększ ilość"
+              aria-label={dict.product.increase}
               className="flex size-11 items-center justify-center text-lg text-text-secondary transition-colors hover:bg-bg-muted disabled:opacity-40 focus-ring"
             >
               +
@@ -121,31 +129,32 @@ export function AddToCart({ product }: { product: Product }) {
         </div>
 
         <div className="flex-1">
-          <p className="text-xs uppercase tracking-wider text-text-muted">Razem</p>
+          <p className="text-xs uppercase tracking-wider text-text-muted">{dict.product.total}</p>
           <p className="mt-1 text-2xl font-extrabold text-text-primary">
-            {formatPrice(unitPrice * quantity)}
+            {formatPrice(unitPrice * quantity, locale)}
           </p>
         </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button size="lg" onClick={handleAdd} disabled={!variant.inStock} className="flex-1">
-          {variant.inStock ? 'Dodaj do koszyka' : 'Produkt niedostępny'}
+          {variant.inStock ? dict.product.addToCart : dict.product.unavailable}
         </Button>
         <Link
-          href="/koszyk/"
+          href={localePath(locale, '/cart')}
           className="inline-flex h-13 items-center justify-center rounded-sm border border-border-default px-6 text-sm font-semibold uppercase tracking-wide text-text-primary transition-colors hover:border-border-brand hover:text-text-brand focus-ring"
         >
-          Przejdź do koszyka
+          {dict.product.goToCart}
         </Link>
       </div>
 
-      {/* Region na komunikat - obecny w DOM od poczatku, zeby czytnik go sledzil */}
+      {/* Message region - present in the DOM from the start, so the screen
+          reader keeps observing it and announces the update in place. */}
       <p role="status" aria-live="polite" className="min-h-6 text-sm">
         {added && (
           <span className="flex items-center gap-2 font-medium text-success">
             <CheckIcon className="size-4" />
-            Dodano do koszyka: {product.name} ({quantity} szt.)
+            {dict.product.addedToCart(name, quantity)}
           </span>
         )}
       </p>
