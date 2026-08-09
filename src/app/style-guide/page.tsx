@@ -130,8 +130,10 @@ export default function StyleGuidePage() {
               </div>
               <p className="mt-3 text-sm leading-relaxed text-text-muted">
                 Monogram zbudowany jest z ukośnego splittera. Ten sam kąt wraca w narzędziu{' '}
-                <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs">.clip-slant</code> i
-                w kaflach kategorii.
+                <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs text-text-primary">
+                  .clip-slant
+                </code>{' '}
+                i w kaflach kategorii.
               </p>
             </section>
 
@@ -213,7 +215,10 @@ export default function StyleGuidePage() {
               <p className="mt-3 text-sm leading-relaxed text-text-muted">
                 Nagłówki: Barlow Condensed (700-800). Tekst: Barlow (400-600). Obie rodziny ładowane
                 lokalnie przez{' '}
-                <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs">next/font</code>.
+                <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs text-text-primary">
+                  next/font
+                </code>
+                .
               </p>
 
               <div className="mt-6 flex flex-col gap-5 rounded-md border border-border-subtle bg-surface p-6">
@@ -420,10 +425,14 @@ export default function StyleGuidePage() {
               </ul>
               <p className="mt-3 text-sm leading-relaxed text-text-muted">
                 Ikony rysowane są{' '}
-                <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs">currentColor</code>.
-                Bez atrybutu{' '}
-                <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs">title</code> są
-                dekoracyjne i ukryte przed czytnikami ekranu.
+                <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs text-text-primary">
+                  currentColor
+                </code>
+                . Bez atrybutu{' '}
+                <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs text-text-primary">
+                  title
+                </code>{' '}
+                są dekoracyjne i ukryte przed czytnikami ekranu.
               </p>
             </section>
 

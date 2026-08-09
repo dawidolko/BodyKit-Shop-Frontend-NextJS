@@ -81,7 +81,7 @@ export function Header() {
         <div className="container-page flex items-center justify-between py-2 text-xs">
           <p>Darmowa dostawa od 500 zł · Wysyłka w 24 h</p>
           <p className="flex items-center gap-4">
-            <a href="tel:+48178123456" className="hover:text-accent">
+            <a href="tel:+48178123456" className="hover:text-accent-fg">
               +48 17 812 34 56
             </a>
             <span aria-hidden="true" className="opacity-40">

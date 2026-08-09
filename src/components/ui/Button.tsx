@@ -26,7 +26,9 @@ const variants: Record<Variant, string> = {
   'on-dark':
     'border border-carbon-600 bg-carbon-950/40 text-carbon-50 backdrop-blur-sm ' +
     'hover:border-brand-500 hover:bg-carbon-950/70 hover:text-brand-400',
-  danger: 'bg-danger text-white hover:brightness-110',
+  // Stale ciemne tlo w obu motywach - token --danger-text rozjasnia sie w dark,
+  // przez co bialy napis spadalby do 2.8:1.
+  danger: 'bg-danger-600 text-white hover:bg-danger-700',
   inverse: 'bg-bg-inverse text-text-inverse hover:bg-carbon-700 dark:hover:bg-carbon-200',
 };
 

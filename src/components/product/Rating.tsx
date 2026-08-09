@@ -23,7 +23,7 @@ export function Rating({
 
   return (
     <div className={cn('flex items-center gap-1.5', className)}>
-      <span className="flex gap-0.5 text-accent" aria-hidden="true">
+      <span className="flex gap-0.5 text-accent-fg" aria-hidden="true">
         {[1, 2, 3, 4, 5].map((star) => (
           <StarIcon
             key={star}

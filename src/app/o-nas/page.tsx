@@ -103,7 +103,7 @@ export default function AboutPage() {
               <ol className="mt-5 flex flex-col gap-5">
                 {milestones.map((milestone) => (
                   <li key={milestone.year} className="flex gap-4">
-                    <span className="font-display text-lg font-extrabold text-accent">
+                    <span className="font-display text-lg font-extrabold text-accent-fg">
                       {milestone.year}
                     </span>
                     <span className="text-sm leading-relaxed text-text-secondary">

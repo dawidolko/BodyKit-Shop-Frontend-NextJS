@@ -106,7 +106,7 @@ export default function BusinessPage() {
               )}
               <h3 className="text-lg font-bold text-text-primary">{tier.name}</h3>
               <p className="mt-1 text-xs text-text-muted">{tier.threshold}</p>
-              <p className="mt-4 font-display text-4xl font-extrabold text-accent">
+              <p className="mt-4 font-display text-4xl font-extrabold text-accent-fg">
                 {tier.discount}
               </p>
               <p className="text-xs uppercase tracking-wider text-text-muted">rabatu</p>

@@ -162,7 +162,7 @@ export default function HelpPage() {
                         {item.q}
                         <span
                           aria-hidden="true"
-                          className="mt-0.5 shrink-0 text-lg leading-none text-accent transition-transform group-open:rotate-45"
+                          className="mt-0.5 shrink-0 text-lg leading-none text-accent-fg transition-transform group-open:rotate-45"
                         >
                           +
                         </span>

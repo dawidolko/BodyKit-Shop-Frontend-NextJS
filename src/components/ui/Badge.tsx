@@ -7,7 +7,7 @@ const tones: Record<BadgeTone, string> = {
   accent: 'bg-accent text-text-on-brand',
   neutral: 'bg-bg-muted text-text-secondary',
   success: 'bg-bg-muted text-success',
-  danger: 'bg-danger text-white',
+  danger: 'bg-danger-600 text-white',
   outline: 'border border-border-default text-text-secondary',
   // Na zdjeciu produktowym nie wiemy, czy tlo jest jasne czy ciemne,
   // wiec plakietka niesie wlasne, stale kontrastowe tlo.

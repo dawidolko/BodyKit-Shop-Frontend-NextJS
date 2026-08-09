@@ -230,7 +230,12 @@ export function ProductFilters({ products }: { products: Product[] }) {
           <ul className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((product, index) => (
               <li key={product.slug} className="flex">
-                <ProductCard product={product} priority={index < 3} className="w-full" />
+                <ProductCard
+                  product={product}
+                  priority={index < 3}
+                  headingLevel={2}
+                  className="w-full"
+                />
               </li>
             ))}
           </ul>

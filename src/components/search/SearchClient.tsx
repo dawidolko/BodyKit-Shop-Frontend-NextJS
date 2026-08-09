@@ -123,7 +123,12 @@ export function SearchClient() {
               <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {results.map((product, index) => (
                   <li key={product.slug} className="flex">
-                    <ProductCard product={product} priority={index < 4} className="w-full" />
+                    <ProductCard
+                      product={product}
+                      priority={index < 4}
+                      headingLevel={2}
+                      className="w-full"
+                    />
                   </li>
                 ))}
               </ul>

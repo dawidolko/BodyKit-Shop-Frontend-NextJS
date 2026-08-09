@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Checkbox, Field, Input } from '@/components/ui/Field';
 import { Picture } from '@/components/ui/Picture';
 import { useCart } from '@/lib/cart';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, plural } from '@/lib/utils';
 
 type Errors = Partial<Record<string, string>>;
 
@@ -137,7 +137,7 @@ export function CheckoutForm() {
             >
               <p className="text-sm font-bold text-danger">
                 Formularz zawiera {errorEntries.length}{' '}
-                {errorEntries.length === 1 ? 'błąd' : 'błędy'} do poprawienia:
+                {plural(errorEntries.length, 'błąd', 'błędy', 'błędów')} do poprawienia:
               </p>
               <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm text-text-secondary">
                 {errorEntries.map(([name, message]) => (

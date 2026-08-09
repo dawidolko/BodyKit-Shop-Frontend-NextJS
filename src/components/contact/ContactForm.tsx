@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Checkbox, Field, Input, Select, Textarea } from '@/components/ui/Field';
 import { CheckIcon } from '@/components/ui/Icon';
+import { plural } from '@/lib/utils';
 
 type Errors = Partial<Record<string, string>>;
 
@@ -128,7 +129,7 @@ export function ContactForm() {
           className="rounded-sm border border-danger bg-danger/5 p-4 focus-ring"
         >
           <p className="text-sm font-bold text-danger">
-            Popraw {errorEntries.length} {errorEntries.length === 1 ? 'pole' : 'pola'}:
+            Popraw {errorEntries.length} {plural(errorEntries.length, 'pole', 'pola', 'pól')}:
           </p>
           <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm text-text-secondary">
             {errorEntries.map(([name, message]) => (

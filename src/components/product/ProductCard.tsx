@@ -11,16 +11,24 @@ import { badgeLabels, cn, discountPercent, formatPrice, getMinPriceLabel } from 
  * Cala karta jest jednym celem klikniecia dzieki rozciagnietemu linkowi
  * (::after), ale w drzewie dostepnosci pozostaje pojedynczym odnosnikiem
  * z pelna nazwa produktu.
+ *
+ * `headingLevel` pozwala dopasowac poziom naglowka do kontekstu: na stronie
+ * kategorii siatka stoi bezposrednio pod h1 (wiec h2), a na stronie glownej
+ * pod naglowkiem sekcji h2 (wiec h3). Przeskok poziomow lamalby strukture
+ * dokumentu, po ktorej nawiguja czytniki ekranu.
  */
 export function ProductCard({
   product,
   priority = false,
+  headingLevel = 3,
   className,
 }: {
   product: Product;
   priority?: boolean;
+  headingLevel?: 2 | 3;
   className?: string;
 }) {
+  const Heading = `h${headingLevel}` as 'h2' | 'h3';
   const discount = discountPercent(product.price, product.compareAtPrice);
   const cover = product.images[0] ?? 'shot-detail-1';
   const anyInStock = product.variants.some((variant) => variant.inStock);
@@ -68,14 +76,14 @@ export function ProductCard({
       <div className="flex flex-1 flex-col p-4">
         <Rating value={product.rating} count={product.reviewCount} size="sm" className="mb-2" />
 
-        <h3 className="text-base font-bold leading-snug text-text-primary">
+        <Heading className="text-base font-bold leading-snug text-text-primary">
           <Link
             href={`/produkty/${product.slug}/`}
             className="rounded-xs after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-focus-within:underline"
           >
             {product.name}
           </Link>
-        </h3>
+        </Heading>
 
         <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-text-muted">
           {product.shortDescription}

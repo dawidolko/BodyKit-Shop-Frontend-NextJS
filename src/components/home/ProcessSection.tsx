@@ -55,7 +55,7 @@ export function ProcessSection() {
               <li key={step.number} className="flex gap-5">
                 <span
                   aria-hidden="true"
-                  className="font-display text-2xl font-extrabold text-accent"
+                  className="font-display text-2xl font-extrabold text-accent-fg"
                 >
                   {step.number}
                 </span>
