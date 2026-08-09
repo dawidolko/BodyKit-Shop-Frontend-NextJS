@@ -7,7 +7,12 @@ import type { Product, ProductVariant } from './types';
 
 /** Skrocone budowanie wariantow - wiekszosc produktow ma ten sam uklad. */
 function variants(
-  base: { material: ProductVariant['material']; finish: ProductVariant['finish']; delta: number; inStock?: boolean }[],
+  base: {
+    material: ProductVariant['material'];
+    finish: ProductVariant['finish'];
+    delta: number;
+    inStock?: boolean;
+  }[],
   prefix: string,
 ): ProductVariant[] {
   return base.map((entry, index) => ({
@@ -497,12 +502,7 @@ export const products: Product[] = [
       { make: 'Audi', model: 'A3 8V/8Y', years: '2013+' },
     ],
     images: ['cat-zawieszenie', 'shot-wheel-1'],
-    variants: variants(
-      [
-        { material: 'aluminium', finish: 'gloss-black', delta: 0 },
-      ],
-      'zsc',
-    ),
+    variants: variants([{ material: 'aluminium', finish: 'gloss-black', delta: 0 }], 'zsc'),
     specs: [
       { label: 'Zakres obniżenia', value: '30-70 mm' },
       { label: 'Regulacja tłumienia', value: '32 stopnie' },
@@ -617,12 +617,7 @@ export const products: Product[] = [
       'Nakładki na wewnętrzne progi drzwi z karbonu z podświetlanym logo. Zasilanie z portu USB lub bezpośrednio z instalacji, czujnik otwarcia drzwi uruchamia podświetlenie automatycznie.',
     fitment: [{ make: 'Uniwersalne', model: 'Docinane na wymiar', years: 'wszystkie' }],
     images: ['cat-karbon', 'shot-detail-3'],
-    variants: variants(
-      [
-        { material: 'carbon', finish: 'carbon-gloss', delta: 0 },
-      ],
-      'lpc',
-    ),
+    variants: variants([{ material: 'carbon', finish: 'carbon-gloss', delta: 0 }], 'lpc'),
     specs: [
       { label: 'Zawartość', value: '4 szt.' },
       { label: 'Zasilanie', value: 'USB lub instalacja 12 V' },

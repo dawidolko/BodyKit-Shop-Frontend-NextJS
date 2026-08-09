@@ -7,7 +7,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react';
 import type { CartLine, CartLineDetailed } from './types';
@@ -87,34 +87,50 @@ type CartContextValue = {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
+/** Odczytuje i waliduje koszyk z localStorage. Zwraca pusty przy jakimkolwiek bledzie. */
+function readStoredCart(): CartLine[] {
+  try {
+    const stored = window.localStorage.getItem(STORAGE_KEY);
+    if (!stored) return [];
+    const parsed: unknown = JSON.parse(stored);
+    if (!Array.isArray(parsed)) return [];
+
+    // Odfiltruj pozycje wskazujace na produkty, ktorych juz nie ma w katalogu.
+    return parsed.filter(
+      (line): line is CartLine =>
+        typeof line === 'object' &&
+        line !== null &&
+        typeof (line as CartLine).productSlug === 'string' &&
+        typeof (line as CartLine).variantId === 'string' &&
+        typeof (line as CartLine).quantity === 'number' &&
+        getProduct((line as CartLine).productSlug) !== undefined,
+    );
+  } catch {
+    // Uszkodzony wpis albo zablokowany storage - startujemy z pustym koszykiem.
+    return [];
+  }
+}
+
+/**
+ * Wykrywa zakonczenie hydracji bez setState w efekcie: na serwerze zwraca
+ * false, w przegladarce true. Pozwala odroznic "koszyk jeszcze nieodczytany"
+ * od "koszyk pusty", co decyduje o tym, czy pokazac szkielet czy komunikat.
+ */
+const subscribeNoop = () => () => {};
+const getHydratedClient = () => true;
+const getHydratedServer = () => false;
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, dispatch] = useReducer(reducer, []);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const isHydrated = useSyncExternalStore(subscribeNoop, getHydratedClient, getHydratedServer);
 
   // Odczyt po zamontowaniu - localStorage nie istnieje podczas prerenderu.
+  // dispatch nie jest setState, wiec nie wywoluje kaskady renderow.
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const parsed: unknown = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          // Odfiltruj pozycje wskazujace na produkty, ktorych juz nie ma w katalogu.
-          const valid = parsed.filter(
-            (line): line is CartLine =>
-              typeof line === 'object' &&
-              line !== null &&
-              typeof (line as CartLine).productSlug === 'string' &&
-              typeof (line as CartLine).variantId === 'string' &&
-              typeof (line as CartLine).quantity === 'number' &&
-              getProduct((line as CartLine).productSlug) !== undefined,
-          );
-          dispatch({ type: 'hydrate', lines: valid });
-        }
-      }
-    } catch {
-      // Uszkodzony wpis albo zablokowany storage - startujemy z pustym koszykiem.
+    const stored = readStoredCart();
+    if (stored.length > 0) {
+      dispatch({ type: 'hydrate', lines: stored });
     }
-    setIsHydrated(true);
   }, []);
 
   // Zapis dopiero po hydracji, zeby nie nadpisac zawartosci pusta tablica.

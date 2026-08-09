@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-type BadgeTone = 'accent' | 'neutral' | 'success' | 'danger' | 'outline';
+type BadgeTone = 'accent' | 'neutral' | 'success' | 'danger' | 'outline' | 'on-image';
 
 const tones: Record<BadgeTone, string> = {
   accent: 'bg-accent text-text-on-brand',
@@ -9,6 +9,9 @@ const tones: Record<BadgeTone, string> = {
   success: 'bg-bg-muted text-success',
   danger: 'bg-danger text-white',
   outline: 'border border-border-default text-text-secondary',
+  // Na zdjeciu produktowym nie wiemy, czy tlo jest jasne czy ciemne,
+  // wiec plakietka niesie wlasne, stale kontrastowe tlo.
+  'on-image': 'bg-carbon-950/85 text-carbon-50 backdrop-blur-sm',
 };
 
 export function Badge({

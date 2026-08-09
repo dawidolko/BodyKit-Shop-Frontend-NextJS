@@ -63,10 +63,10 @@
 
   /* ---- Cienie: neutralne, z ciepla poswiata dla akcentu ---- */
   --shadow-xs: 0 1px 2px 0 rgb(15 17 21 / 0.06);
-  --shadow-sm: 0 2px 8px -2px rgb(15 17 21 / 0.10);
+  --shadow-sm: 0 2px 8px -2px rgb(15 17 21 / 0.1);
   --shadow-md: 0 8px 24px -8px rgb(15 17 21 / 0.16);
   --shadow-lg: 0 20px 48px -16px rgb(15 17 21 / 0.22);
-  --shadow-glow: 0 0 0 1px rgb(255 107 26 / 0.30), 0 8px 32px -8px rgb(255 107 26 / 0.35);
+  --shadow-glow: 0 0 0 1px rgb(255 107 26 / 0.3), 0 8px 32px -8px rgb(255 107 26 / 0.35);
 
   /* ---- Easing / czasy ---- */
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
@@ -141,7 +141,7 @@
   --bg-muted: var(--color-carbon-900);
   --bg-inset: #0a0b0e;
   --bg-inverse: var(--color-carbon-50);
-  --bg-overlay: rgb(0 0 0 / 0.70);
+  --bg-overlay: rgb(0 0 0 / 0.7);
 
   --surface: #14161c;
   --surface-raised: #1a1d26;
@@ -245,7 +245,12 @@
     text-rendering: optimizeLegibility;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.015em;

@@ -33,7 +33,6 @@ export function CategoryGrid() {
                 <Picture
                   name={category.image}
                   alt=""
-                  profile="category"
                   sizes="(min-width: 1024px) 22rem, (min-width: 640px) 45vw, 90vw"
                   priority={index < 2}
                   imgClassName="transition-transform duration-500 ease-(--ease-out-quint) group-hover:scale-105"

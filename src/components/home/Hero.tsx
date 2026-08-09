@@ -15,7 +15,6 @@ export function Hero() {
         <Picture
           name="hero-main"
           alt=""
-          profile="hero"
           sizes="100vw"
           priority
           className="h-full w-full"
@@ -41,9 +40,9 @@ export function Hero() {
           </h1>
 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-carbon-300 sm:text-lg">
-            Splittery, spoilery i dyfuzory projektowane pod konkretne roczniki i wersje
-            nadwozia. Do każdego elementu dostajesz komplet montażowy i instrukcję po
-            polsku — bez dopasowywania na miejscu.
+            Splittery, spoilery i dyfuzory projektowane pod konkretne roczniki i wersje nadwozia. Do
+            każdego elementu dostajesz komplet montażowy i instrukcję po polsku — bez dopasowywania
+            na miejscu.
           </p>
 
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">

@@ -19,7 +19,7 @@ export function ProductGallery({ images, productName }: { images: string[]; prod
         <Picture
           name={current}
           alt={`${productName} — zdjęcie ${active + 1} z ${images.length}`}
-          profile="product"
+          ratio={1}
           sizes="(min-width: 1024px) 36rem, 92vw"
           priority
         />
@@ -42,7 +42,7 @@ export function ProductGallery({ images, productName }: { images: string[]; prod
                   : 'border-border-subtle hover:border-border-strong',
               )}
             >
-              <Picture name={image} alt="" profile="product" sizes="5rem" />
+              <Picture name={image} alt="" ratio={1} sizes="5rem" />
             </button>
           ))}
         </div>

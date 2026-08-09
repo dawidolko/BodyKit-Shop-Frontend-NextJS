@@ -27,8 +27,7 @@ const variants: Record<Variant, string> = {
     'border border-carbon-600 bg-carbon-950/40 text-carbon-50 backdrop-blur-sm ' +
     'hover:border-brand-500 hover:bg-carbon-950/70 hover:text-brand-400',
   danger: 'bg-danger text-white hover:brightness-110',
-  inverse:
-    'bg-bg-inverse text-text-inverse hover:bg-carbon-700 dark:hover:bg-carbon-200',
+  inverse: 'bg-bg-inverse text-text-inverse hover:bg-carbon-700 dark:hover:bg-carbon-200',
 };
 
 const sizes: Record<Size, string> = {
@@ -45,10 +44,7 @@ type CommonProps = {
 };
 
 type ButtonProps = CommonProps & ComponentPropsWithoutRef<'button'>;
-type LinkButtonProps = CommonProps & { href: string } & Omit<
-    ComponentPropsWithoutRef<'a'>,
-    'href'
-  >;
+type LinkButtonProps = CommonProps & { href: string } & Omit<ComponentPropsWithoutRef<'a'>, 'href'>;
 
 export function Button({
   variant = 'primary',

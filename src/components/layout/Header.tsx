@@ -26,12 +26,15 @@ export function Header() {
   const catalogRef = useRef<HTMLLIElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Zamknij oba panele przy zmianie trasy - inaczej menu zostaje otwarte
-  // po przejsciu na nowa strone.
-  useEffect(() => {
+  // Zamkniecie paneli przy zmianie trasy. Robimy to w trakcie renderu,
+  // a nie w efekcie - to zalecany przez React sposob resetowania stanu
+  // przy zmianie wartosci wejsciowej, bez dodatkowego przebiegu renderu.
+  const [lastPathname, setLastPathname] = useState(pathname);
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname);
     setMenuOpen(false);
     setCatalogOpen(false);
-  }, [pathname]);
+  }
 
   // Escape zamyka panele, a fokus wraca na przycisk, ktory je otworzyl.
   useEffect(() => {
@@ -67,12 +70,14 @@ export function Header() {
     };
   }, [menuOpen]);
 
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href.replace(/\/$/, '') + '/');
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href.replace(/\/$/, '') + '/');
 
   return (
     <header className="sticky top-0 z-50 border-b border-border-subtle bg-bg-base/85 backdrop-blur-md">
-      {/* Pasek informacyjny */}
-      <div className="hidden bg-bg-inverse text-text-inverse md:block">
+      {/* Pasek informacyjny - stale ciemny w obu motywach, wiec kolory sa
+          wpisane bezposrednio zamiast tokenow odwracajacych sie w dark. */}
+      <div className="hidden bg-carbon-950 text-carbon-300 md:block">
         <div className="container-page flex items-center justify-between py-2 text-xs">
           <p>Darmowa dostawa od 500 zł · Wysyłka w 24 h</p>
           <p className="flex items-center gap-4">
@@ -189,9 +194,7 @@ export function Header() {
             href="/koszyk/"
             className="relative inline-flex size-10 items-center justify-center rounded-sm text-text-secondary transition-colors hover:bg-bg-muted hover:text-text-primary focus-ring"
             aria-label={
-              isHydrated && itemCount > 0
-                ? `Koszyk, produktów: ${itemCount}`
-                : 'Koszyk, pusty'
+              isHydrated && itemCount > 0 ? `Koszyk, produktów: ${itemCount}` : 'Koszyk, pusty'
             }
           >
             <CartIcon className="size-5" />
@@ -221,11 +224,11 @@ export function Header() {
 
       {/* Menu mobilne */}
       {menuOpen && (
-        <div
-          id="mobile-menu"
-          className="border-t border-border-subtle bg-bg-base lg:hidden"
-        >
-          <nav aria-label="Nawigacja mobilna" className="max-h-[calc(100dvh-8rem)] overflow-y-auto px-4 py-4">
+        <div id="mobile-menu" className="border-t border-border-subtle bg-bg-base lg:hidden">
+          <nav
+            aria-label="Nawigacja mobilna"
+            className="max-h-[calc(100dvh-8rem)] overflow-y-auto px-4 py-4"
+          >
             <ul className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <li key={link.href}>
@@ -262,11 +265,17 @@ export function Header() {
             </ul>
 
             <div className="mt-6 border-t border-border-subtle px-4 pt-4">
-              <Link href="/konto/" className="flex h-11 items-center gap-3 text-sm text-text-secondary">
+              <Link
+                href="/konto/"
+                className="flex h-11 items-center gap-3 text-sm text-text-secondary"
+              >
                 <UserIcon className="size-5" />
                 Panel klienta
               </Link>
-              <a href="tel:+48178123456" className="flex h-11 items-center gap-3 text-sm text-text-secondary">
+              <a
+                href="tel:+48178123456"
+                className="flex h-11 items-center gap-3 text-sm text-text-secondary"
+              >
                 +48 17 812 34 56
               </a>
             </div>

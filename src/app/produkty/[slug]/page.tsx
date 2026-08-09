@@ -28,11 +28,7 @@ export function generateStaticParams(): Params[] {
   return products.map((product) => ({ slug: product.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<Params>;
-}): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { slug } = await params;
   const product = getProduct(slug);
   if (!product) return {};
@@ -48,7 +44,9 @@ export async function generateMetadata({
       title: `${product.name} — BodyKit Shop`,
       description: product.shortDescription,
       url: absoluteUrl(`/produkty/${product.slug}/`),
-      images: [{ url: asset(`/images/${cover}-900.webp`), width: 900, height: 900, alt: product.name }],
+      images: [
+        { url: asset(`/images/${cover}-900.webp`), width: 900, height: 900, alt: product.name },
+      ],
     },
   };
 }
@@ -86,9 +84,7 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
       lowPrice: priceToNumber(Math.min(...prices)),
       highPrice: priceToNumber(Math.max(...prices)),
       offerCount: product.variants.length,
-      availability: anyInStock
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
+      availability: anyInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       url: absoluteUrl(`/produkty/${product.slug}/`),
     },
   };
@@ -99,9 +95,7 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
       <Breadcrumbs
         items={[
           { href: '/kategorie/', label: 'Katalog' },
-          ...(category
-            ? [{ href: `/kategorie/${category.slug}/`, label: category.name }]
-            : []),
+          ...(category ? [{ href: `/kategorie/${category.slug}/`, label: category.name }] : []),
           { href: `/produkty/${product.slug}/`, label: product.name },
         ]}
       />
@@ -231,9 +225,9 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
             </ul>
             <p className="mt-5 text-xs leading-relaxed text-text-muted">
               Dostępne materiały:{' '}
-              {[...new Set(product.variants.map((variant) => materialLabels[variant.material]))].join(
-                ', ',
-              )}
+              {[
+                ...new Set(product.variants.map((variant) => materialLabels[variant.material])),
+              ].join(', ')}
               .
             </p>
           </section>

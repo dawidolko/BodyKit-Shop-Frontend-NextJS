@@ -53,7 +53,11 @@ export function Field({
       )}
       {children}
       {error && (
-        <p id={`${htmlFor}-error`} role="alert" className="flex items-center gap-1 text-xs font-medium text-danger">
+        <p
+          id={`${htmlFor}-error`}
+          role="alert"
+          className="flex items-center gap-1 text-xs font-medium text-danger"
+        >
           {error}
         </p>
       )}

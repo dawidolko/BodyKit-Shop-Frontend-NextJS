@@ -3,7 +3,8 @@ export const site = {
   name: 'BodyKit Shop',
   shortName: 'BodyKit',
   /** Adres produkcyjny - nadpisywany zmienna srodowiskowa w workflow. */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dawidolko.github.io/BodyKit-Shop-Frontend-NextJS',
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://dawidolko.github.io/BodyKit-Shop-Frontend-NextJS',
   description:
     'Dokładki, splittery, spoilery i elementy karbonowe dopasowane do konkretnych modeli aut. Sprawdzone materiały, komplet montażowy i instrukcje po polsku.',
   locale: 'pl_PL',

@@ -339,7 +339,10 @@ export function CheckoutForm() {
                 label={
                   <>
                     Akceptuję{' '}
-                    <a href="/regulamin/" className="font-medium text-text-brand underline focus-ring">
+                    <a
+                      href="/regulamin/"
+                      className="font-medium text-text-brand underline focus-ring"
+                    >
                       regulamin
                     </a>{' '}
                     i politykę prywatności
@@ -378,7 +381,7 @@ export function CheckoutForm() {
                   <Picture
                     name={line.product.images[0] ?? 'shot-detail-1'}
                     alt=""
-                    profile="product"
+                    ratio={1}
                     sizes="3.5rem"
                   />
                 </div>
@@ -417,8 +420,8 @@ export function CheckoutForm() {
           </dl>
 
           <p className="mt-5 text-xs leading-relaxed text-text-muted">
-            Sklep demonstracyjny — zamówienie nie zostanie zrealizowane, a dane
-            nie są nigdzie wysyłane.
+            Sklep demonstracyjny — zamówienie nie zostanie zrealizowane, a dane nie są nigdzie
+            wysyłane.
           </p>
         </aside>
       </div>

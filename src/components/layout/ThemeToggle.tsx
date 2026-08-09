@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { MoonIcon, SunIcon } from '@/components/ui/Icon';
 
 const STORAGE_KEY = 'bodykit-theme';
@@ -24,28 +24,45 @@ export const themeInitScript = `
 })();
 `.trim();
 
-export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<Theme>('light');
-  const [mounted, setMounted] = useState(false);
+/**
+ * Motyw zyje poza Reactem - jako klasa na <html> ustawiana przez skrypt
+ * inicjalizujacy. useSyncExternalStore czyta go bezposrednio ze zrodla,
+ * dzieki czemu nie potrzebujemy setState w efekcie ani osobnej kopii stanu.
+ */
+function subscribeToTheme(onChange: () => void): () => void {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class'],
+  });
 
-  useEffect(() => {
-    setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-    setMounted(true);
-  }, []);
-
-  // Reaguj na zmiane ustawien systemowych, ale tylko gdy uzytkownik
+  // Zmiana ustawien systemowych wplywa na motyw tylko wtedy, gdy uzytkownik
   // nie dokonal wlasnego wyboru.
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = (event: MediaQueryListEvent) => {
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  const onMediaChange = (event: MediaQueryListEvent) => {
+    try {
       if (localStorage.getItem(STORAGE_KEY)) return;
-      const next: Theme = event.matches ? 'dark' : 'light';
-      document.documentElement.classList.toggle('dark', next === 'dark');
-      setTheme(next);
-    };
-    media.addEventListener('change', onChange);
-    return () => media.removeEventListener('change', onChange);
-  }, []);
+    } catch {
+      return;
+    }
+    document.documentElement.classList.toggle('dark', event.matches);
+  };
+  media.addEventListener('change', onMediaChange);
+
+  return () => {
+    observer.disconnect();
+    media.removeEventListener('change', onMediaChange);
+  };
+}
+
+const getTheme = (): Theme =>
+  document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+
+/** Podczas prerenderu nie ma DOM - zakladamy motyw jasny i korygujemy po hydracji. */
+const getServerTheme = (): Theme => 'light';
+
+export function ThemeToggle({ className }: { className?: string }) {
+  const theme = useSyncExternalStore(subscribeToTheme, getTheme, getServerTheme);
 
   function toggle() {
     const next: Theme = theme === 'dark' ? 'light' : 'dark';
@@ -55,7 +72,6 @@ export function ThemeToggle({ className }: { className?: string }) {
     } catch {
       // Brak dostepu do storage - motyw zmieni sie tylko na czas sesji.
     }
-    setTheme(next);
   }
 
   const label = theme === 'dark' ? 'Włącz motyw jasny' : 'Włącz motyw ciemny';
@@ -73,13 +89,9 @@ export function ThemeToggle({ className }: { className?: string }) {
         (className ?? '')
       }
     >
-      {/* Przed hydracja renderujemy stala ikone, zeby markup serwera i klienta
-          byly zgodne; po zamontowaniu przelaczamy na wlasciwa. */}
-      {!mounted || theme === 'light' ? (
-        <MoonIcon className="size-5" />
-      ) : (
-        <SunIcon className="size-5" />
-      )}
+      {/* getServerTheme zwraca 'light', wiec markup serwera i klienta
+          zgadzaja sie przy pierwszym renderze. */}
+      {theme === 'light' ? <MoonIcon className="size-5" /> : <SunIcon className="size-5" />}
     </button>
   );
 }

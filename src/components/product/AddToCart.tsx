@@ -15,7 +15,8 @@ import { cn, finishLabels, formatPrice, materialLabels } from '@/lib/utils';
  */
 export function AddToCart({ product }: { product: Product }) {
   const { addItem } = useCart();
-  const firstAvailable = product.variants.find((variant) => variant.inStock) ?? product.variants[0]!;
+  const firstAvailable =
+    product.variants.find((variant) => variant.inStock) ?? product.variants[0]!;
   const [variantId, setVariantId] = useState(firstAvailable.id);
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { ProductCard } from '@/components/product/ProductCard';
 import { SearchIcon } from '@/components/ui/Icon';
@@ -15,26 +15,33 @@ import { plural } from '@/lib/utils';
  * zakresem U+0300-U+036F. "ł" nie ma rozkladu, wiec podmieniamy je osobno.
  */
 function normalize(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/ł/g, 'l');
+  return text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/ł/g, 'l');
+}
+
+/** Odczyt frazy z adresu - zrodlo zewnetrzne wzgledem Reacta. */
+function getQueryFromLocation(): string {
+  return new URLSearchParams(window.location.search).get('q') ?? '';
+}
+
+/** Adres zmienia sie przy nawigacji wstecz/naprzod. */
+function subscribeToLocation(onChange: () => void): () => void {
+  window.addEventListener('popstate', onChange);
+  return () => window.removeEventListener('popstate', onChange);
 }
 
 /**
  * Wyszukiwarka po nazwie, opisie, kategorii i dopasowaniu do modelu auta.
- * Fraza z adresu (?q=) jest odczytywana po zamontowaniu - przy static export
- * parametry zapytania nie sa znane w czasie budowania.
  */
 export function SearchClient() {
-  const [query, setQuery] = useState('');
+  // Fraza startowa pochodzi z adresu (?q=...). Przy static export parametry
+  // zapytania nie sa znane w czasie budowania, wiec czytamy je dopiero
+  // po hydracji - useSyncExternalStore robi to bez setState w efekcie.
+  const initialQuery = useSyncExternalStore(subscribeToLocation, getQueryFromLocation, () => '');
+  const [typed, setTyped] = useState<string | null>(null);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const initial = params.get('q');
-    if (initial) setQuery(initial);
-  }, []);
+  // Dopoki uzytkownik nie zaczal pisac, pokazujemy fraze z adresu.
+  const query = typed ?? initialQuery;
+  const setQuery = setTyped;
 
   const results = useMemo(() => {
     const needle = normalize(query.trim());
@@ -65,8 +72,8 @@ export function SearchClient() {
         }
         return { product, score };
       })
-      .filter((entry): entry is { product: (typeof products)[number]; score: number } =>
-        entry !== null,
+      .filter(
+        (entry): entry is { product: (typeof products)[number]; score: number } => entry !== null,
       )
       .sort((a, b) => b.score - a.score || b.product.rating - a.product.rating)
       .map((entry) => entry.product);
@@ -85,9 +92,7 @@ export function SearchClient() {
           Szukaj produktów
         </label>
         <div className="relative max-w-2xl">
-          <SearchIcon
-            className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-text-muted"
-          />
+          <SearchIcon className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-text-muted" />
           <input
             id="search-input"
             type="search"
@@ -106,7 +111,10 @@ export function SearchClient() {
       <div className="container-page pb-8">
         {hasQuery ? (
           <>
-            <p aria-live="polite" className="border-b border-border-subtle pb-4 text-sm text-text-secondary">
+            <p
+              aria-live="polite"
+              className="border-b border-border-subtle pb-4 text-sm text-text-secondary"
+            >
               <span className="font-semibold text-text-primary">{results.length}</span>{' '}
               {plural(results.length, 'wynik', 'wyniki', 'wyników')} dla „{query.trim()}”
             </p>

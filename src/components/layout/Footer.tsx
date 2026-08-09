@@ -33,9 +33,17 @@ const columns = [
 ];
 
 const guarantees = [
-  { icon: TruckIcon, title: 'Wysyłka w 24 h', text: 'Produkty z magazynu wysyłamy tego samego dnia.' },
+  {
+    icon: TruckIcon,
+    title: 'Wysyłka w 24 h',
+    text: 'Produkty z magazynu wysyłamy tego samego dnia.',
+  },
   { icon: ShieldIcon, title: '24 miesiące gwarancji', text: 'Na wady materiałowe i wykonanie.' },
-  { icon: WrenchIcon, title: 'Wsparcie montażu', text: 'Instrukcje PL i pomoc techniczna telefoniczna.' },
+  {
+    icon: WrenchIcon,
+    title: 'Wsparcie montażu',
+    text: 'Instrukcje PL i pomoc techniczna telefoniczna.',
+  },
 ];
 
 export function Footer() {
@@ -58,17 +66,20 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="container-page grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-5">
+      {/* 6 kolumn: blok marki zajmuje 2, cztery nawigacje po jednej */}
+      <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-6">
         <div className="lg:col-span-2">
           <Logo className="h-10 w-auto text-text-primary" />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-text-secondary">
-            Dokładki, spoilery i elementy karbonowe dopasowane do konkretnych modeli aut.
-            Każdy produkt opisujemy tak, żebyś wiedział, co dostajesz, zanim klikniesz
-            „do koszyka”.
+            Dokładki, spoilery i elementy karbonowe dopasowane do konkretnych modeli aut. Każdy
+            produkt opisujemy tak, żebyś wiedział, co dostajesz, zanim klikniesz „do koszyka”.
           </p>
 
           <address className="mt-6 flex flex-col gap-2 text-sm not-italic text-text-secondary">
-            <a href="tel:+48178123456" className="flex items-center gap-2.5 hover:text-text-brand focus-ring rounded-xs">
+            <a
+              href="tel:+48178123456"
+              className="flex items-center gap-2.5 hover:text-text-brand focus-ring rounded-xs"
+            >
               <PhoneIcon className="size-4 text-text-muted" />
               +48 17 812 34 56
             </a>
@@ -79,14 +90,14 @@ export function Footer() {
               <MailIcon className="size-4 text-text-muted" />
               kontakt@bodykitshop.pl
             </a>
-            <p className="mt-1 text-text-muted">
-              ul. Warsztatowa 12, 35-001 Rzeszów
-            </p>
+            <p className="mt-1 text-text-muted">ul. Warsztatowa 12, 35-001 Rzeszów</p>
           </address>
         </div>
 
         <nav aria-label="Kategorie produktów">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-text-primary">Kategorie</h2>
+          <h2 className="text-xs font-bold uppercase tracking-wider text-text-primary">
+            Kategorie
+          </h2>
           <ul className="mt-4 flex flex-col gap-2.5">
             {categories.slice(0, 6).map((category) => (
               <li key={category.slug}>
@@ -125,10 +136,7 @@ export function Footer() {
       <div className="border-t border-border-subtle">
         <div className="container-page flex flex-col gap-3 py-6 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} BodyKit Shop. Projekt demonstracyjny.</p>
-          <p>
-            Sklep prezentacyjny — zamówienia nie są realizowane, a płatności nie są
-            pobierane.
-          </p>
+          <p>Sklep prezentacyjny — zamówienia nie są realizowane, a płatności nie są pobierane.</p>
         </div>
       </div>
     </footer>

@@ -40,24 +40,20 @@ export default function ThankYouPage() {
         </h1>
 
         <p className="mt-4 text-base leading-relaxed text-text-secondary">
-          Zamówienie zostało przyjęte. Poniżej znajdziesz numer referencyjny —
-          przyda się, gdybyś chciał dopytać o status.
+          Zamówienie zostało przyjęte. Poniżej znajdziesz numer referencyjny — przyda się, gdybyś
+          chciał dopytać o status.
         </p>
 
         <p className="mx-auto mt-6 inline-flex flex-col rounded-md border border-border-subtle bg-surface px-8 py-4">
-          <span className="text-xs uppercase tracking-wider text-text-muted">
-            Numer zamówienia
-          </span>
-          <span className="mt-1 font-mono text-lg font-bold text-text-primary">
-            BK-2026-04812
-          </span>
+          <span className="text-xs uppercase tracking-wider text-text-muted">Numer zamówienia</span>
+          <span className="mt-1 font-mono text-lg font-bold text-text-primary">BK-2026-04812</span>
         </p>
 
         <div className="mt-8 rounded-sm border border-warning/40 bg-warning/5 p-4">
           <p className="text-sm leading-relaxed text-text-secondary">
             <strong className="font-bold text-text-primary">To sklep demonstracyjny.</strong>{' '}
-            Zamówienie nie zostało nigdzie wysłane, żadne dane nie zostały zapisane
-            i nie pobrano żadnej płatności.
+            Zamówienie nie zostało nigdzie wysłane, żadne dane nie zostały zapisane i nie pobrano
+            żadnej płatności.
           </p>
         </div>
       </div>

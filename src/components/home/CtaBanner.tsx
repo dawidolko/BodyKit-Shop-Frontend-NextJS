@@ -8,7 +8,6 @@ export function CtaBanner() {
         <Picture
           name="cta-banner"
           alt=""
-          profile="banner"
           sizes="(min-width: 1536px) 88rem, 95vw"
           className="h-full w-full"
         />
@@ -26,8 +25,8 @@ export function CtaBanner() {
               Nie wiesz, co pasuje do Twojego auta?
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-carbon-300 sm:text-base">
-              Napisz markę, model i rocznik — odpiszemy z listą pasujących elementów
-              i podpowiemy, co ma sens montować razem.
+              Napisz markę, model i rocznik — odpiszemy z listą pasujących elementów i podpowiemy,
+              co ma sens montować razem.
             </p>
             <LinkButton href="/kontakt/" className="mt-6">
               Zapytaj o dopasowanie

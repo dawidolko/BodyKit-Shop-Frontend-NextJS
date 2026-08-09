@@ -8,8 +8,17 @@ import { FREE_SHIPPING_THRESHOLD, useCart } from '@/lib/cart';
 import { finishLabels, formatPrice, materialLabels, plural } from '@/lib/utils';
 
 export function CartClient() {
-  const { detailedLines, itemCount, subtotal, shipping, total, isHydrated, setQuantity, removeItem, clear } =
-    useCart();
+  const {
+    detailedLines,
+    itemCount,
+    subtotal,
+    shipping,
+    total,
+    isHydrated,
+    setQuantity,
+    removeItem,
+    clear,
+  } = useCart();
 
   // Do czasu odczytania localStorage nie wiemy, co jest w koszyku - pokazujemy
   // szkielet zamiast falszywego komunikatu o pustym koszyku.
@@ -40,8 +49,7 @@ export function CartClient() {
         <div className="rounded-md border border-dashed border-border-default px-6 py-16 text-center">
           <p className="text-lg font-bold text-text-primary">Twój koszyk jest pusty</p>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-text-muted">
-            Wybierz części z katalogu — przy każdej znajdziesz listę pasujących modeli
-            i roczników.
+            Wybierz części z katalogu — przy każdej znajdziesz listę pasujących modeli i roczników.
           </p>
           <LinkButton href="/kategorie/" size="lg" className="mt-6">
             Przeglądaj katalog
@@ -75,7 +83,7 @@ export function CartClient() {
                   <Picture
                     name={line.product.images[0] ?? 'shot-detail-1'}
                     alt=""
-                    profile="product"
+                    ratio={1}
                     sizes="7rem"
                   />
                 </Link>
@@ -84,7 +92,10 @@ export function CartClient() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <h3 className="text-sm font-bold leading-snug text-text-primary sm:text-base">
-                        <Link href={`/produkty/${line.product.slug}/`} className="rounded-xs hover:text-text-brand focus-ring">
+                        <Link
+                          href={`/produkty/${line.product.slug}/`}
+                          className="rounded-xs hover:text-text-brand focus-ring"
+                        >
                           {line.product.name}
                         </Link>
                       </h3>
@@ -108,7 +119,9 @@ export function CartClient() {
                     <div className="flex items-center rounded-sm border border-border-default">
                       <button
                         type="button"
-                        onClick={() => setQuantity(line.productSlug, line.variantId, line.quantity - 1)}
+                        onClick={() =>
+                          setQuantity(line.productSlug, line.variantId, line.quantity - 1)
+                        }
                         aria-label={`Zmniejsz ilość: ${line.product.name}`}
                         className="flex size-9 items-center justify-center text-text-secondary transition-colors hover:bg-bg-muted focus-ring"
                       >
@@ -122,7 +135,9 @@ export function CartClient() {
                       </span>
                       <button
                         type="button"
-                        onClick={() => setQuantity(line.productSlug, line.variantId, line.quantity + 1)}
+                        onClick={() =>
+                          setQuantity(line.productSlug, line.variantId, line.quantity + 1)
+                        }
                         aria-label={`Zwiększ ilość: ${line.product.name}`}
                         className="flex size-9 items-center justify-center text-text-secondary transition-colors hover:bg-bg-muted focus-ring"
                       >
@@ -208,8 +223,7 @@ export function CartClient() {
           </LinkButton>
 
           <p className="mt-4 text-center text-xs leading-relaxed text-text-muted">
-            To sklep demonstracyjny — zamówienia nie są realizowane, a płatności
-            nie są pobierane.
+            To sklep demonstracyjny — zamówienia nie są realizowane, a płatności nie są pobierane.
           </p>
         </section>
       </div>

@@ -27,7 +27,6 @@ export function ProcessSection() {
           <Picture
             name="hero-garage"
             alt="Samochód sportowy w hali warsztatowej przygotowany do montażu elementów karoserii"
-            profile="editorial"
             sizes="(min-width: 1024px) 40rem, 90vw"
             className="rounded-lg border border-border-subtle"
           />
@@ -39,14 +38,16 @@ export function ProcessSection() {
         </div>
 
         <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-text-brand">Jak to działa</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-text-brand">
+            Jak to działa
+          </p>
           <h2 id="proces-heading" className="mt-2 text-3xl font-extrabold uppercase sm:text-4xl">
             Trzy kroki do nowej sylwetki auta
           </h2>
           <p className="mt-4 text-base leading-relaxed text-text-secondary">
-            Najczęstszy problem z dokładkami to montaż: element nie przylega, trzeba
-            szpachlować albo dowiercać otwory. Dlatego każdy produkt opisujemy przez
-            konkretne roczniki, a nie „uniwersalne dopasowanie”.
+            Najczęstszy problem z dokładkami to montaż: element nie przylega, trzeba szpachlować
+            albo dowiercać otwory. Dlatego każdy produkt opisujemy przez konkretne roczniki, a nie
+            „uniwersalne dopasowanie”.
           </p>
 
           <ol className="mt-8 flex flex-col gap-6">

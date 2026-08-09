@@ -34,9 +34,7 @@ export function ProductFilters({ products }: { products: Product[] }) {
 
   const availableMaterials = useMemo(() => {
     const set = new Set<Material>();
-    products.forEach((product) =>
-      product.variants.forEach((variant) => set.add(variant.material)),
-    );
+    products.forEach((product) => product.variants.forEach((variant) => set.add(variant.material)));
     return [...set].sort();
   }, [products]);
 
@@ -132,10 +130,7 @@ export function ProductFilters({ products }: { products: Product[] }) {
 
         <div
           id="filter-panel"
-          className={cn(
-            'mt-4 flex-col gap-7 lg:mt-0 lg:flex',
-            panelOpen ? 'flex' : 'hidden',
-          )}
+          className={cn('mt-4 flex-col gap-7 lg:mt-0 lg:flex', panelOpen ? 'flex' : 'hidden')}
         >
           <fieldset>
             <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">

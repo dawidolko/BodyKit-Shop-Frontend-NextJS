@@ -116,23 +116,31 @@ async function main() {
   }
 
   await writeCredits(results);
-  await writeBlurMap(names);
+  await writeBlurMap(results);
   console.log(`\nGotowe. Wygenerowano ${results.length * 2} wariantow + LQIP.`);
 }
 
 /**
- * Zbiera wszystkie LQIP w jeden modul JSON importowany przez komponent Picture.
- * Dzieki temu placeholder jest w HTML od pierwszego renderu, bez dodatkowego zadania.
+ * Zapisuje manifest obrazow: dla kazdego pliku LQIP, faktycznie wygenerowane
+ * szerokosci i proporcje kadru.
+ *
+ * Komponent Picture buduje srcset wylacznie z tej mapy, dzieki czemu nie moze
+ * poprosic o wariant, ktorego nie ma na dysku - a taki blad daje 404 dopiero
+ * w przegladarce, nie przy budowaniu.
  */
-async function writeBlurMap(names) {
+async function writeBlurMap(results) {
   const entries = {};
-  for (const name of names) {
-    entries[name] = await readFile(path.join(OUT_DIR, `${name}-blur.txt`), 'utf8');
+  for (const result of results) {
+    entries[result.name] = {
+      blur: await readFile(path.join(OUT_DIR, `${result.name}-blur.txt`), 'utf8'),
+      widths: result.widths,
+      ratio: PROFILES[result.profile].ratio,
+    };
   }
-  const target = path.resolve('src/lib/blur-map.json');
+  const target = path.resolve('src/lib/image-manifest.json');
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, `${JSON.stringify(entries, null, 2)}\n`, 'utf8');
-  console.log(`  -> src/lib/blur-map.json (${names.length} wpisow)`);
+  console.log(`  -> src/lib/image-manifest.json (${results.length} wpisow)`);
 }
 
 /** Zapisuje liste autorow - licencja Unsplash tego nie wymaga, ale wypada. */

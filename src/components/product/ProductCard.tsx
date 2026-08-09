@@ -39,7 +39,7 @@ export function ProductCard({
         <Picture
           name={cover}
           alt={`${product.name} - zdjęcie produktu`}
-          profile="product"
+          ratio={1}
           sizes="(min-width: 1280px) 22rem, (min-width: 768px) 33vw, 50vw"
           priority={priority}
           imgClassName="transition-transform duration-500 ease-(--ease-out-quint) group-hover:scale-[1.04]"
@@ -51,7 +51,7 @@ export function ProductCard({
             {product.badges
               .filter((badge) => badge !== 'promocja')
               .map((badge) => (
-                <Badge key={badge} tone={badge === 'nowosc' ? 'neutral' : 'outline'}>
+                <Badge key={badge} tone="on-image">
                   {badgeLabels[badge]}
                 </Badge>
               ))}
@@ -88,9 +88,7 @@ export function ProductCard({
                 {formatPrice(product.compareAtPrice)}
               </span>
             )}
-            <span className="text-lg font-bold text-text-primary">
-              {getMinPriceLabel(product)}
-            </span>
+            <span className="text-lg font-bold text-text-primary">{getMinPriceLabel(product)}</span>
           </p>
           <span
             aria-hidden="true"

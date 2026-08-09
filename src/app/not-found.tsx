@@ -25,8 +25,8 @@ export default function NotFound() {
         </h1>
 
         <p className="mt-4 text-base leading-relaxed text-text-secondary">
-          Nie znaleźliśmy strony, której szukasz. Mogła zostać przeniesiona
-          albo adres zawiera literówkę.
+          Nie znaleźliśmy strony, której szukasz. Mogła zostać przeniesiona albo adres zawiera
+          literówkę.
         </p>
 
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

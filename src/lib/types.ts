@@ -12,7 +12,8 @@ export type Category = {
   description: string;
   image: string;
   /** Ikona SVG renderowana w kaflach - klucz z CategoryIcon. */
-  icon: 'splitter' | 'spoiler' | 'diffuser' | 'skirt' | 'wheel' | 'exhaust' | 'suspension' | 'carbon';
+  icon:
+    'splitter' | 'spoiler' | 'diffuser' | 'skirt' | 'wheel' | 'exhaust' | 'suspension' | 'carbon';
 };
 
 export type ProductVariant = {
