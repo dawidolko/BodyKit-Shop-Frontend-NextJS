@@ -32,27 +32,27 @@ Cart state lives in `localStorage`, the catalog is compiled into the bundle, and
 
 ## 🖼️ Screenshots
 
-| Home page | Shop |
-|---|---|
+| Home page                                                                                       | Shop                                                                                    |
+| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | ![The BodyKit Shop home page with the hero and featured categories](docs/screenshots/home.webp) | ![The shop listing with product cards and category filters](docs/screenshots/shop.webp) |
 
-| Contact | |
-|---|---|
-| ![The contact page with an accessible, fully validated form](docs/screenshots/contact.webp) | |
+| Contact                                                                                     |     |
+| ------------------------------------------------------------------------------------------- | --- |
+| ![The contact page with an accessible, fully validated form](docs/screenshots/contact.webp) |     |
 
 ---
 
 ## 🧩 Modules
 
-| Module | Description | Stack |
-| --- | --- | --- |
-| **Catalog** | Products, categories and localized content in the data layer | `src/lib/products.ts`, `src/lib/categories.ts` |
-| **Cart** | Client-side cart state persisted to `localStorage` | `src/lib/cart.tsx` |
-| **Product UI** | Card, gallery, filters and add-to-cart | `src/components/product` |
-| **Checkout** | Multi-field checkout with full validation, no network calls | `src/components/checkout` |
-| **SEO** | Structured data emitters for Store, Product, FAQ and BreadcrumbList | `src/components/seo` |
-| **i18n** | Locale config, dictionaries and the language switcher | `src/i18n` |
-| **Image pipeline** | Fetch, crop, convert and manifest generation | `scripts/`, `src/lib/image-manifest.json` |
+| Module             | Description                                                         | Stack                                          |
+| ------------------ | ------------------------------------------------------------------- | ---------------------------------------------- |
+| **Catalog**        | Products, categories and localized content in the data layer        | `src/lib/products.ts`, `src/lib/categories.ts` |
+| **Cart**           | Client-side cart state persisted to `localStorage`                  | `src/lib/cart.tsx`                             |
+| **Product UI**     | Card, gallery, filters and add-to-cart                              | `src/components/product`                       |
+| **Checkout**       | Multi-field checkout with full validation, no network calls         | `src/components/checkout`                      |
+| **SEO**            | Structured data emitters for Store, Product, FAQ and BreadcrumbList | `src/components/seo`                           |
+| **i18n**           | Locale config, dictionaries and the language switcher               | `src/i18n`                                     |
+| **Image pipeline** | Fetch, crop, convert and manifest generation                        | `scripts/`, `src/lib/image-manifest.json`      |
 
 ---
 
@@ -120,21 +120,21 @@ npm run serve     # preview the built output on :3000
 
 ### Available Scripts
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Development server |
-| `npm run build` | Static export into `out/` |
-| `npm run serve` | Preview the built output |
-| `npm run verify` | Types + lint + format + build |
-| `npm run typecheck` | TypeScript only |
-| `npm run lint` / `lint:fix` | ESLint |
-| `npm run format` / `format:check` | Prettier |
-| `npm run audit:a11y` | axe-core audit (needs a running server) |
-| `npm run images:fetch` | Download photo sources |
-| `npm run images:optimize` | Optimize images and write the manifest |
-| `npm run brand:assets` | Favicons and Open Graph card |
-| `npm run docker:build` | Build the Docker image |
-| `npm run docker:up` / `docker:down` | Docker Compose |
+| Command                             | Purpose                                 |
+| ----------------------------------- | --------------------------------------- |
+| `npm run dev`                       | Development server                      |
+| `npm run build`                     | Static export into `out/`               |
+| `npm run serve`                     | Preview the built output                |
+| `npm run verify`                    | Types + lint + format + build           |
+| `npm run typecheck`                 | TypeScript only                         |
+| `npm run lint` / `lint:fix`         | ESLint                                  |
+| `npm run format` / `format:check`   | Prettier                                |
+| `npm run audit:a11y`                | axe-core audit (needs a running server) |
+| `npm run images:fetch`              | Download photo sources                  |
+| `npm run images:optimize`           | Optimize images and write the manifest  |
+| `npm run brand:assets`              | Favicons and Open Graph card            |
+| `npm run docker:build`              | Build the Docker image                  |
+| `npm run docker:up` / `docker:down` | Docker Compose                          |
 
 ---
 
@@ -179,13 +179,13 @@ The visual direction is **carbon plus electric orange**: a dark technical base w
 
 ### Colour
 
-| Role | Light | Dark |
-| --- | --- | --- |
-| Primary text | `carbon-900` — 16.8:1 | `carbon-50` — 17.6:1 |
-| Secondary text | `carbon-600` — 7.2:1 | `carbon-300` — 9.2:1 |
-| Muted text | `carbon-500` — 5.1:1 | `carbon-400` — 5.6:1 |
-| Link / accent | `brand-700` — 5.5:1 | `brand-400` — 6.9:1 |
-| Text on accent | `carbon-950` on `brand-500` — 6.6:1 | same pair |
+| Role           | Light                               | Dark                 |
+| -------------- | ----------------------------------- | -------------------- |
+| Primary text   | `carbon-900` — 16.8:1               | `carbon-50` — 17.6:1 |
+| Secondary text | `carbon-600` — 7.2:1                | `carbon-300` — 9.2:1 |
+| Muted text     | `carbon-500` — 5.1:1                | `carbon-400` — 5.6:1 |
+| Link / accent  | `brand-700` — 5.5:1                 | `brand-400` — 6.9:1  |
+| Text on accent | `carbon-950` on `brand-500` — 6.6:1 | same pair            |
 
 One decision worth explaining: **brand surfaces use dark ink, not white.** White on `brand-500` measures 2.8:1, which fails even the large-text threshold. Dark carbon on the same orange reaches 6.6:1 — and reads sharper.
 
@@ -314,8 +314,8 @@ The site runs on a custom domain: **[bodykit.dawidolko.pl](https://bodykit.dawid
 
 Add this record for `dawidolko.pl`:
 
-| Type | Name | Value |
-| --- | --- | --- |
+| Type    | Name      | Value                  |
+| ------- | --------- | ---------------------- |
 | `CNAME` | `bodykit` | `dawidolko.github.io.` |
 
 Propagation usually takes a few minutes. "Enforce HTTPS" stays greyed out until the certificate is issued.
