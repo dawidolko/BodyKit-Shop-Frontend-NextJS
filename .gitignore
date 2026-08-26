@@ -37,3 +37,6 @@ yarn-error.log*
 
 # obrazy pobierane skryptem (zrodla), zoptymalizowane trafiaja do public/
 /.image-cache/
+
+# Machine-local Claude settings
+.claude/settings.local.json
