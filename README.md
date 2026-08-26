@@ -6,12 +6,12 @@
 
 Cart state lives in `localStorage`, the catalog is compiled into the bundle, and every page is generated at build time in both languages. The project demonstrates a production-grade static Next.js setup: prefixed locale routes, a build-time image pipeline, a documented design system and an accessibility audit wired into CI.
 
-[![Next.js 16](https://img.shields.io/badge/Next.js-16-000)](https://nextjs.org)
-[![React 19](https://img.shields.io/badge/React-19-087ea4)](https://react.dev)
-[![Tailwind 4](https://img.shields.io/badge/Tailwind-4-06b6d4)](https://tailwindcss.com)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6)](https://www.typescriptlang.org)
-[![WCAG 2.2 AA](https://img.shields.io/badge/WCAG_2.2-AA-16a34a)](#-accessibility)
-[![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![WCAG](https://img.shields.io/badge/WCAG%202.2-AA-16A34A?logo=accessibleicon&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 ---
 
