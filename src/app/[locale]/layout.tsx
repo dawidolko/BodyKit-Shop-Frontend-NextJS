@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Barlow, Barlow_Condensed } from 'next/font/google';
 import '../globals.css';
-import { themeInitScript } from '@/components/layout/ThemeToggle';
+import { ThemeSync, themeInitScript } from '@/components/layout/ThemeToggle';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/lib/cart';
@@ -114,6 +114,7 @@ export default async function LocaleLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="flex min-h-dvh flex-col">
+        <ThemeSync />
         <a href="#main-content" className="skip-link">
           {dict.nav.skipToContent}
         </a>

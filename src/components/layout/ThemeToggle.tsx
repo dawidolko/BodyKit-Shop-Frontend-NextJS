@@ -1,6 +1,6 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { MoonIcon, SunIcon } from '@/components/ui/Icon';
 import { getDictionary } from '@/i18n';
 import type { Locale } from '@/i18n/config';
@@ -14,6 +14,31 @@ type Theme = 'light' | 'dark';
  * it the page would flash the light theme before React could apply the class —
  * especially jarring for someone who chose dark mode.
  */
+/**
+ * Re-applies the stored theme after a client-side navigation.
+ *
+ * The locale switcher is a `<Link>`, so moving between /pl and /en re-renders
+ * the document shell. React then reconciles `<html className={fontVariables}>`
+ * and drops the `dark` class that themeInitScript had added outside React's
+ * knowledge — the page snapped back to light while localStorage still said
+ * dark. Restoring it on mount keeps the two in step.
+ */
+export function ThemeSync() {
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const shouldBeDark = stored === 'dark' || (!stored && prefersDark);
+
+      document.documentElement.classList.toggle('dark', shouldBeDark);
+    } catch {
+      // A blocked localStorage is not a reason to break the page.
+    }
+  });
+
+  return null;
+}
+
 export const themeInitScript = `
 (function() {
   try {
