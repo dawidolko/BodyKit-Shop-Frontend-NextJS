@@ -107,8 +107,11 @@ export function Header({ locale }: { locale: Locale }) {
         <Link
           href={href('/')}
           className="shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--focus-ring)"
-          aria-label={dict.nav.home}
         >
+          {/* Accessible name as real text instead of aria-label: the SVG
+              wordmark renders "BODYKIT" / "SHOP" as visible text, which would
+              not match an aria-label (WCAG 2.5.3, axe label-content-name-mismatch). */}
+          <span className="sr-only">{dict.nav.home}</span>
           {/* Below 380 px the full wordmark would not fit next to the icons,
               so only the monogram is shown. */}
           <Logo
