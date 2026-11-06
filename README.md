@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="https://bodykit.dawidolko.pl/"><img src="docs/readme/banner.webp" alt="BodyKit Shop: web platform. A front-end shop for car body kits and styling parts - a complete bilingual storefront that compiles to static HTML" width="100%"></a>
+</p>
+
 # BodyKit Shop
 
 > 🚀 **A front-end shop for car body kits and styling parts** - a complete bilingual storefront that compiles to static HTML
@@ -12,6 +16,8 @@ Cart state lives in `localStorage`, the catalog is compiled into the bundle, and
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
 ![WCAG](https://img.shields.io/badge/WCAG%202.2-AA-16A34A?logo=accessibleicon&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
+
+**[Live site](https://bodykit.dawidolko.pl/)** · [Screenshots](#️-screenshots) · [Getting started](#-getting-started)
 
 ---
 
@@ -220,6 +226,8 @@ What that covers in practice:
 - **High contrast** — `prefers-contrast: more` strengthens borders and muted text.
 - **Structure** — one `h1` per page and no skipped heading levels (`ProductCard` takes its level from context).
 
+An accessibility panel in the corner of every page changes text size, contrast, font and motion, and remembers the choice on the device. It sits on top of the markup and does not replace accessible markup.
+
 ---
 
 ## 🖼️ Images
@@ -344,12 +352,6 @@ The catalog, technical descriptions and company details are fictional.
 
 ---
 
-## 🌍 Live Demo
-
-The project is deployed and available at: **[https://bodykit.dawidolko.pl](https://bodykit.dawidolko.pl)**
-
----
-
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
@@ -358,7 +360,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👨‍💻 Author
 
-Created by **[Dawid Olko](https://github.com/dawidolko)**
+**Dawid Olko** · Fullstack / AI Developer
 
-- **Website** — [dawidolko.pl](https://dawidolko.pl/)
-- **LinkedIn** — [@dawidolko](https://www.linkedin.com/in/dawidolko/)
+[Portfolio](https://olkodawid.dawidolko.pl) · [CV](https://cv.dawidolko.pl) · [LinkedIn](https://www.linkedin.com/in/dawidolko/) · [GitHub](https://github.com/dawidolko)
