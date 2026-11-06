@@ -222,6 +222,8 @@ What that covers in practice:
 - **Keyboard** — skip link, `Escape` closes panels and restores focus, disclosures expose `aria-expanded`.
 - **Forms** — labels bound to controls, errors announced through `role="alert"`, and a failed submit moves focus to a summary that links to each broken field.
 - **Language** — `<html lang>` matches the rendered locale, and `hreflang` links pair the two versions.
+
+An accessibility panel in the corner of every page changes text size, contrast, font and motion, and remembers the choice on the device. It sits on top of the markup and does not replace accessible markup.
 - **Motion** — `prefers-reduced-motion` collapses every animation to 0.01 ms.
 - **High contrast** — `prefers-contrast: more` strengthens borders and muted text.
 - **Structure** — one `h1` per page and no skipped heading levels (`ProductCard` takes its level from context).
