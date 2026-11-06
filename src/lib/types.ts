@@ -14,6 +14,8 @@ export type BadgeKey = 'new' | 'bestseller' | 'sale' | 'lastUnits';
 
 export type Category = {
   slug: string;
+  /** Three-letter section code, printed on index tabs and part numbers. */
+  code: string;
   name: Localized;
   /** Short line under the category heading. */
   tagline: Localized;

@@ -5,28 +5,10 @@ import { categories } from '@/lib/categories';
 import { t } from '@/lib/utils';
 import { getDictionary } from '@/i18n';
 import { defaultLocale, localePath, localeTags } from '@/i18n/config';
-import { Barlow, Barlow_Condensed } from 'next/font/google';
 import './globals.css';
 import { themeInitScript } from '@/components/layout/ThemeToggle';
 import { CONTENT_SECURITY_POLICY } from '@/lib/csp';
-
-const barlow = Barlow({
-  subsets: ['latin'],
-  preload: false,
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-barlow',
-  display: 'swap',
-});
-
-const barlowCondensed = Barlow_Condensed({
-  subsets: ['latin'],
-  preload: false,
-  weight: ['600', '700', '800'],
-  variable: '--font-barlow-condensed',
-  display: 'swap',
-});
-
-const fontVariables = `${barlow.variable} ${barlowCondensed.variable}`;
+import { fontVariables } from '@/lib/fonts';
 
 /**
  * A global 404 rather than app/not-found.tsx, whose stylesheet and fonts would
@@ -58,16 +40,11 @@ export default function GlobalNotFound() {
             route, so nothing else provides one. */}
         <main id="main-content" className="container-page flex-1 py-24">
           <div className="mx-auto max-w-2xl text-center">
-            <p
-              aria-hidden="true"
-              className="font-display text-8xl font-extrabold leading-none text-accent-fg sm:text-9xl"
-            >
+            <p aria-hidden="true" className="type-display-xl text-accent-fg">
               404
             </p>
 
-            <h1 className="mt-6 text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
-              {dict.notFound.title}
-            </h1>
+            <h1 className="type-display-lg mt-6">{dict.notFound.title}</h1>
 
             <p className="mt-4 text-base leading-relaxed text-text-secondary">
               {dict.notFound.lead}
@@ -86,7 +63,7 @@ export default function GlobalNotFound() {
           <nav aria-labelledby="popular-heading" className="mx-auto mt-16 max-w-3xl">
             <h2
               id="popular-heading"
-              className="text-center text-xs font-bold uppercase tracking-wider text-text-muted"
+              className="text-center text-sm font-bold not-italic text-text-muted"
             >
               {dict.notFound.popular}
             </h2>

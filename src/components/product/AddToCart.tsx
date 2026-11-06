@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/Button';
+import { Button, LinkButton } from '@/components/ui/Button';
 import { CheckIcon } from '@/components/ui/Icon';
 import { useCart } from '@/lib/cart';
 import type { Product } from '@/lib/types';
@@ -37,10 +36,10 @@ export function AddToCart({ product, locale }: { product: Product; locale: Local
   return (
     <div className="flex flex-col gap-6">
       <fieldset>
-        <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">
+        <legend className="text-sm font-bold text-text-primary">
           {dict.product.materialAndFinish}
         </legend>
-        <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div className="mt-2 grid gap-px bg-border-default p-px sm:grid-cols-2">
           {product.variants.map((item) => {
             const price = product.price + item.priceDelta;
             const selected = item.id === variantId;
@@ -48,11 +47,10 @@ export function AddToCart({ product, locale }: { product: Product; locale: Local
               <label
                 key={item.id}
                 className={cn(
-                  'flex cursor-pointer items-start gap-3 rounded-sm border p-3 transition-colors',
-                  selected
-                    ? 'border-border-brand bg-accent-subtle'
-                    : 'border-border-subtle hover:border-border-strong',
-                  !item.inStock && 'cursor-not-allowed opacity-55',
+                  'flex cursor-pointer items-start gap-3 p-3 transition-colors',
+                  'has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-(--focus-ring)',
+                  selected ? 'bg-bg-muted shadow-[inset_4px_0_0_var(--accent)]' : 'bg-surface',
+                  !item.inStock && 'cursor-not-allowed opacity-70',
                 )}
               >
                 <input
@@ -71,7 +69,7 @@ export function AddToCart({ product, locale }: { product: Product; locale: Local
                   <span className="block text-xs text-text-muted">
                     {dict.finishes[item.finish]}
                   </span>
-                  <span className="mt-1 block text-sm font-bold text-text-primary">
+                  <span className="type-display mt-1 block text-sm text-text-primary">
                     {formatPrice(price, locale)}
                   </span>
                   {!item.inStock && (
@@ -88,13 +86,10 @@ export function AddToCart({ product, locale }: { product: Product; locale: Local
 
       <div className="flex flex-wrap items-end gap-4">
         <div>
-          <label
-            htmlFor="quantity"
-            className="block text-xs font-bold uppercase tracking-wider text-text-primary"
-          >
+          <label htmlFor="quantity" className="block text-sm font-bold text-text-primary">
             {dict.product.quantity}
           </label>
-          <div className="mt-2 flex items-center rounded-sm border border-border-default">
+          <div className="mt-1.5 flex items-center border-2 border-border-strong">
             <button
               type="button"
               onClick={() => setQuantity((value) => Math.max(1, value - 1))}
@@ -114,7 +109,7 @@ export function AddToCart({ product, locale }: { product: Product; locale: Local
                 const parsed = Number.parseInt(event.target.value, 10);
                 setQuantity(Number.isNaN(parsed) ? 1 : Math.min(99, Math.max(1, parsed)));
               }}
-              className="h-11 w-14 border-x border-border-default bg-transparent text-center text-sm font-semibold text-text-primary focus-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              className="h-11 w-14 border-x-2 border-border-strong bg-transparent text-center text-sm font-semibold text-text-primary focus-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
             />
             <button
               type="button"
@@ -129,23 +124,25 @@ export function AddToCart({ product, locale }: { product: Product; locale: Local
         </div>
 
         <div className="flex-1">
-          <p className="text-xs uppercase tracking-wider text-text-muted">{dict.product.total}</p>
-          <p className="mt-1 text-2xl font-extrabold text-text-primary">
+          <p className="text-sm font-bold text-text-primary">{dict.product.total}</p>
+          <p className="type-display mt-1 text-3xl text-text-primary">
             {formatPrice(unitPrice * quantity, locale)}
           </p>
         </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Button size="lg" onClick={handleAdd} disabled={!variant.inStock} className="flex-1">
+        <Button size="lg" onClick={handleAdd} disabled={!variant.inStock} className="mx-1.5 flex-1">
           {variant.inStock ? dict.product.addToCart : dict.product.unavailable}
         </Button>
-        <Link
+        <LinkButton
           href={localePath(locale, '/cart')}
-          className="inline-flex h-13 items-center justify-center rounded-sm border border-border-default px-6 text-sm font-semibold uppercase tracking-wide text-text-primary transition-colors hover:border-border-brand hover:text-text-brand focus-ring"
+          variant="secondary"
+          size="lg"
+          className="mx-1.5"
         >
           {dict.product.goToCart}
-        </Link>
+        </LinkButton>
       </div>
 
       {/* Message region - present in the DOM from the start, so the screen

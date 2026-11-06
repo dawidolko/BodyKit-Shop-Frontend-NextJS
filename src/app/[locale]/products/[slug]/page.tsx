@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/Badge';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { CheckIcon, ShieldIcon, TruckIcon, WrenchIcon } from '@/components/ui/Icon';
 import { getCategory } from '@/lib/categories';
-import { getProduct, getRelatedProducts, products } from '@/lib/products';
+import { getPartNumber, getProduct, getRelatedProducts, products } from '@/lib/products';
 import {
   absoluteLocaleUrl,
   canonicalUrl,
@@ -121,159 +121,178 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
         dict={dict}
       />
 
-      <div className="container-page py-8">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
-          <ProductGallery images={product.images} productName={name} locale={locale} />
+      <div className="grid border-b-2 border-border-strong bg-surface lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]">
+        <ProductGallery images={product.images} productName={name} locale={locale} />
 
-          <div>
-            {(product.badges.length > 0 || discount) && (
-              <div className="mb-4 flex flex-wrap gap-2">
-                {discount && <Badge tone="accent">-{discount}%</Badge>}
-                {product.badges.map((badge) => (
-                  <Badge key={badge} tone="outline">
-                    {dict.badges[badge]}
-                  </Badge>
-                ))}
+        <div className="px-4 py-6 md:px-6 lg:border-l-2 lg:border-border-strong lg:py-8 xl:pr-[max(1.5rem,calc((100vw-90rem)/2+1.5rem))]">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="index-tab type-data">
+              <span className="sr-only">{dict.product.partNumber} </span>
+              {getPartNumber(product)}
+            </span>
+            {discount && <Badge tone="accent">-{discount}%</Badge>}
+            {product.badges
+              .filter((badge) => badge !== 'sale')
+              .map((badge) => (
+                <Badge key={badge} tone={badge === 'lastUnits' ? 'hazard' : 'on-image'}>
+                  {dict.badges[badge]}
+                </Badge>
+              ))}
+          </div>
+
+          <h1 className="type-display-lg mt-3">{name}</h1>
+
+          <div className="mt-3 flex flex-wrap items-center gap-4">
+            <Rating value={product.rating} count={product.reviewCount} dict={dict} />
+            <span className="text-sm font-semibold">
+              {anyInStock ? (
+                <span className="flex items-center gap-1.5 text-success">
+                  <CheckIcon className="size-4" />
+                  {dict.product.available}
+                </span>
+              ) : (
+                <span className="text-danger">{dict.product.unavailable}</span>
+              )}
+            </span>
+          </div>
+
+          <p className="mt-4 max-w-prose leading-relaxed text-text-secondary">{description}</p>
+
+          {product.compareAtPrice && (
+            <p className="mt-4 text-sm text-text-muted">
+              {dict.product.listPrice}{' '}
+              <span className="line-through">{formatPrice(product.compareAtPrice, locale)}</span>
+            </p>
+          )}
+
+          <div className="mt-5 border-t-2 border-border-strong pt-5">
+            <AddToCart product={product} locale={locale} />
+          </div>
+
+          <ul className="mt-5 grid gap-3 border-t border-border-subtle pt-4 sm:grid-cols-3">
+            <li className="flex gap-2.5">
+              <TruckIcon className="size-5 shrink-0 text-accent-fg" />
+              <span className="text-sm leading-snug text-text-secondary">
+                {shippingLabel(product.shippingDays, dict)}
+              </span>
+            </li>
+            <li className="flex gap-2.5">
+              <ShieldIcon className="size-5 shrink-0 text-accent-fg" />
+              <span className="text-sm leading-snug text-text-secondary">
+                {dict.product.warranty}
+              </span>
+            </li>
+            <li className="flex gap-2.5">
+              <WrenchIcon className="size-5 shrink-0 text-accent-fg" />
+              <span className="text-sm leading-snug text-text-secondary">
+                {dict.product.instructions}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="container-page grid gap-x-12 gap-y-10 py-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,4fr)_minmax(0,3fr)]">
+        <section aria-labelledby="fitment-heading">
+          <h2 id="fitment-heading" className="type-display-md">
+            {dict.product.fitment}
+          </h2>
+          <table className="mt-4 w-full border-collapse bg-surface text-sm">
+            <thead>
+              <tr className="border-b-2 border-border-strong text-left">
+                <th scope="col" className="px-3 py-2 font-bold">
+                  {dict.product.make}
+                </th>
+                <th scope="col" className="px-3 py-2 font-bold">
+                  {dict.product.model}
+                </th>
+                <th scope="col" className="px-3 py-2 font-bold">
+                  {dict.product.yearsColumn}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {product.fitment.map((fit) => (
+                <tr key={`${fit.make}-${fit.model}`} className="border-b border-border-subtle">
+                  <td className="px-3 py-2.5 font-semibold text-text-primary">{fit.make}</td>
+                  <td className="px-3 py-2.5 text-text-primary">{fit.model}</td>
+                  <td className="type-data px-3 py-2.5 text-text-secondary">{fit.years}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-3 text-sm leading-relaxed text-text-muted">
+            {dict.product.notListed}{' '}
+            <Link
+              href={localePath(locale, '/contact')}
+              className="font-medium text-text-brand underline focus-ring"
+            >
+              {dict.product.notListedLink}
+            </Link>{' '}
+            {dict.product.notListedSuffix}
+          </p>
+        </section>
+
+        <section aria-labelledby="spec-heading">
+          <h2 id="spec-heading" className="type-display-md">
+            {dict.product.specs}
+          </h2>
+          <dl className="mt-4 divide-y divide-border-subtle border-y-2 border-border-strong bg-surface">
+            {category && (
+              <div className="flex justify-between gap-4 px-3 py-2.5">
+                <dt className="text-sm text-text-muted">{dict.product.category}</dt>
+                <dd className="text-right text-sm font-medium text-text-primary">
+                  {t(category.name, locale)}
+                </dd>
               </div>
             )}
+            {product.specs.map((spec) => (
+              <div key={t(spec.label, locale)} className="flex justify-between gap-4 px-3 py-2.5">
+                <dt className="text-sm text-text-muted">{t(spec.label, locale)}</dt>
+                <dd className="text-right text-sm font-medium text-text-primary">
+                  {t(spec.value, locale)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
 
-            <h1 className="text-3xl font-extrabold uppercase leading-tight tracking-tight sm:text-4xl">
-              {name}
-            </h1>
-
-            <div className="mt-3 flex flex-wrap items-center gap-4">
-              <Rating value={product.rating} count={product.reviewCount} dict={dict} />
-              <span className="text-sm text-text-muted">
-                {anyInStock ? (
-                  <span className="flex items-center gap-1.5 text-success">
-                    <CheckIcon className="size-4" />
-                    {dict.product.available}
-                  </span>
-                ) : (
-                  <span className="text-danger">{dict.product.unavailable}</span>
-                )}
-              </span>
-            </div>
-
-            <p className="mt-5 text-base leading-relaxed text-text-secondary">{description}</p>
-
-            {product.compareAtPrice && (
-              <p className="mt-6 text-sm text-text-muted">
-                {dict.product.listPrice}{' '}
-                <span className="line-through">{formatPrice(product.compareAtPrice, locale)}</span>
-              </p>
+        <section aria-labelledby="included-heading">
+          <h2 id="included-heading" className="type-display-md">
+            {dict.product.included}
+          </h2>
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {t(product.included, locale).map((item) => (
+              <li key={item} className="flex gap-3 text-sm text-text-secondary">
+                <CheckIcon className="mt-0.5 size-4 shrink-0 text-success" />
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-sm leading-relaxed text-text-muted">
+            {dict.product.availableMaterials}{' '}
+            {[...new Set(product.variants.map((variant) => dict.materials[variant.material]))].join(
+              ', ',
             )}
-
-            <div className="mt-6 border-t border-border-subtle pt-6">
-              <AddToCart product={product} locale={locale} />
-            </div>
-
-            <ul className="mt-8 grid gap-4 border-t border-border-subtle pt-6 sm:grid-cols-3">
-              <li className="flex gap-3">
-                <TruckIcon className="size-5 shrink-0 text-accent-fg" />
-                <span className="text-xs leading-relaxed text-text-secondary">
-                  {shippingLabel(product.shippingDays, dict)}
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <ShieldIcon className="size-5 shrink-0 text-accent-fg" />
-                <span className="text-xs leading-relaxed text-text-secondary">
-                  {dict.product.warranty}
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <WrenchIcon className="size-5 shrink-0 text-accent-fg" />
-                <span className="text-xs leading-relaxed text-text-secondary">
-                  {dict.product.instructions}
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Specifications, fitment and what is in the box */}
-        <div className="mt-16 grid gap-10 lg:grid-cols-3">
-          <section aria-labelledby="spec-heading">
-            <h2 id="spec-heading" className="text-lg font-bold uppercase tracking-wide">
-              {dict.product.specs}
-            </h2>
-            <dl className="mt-4 divide-y divide-border-subtle border-y border-border-subtle">
-              {product.specs.map((spec) => (
-                <div key={t(spec.label, locale)} className="flex justify-between gap-4 py-3">
-                  <dt className="text-sm text-text-muted">{t(spec.label, locale)}</dt>
-                  <dd className="text-right text-sm font-medium text-text-primary">
-                    {t(spec.value, locale)}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-
-          <section aria-labelledby="fitment-heading">
-            <h2 id="fitment-heading" className="text-lg font-bold uppercase tracking-wide">
-              {dict.product.fitment}
-            </h2>
-            <ul className="mt-4 divide-y divide-border-subtle border-y border-border-subtle">
-              {product.fitment.map((fit) => (
-                <li key={`${fit.make}-${fit.model}`} className="py-3">
-                  <p className="text-sm font-semibold text-text-primary">
-                    {fit.make} {fit.model}
-                  </p>
-                  <p className="text-xs text-text-muted">
-                    {dict.product.years} {fit.years}
-                  </p>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 text-xs leading-relaxed text-text-muted">
-              {dict.product.notListed}{' '}
-              <Link
-                href={localePath(locale, '/contact')}
-                className="font-medium text-text-brand underline focus-ring"
-              >
-                {dict.product.notListedLink}
-              </Link>{' '}
-              {dict.product.notListedSuffix}
-            </p>
-          </section>
-
-          <section aria-labelledby="included-heading">
-            <h2 id="included-heading" className="text-lg font-bold uppercase tracking-wide">
-              {dict.product.included}
-            </h2>
-            <ul className="mt-4 flex flex-col gap-3">
-              {t(product.included, locale).map((item) => (
-                <li key={item} className="flex gap-3 text-sm text-text-secondary">
-                  <CheckIcon className="mt-0.5 size-4 shrink-0 text-success" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-5 text-xs leading-relaxed text-text-muted">
-              {dict.product.availableMaterials}{' '}
-              {[
-                ...new Set(product.variants.map((variant) => dict.materials[variant.material])),
-              ].join(', ')}
-              .
-            </p>
-          </section>
-        </div>
-
-        {related.length > 0 && (
-          <section aria-labelledby="related-heading" className="mt-20">
-            <h2 id="related-heading" className="text-2xl font-extrabold uppercase tracking-tight">
-              {dict.product.related}
-            </h2>
-            <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {related.map((item) => (
-                <li key={item.slug} className="flex">
-                  <ProductCard product={item} locale={locale} dict={dict} className="w-full" />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
+            .
+          </p>
+        </section>
       </div>
+
+      {related.length > 0 && (
+        <section aria-labelledby="related-heading">
+          <h2 id="related-heading" className="type-display-lg container-page pb-5">
+            {dict.product.related}
+          </h2>
+          <ul className="part-wall">
+            {related.map((item) => (
+              <li key={item.slug}>
+                <ProductCard product={item} locale={locale} dict={dict} className="w-full" />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </>
   );
 }

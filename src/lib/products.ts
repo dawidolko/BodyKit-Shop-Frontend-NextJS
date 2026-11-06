@@ -1,3 +1,4 @@
+import { getCategory } from './categories';
 import type { Product, ProductVariant } from './types';
 
 /**
@@ -1137,6 +1138,34 @@ export function getFeaturedProducts(limit = 8): Product[] {
     .filter((product) => product.badges.length > 0)
     .sort((a, b) => b.rating - a.rating)
     .slice(0, limit);
+}
+
+/**
+ * Catalogue number printed on tags and order lines, e.g. BK-SPL-002. It is the
+ * product's position inside its category, so new parts belong at the end of a
+ * category: inserting one earlier would renumber the parts behind it.
+ */
+export function getPartNumber(product: Product): string {
+  const position = getProductsByCategory(product.categorySlug).findIndex(
+    (item) => item.slug === product.slug,
+  );
+  const code = getCategory(product.categorySlug)?.code ?? 'GEN';
+  return `BK-${code}-${String(position + 1).padStart(3, '0')}`;
+}
+
+/** Car makes in the catalogue, the best covered first. */
+export function getMakes(limit = 8): string[] {
+  const counts = new Map<string, number>();
+  for (const product of products) {
+    for (const make of new Set(product.fitment.map((fit) => fit.make))) {
+      if (make === 'Universal') continue;
+      counts.set(make, (counts.get(make) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, limit)
+    .map(([make]) => make);
 }
 
 /** Lowest variant price - used for the "from X zl" label. */

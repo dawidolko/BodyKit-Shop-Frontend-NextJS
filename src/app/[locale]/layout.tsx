@@ -1,36 +1,15 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Barlow, Barlow_Condensed } from 'next/font/google';
 import '../globals.css';
 import { ThemeSync, themeInitScript } from '@/components/layout/ThemeToggle';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/lib/cart';
+import { fontVariables } from '@/lib/fonts';
 import { site, absoluteLocaleUrl, canonicalUrl, ogImage } from '@/lib/site';
 import { CONTENT_SECURITY_POLICY } from '@/lib/csp';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localeTags, ogLocales, type Locale } from '@/i18n/config';
-
-/*
- * Only the heading face is preloaded, in its latin subset. latin-ext stays
- * declared and loads on demand, so Polish glyphs still come from these files.
- */
-const barlow = Barlow({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-barlow',
-  display: 'swap',
-  preload: false,
-});
-
-const barlowCondensed = Barlow_Condensed({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-barlow-condensed',
-  display: 'swap',
-});
-
-const fontVariables = `${barlow.variable} ${barlowCondensed.variable}`;
 
 type LayoutParams = { locale: string };
 
@@ -110,7 +89,7 @@ export default async function LocaleLayout({
     <html lang={localeTags[typedLocale]} className={fontVariables}>
       <head>
         <meta httpEquiv="Content-Security-Policy" content={CONTENT_SECURITY_POLICY} />
-        <script src="/a11y/a11y-panel.js" data-accent="#1d4ed8" defer></script>
+        <script src="/a11y/a11y-panel.js" data-accent="#c8102e" defer></script>
         {/* Applies the theme before first paint. Without it the page would
             flash a light background before React adds the .dark class. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
@@ -122,7 +101,7 @@ export default async function LocaleLayout({
         </a>
         <CartProvider>
           <Header locale={typedLocale} />
-          <main id="main-content" tabIndex={-1} className="flex-1">
+          <main id="main-content" tabIndex={-1} className="flex-1 pb-16 has-[.home-page]:pb-0">
             {children}
           </main>
           <Footer locale={typedLocale} dict={dict} />

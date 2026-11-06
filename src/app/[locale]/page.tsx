@@ -68,11 +68,13 @@ export default async function HomePage({ params }: { params: Promise<PageParams>
     <>
       <JsonLd data={[organization, website]} />
       {/* The only h1 on this page lives inside the Hero component. */}
-      <Hero locale={locale} dict={dict} />
-      <CategoryGrid locale={locale} dict={dict} />
-      <FeaturedProducts locale={locale} dict={dict} />
-      <ProcessSection locale={locale} dict={dict} />
-      <CtaBanner locale={locale} dict={dict} />
+      <div className="home-page">
+        <Hero locale={locale} dict={dict} />
+        <FeaturedProducts locale={locale} dict={dict} />
+        <CategoryGrid locale={locale} dict={dict} />
+        <ProcessSection locale={locale} dict={dict} />
+        <CtaBanner locale={locale} dict={dict} />
+      </div>
     </>
   );
 }

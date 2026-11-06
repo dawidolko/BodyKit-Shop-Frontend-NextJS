@@ -108,7 +108,7 @@ export default async function AccountPage({ params }: { params: Promise<PagePara
       <PageHeader title={dict.account.title} description={dict.account.description} />
 
       <div className="container-page pb-16">
-        <div className="mb-8 rounded-sm border border-warning/40 bg-warning/5 p-4">
+        <div className="mb-8 border-l-4 border-hazard bg-surface p-4">
           <p className="text-sm leading-relaxed text-text-secondary">
             <strong className="font-bold text-text-primary">{dict.account.demoNoticeStrong}</strong>{' '}
             {dict.account.demoNotice}
@@ -117,19 +117,16 @@ export default async function AccountPage({ params }: { params: Promise<PagePara
 
         <div className="grid gap-10 lg:grid-cols-[1fr_20rem]">
           <section aria-labelledby="orders-heading">
-            <h2 id="orders-heading" className="text-xl font-extrabold uppercase tracking-tight">
+            <h2 id="orders-heading" className="type-display-md">
               {dict.account.orderHistory}
             </h2>
 
             <ul className="mt-5 flex flex-col gap-4">
               {orders.map((order) => (
-                <li
-                  key={order.id}
-                  className="rounded-md border border-border-subtle bg-surface p-5"
-                >
+                <li key={order.id} className="sheet p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="font-mono text-sm font-bold text-text-primary">{order.id}</p>
+                      <p className="type-data text-base text-text-primary">{order.id}</p>
                       <p className="mt-0.5 text-xs text-text-muted">
                         <time dateTime={order.date}>{formatDate(order.date, locale)}</time>
                       </p>
@@ -173,10 +170,8 @@ export default async function AccountPage({ params }: { params: Promise<PagePara
           </section>
 
           <aside className="flex flex-col gap-5">
-            <div className="rounded-md border border-border-subtle bg-surface p-6">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-text-muted">
-                {dict.account.deliveryDetails}
-              </h2>
+            <div className="sheet p-6">
+              <h2 className="text-sm font-bold text-text-muted">{dict.account.deliveryDetails}</h2>
               <address className="mt-4 text-sm not-italic leading-relaxed text-text-secondary">
                 Jan Kowalski
                 <br />
@@ -196,10 +191,8 @@ export default async function AccountPage({ params }: { params: Promise<PagePara
               </LinkButton>
             </div>
 
-            <div className="rounded-md border border-border-subtle bg-surface p-6">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-text-muted">
-                {dict.account.savedCars}
-              </h2>
+            <div className="sheet p-6">
+              <h2 className="text-sm font-bold text-text-muted">{dict.account.savedCars}</h2>
               <ul className="mt-4 flex flex-col gap-4">
                 {savedCars.map((car) => (
                   <li key={car.name}>

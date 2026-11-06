@@ -159,16 +159,14 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
       <div className="container-page pb-16">
         <div className="grid gap-10 lg:grid-cols-[14rem_1fr]">
-          <nav aria-label={dict.styleGuide.sections} className="lg:sticky lg:top-28 lg:self-start">
-            <p className="text-xs font-bold uppercase tracking-wider text-text-muted">
-              {dict.styleGuide.sections}
-            </p>
+          <nav aria-label={dict.styleGuide.sections} className="lg:sticky lg:top-20 lg:self-start">
+            <p className="text-sm font-bold text-text-muted">{dict.styleGuide.sections}</p>
             <ul className="mt-4 flex flex-col gap-2">
               {sections.map((section) => (
                 <li key={section.id}>
                   <a
                     href={`#${section.id}`}
-                    className="rounded-xs text-sm text-text-secondary transition-colors hover:text-text-brand focus-ring"
+                    className="text-sm text-text-secondary transition-colors hover:text-text-brand focus-ring"
                   >
                     {section.label}
                   </a>
@@ -180,14 +178,14 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
           <div className="flex min-w-0 flex-col gap-16">
             {/* Brand mark */}
             <section aria-labelledby="logo-heading">
-              <h2 id="logo-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="logo-heading" className="type-display-md">
                 {dict.styleGuide.brandMark}
               </h2>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
-                <div className="flex items-center justify-center overflow-hidden rounded-md border border-border-subtle bg-surface p-6 sm:p-8">
+                <div className="flex items-center justify-center overflow-hidden sheet p-6 sm:p-8">
                   <Logo className="h-10 w-auto max-w-full text-text-primary sm:h-12" />
                 </div>
-                <div className="flex items-center justify-center overflow-hidden rounded-md border border-border-subtle bg-carbon-950 p-6 sm:p-8">
+                <div className="flex items-center justify-center overflow-hidden sheet bg-carbon-950 p-6 sm:p-8">
                   <Logo className="h-10 w-auto max-w-full text-carbon-50 sm:h-12" />
                 </div>
               </div>
@@ -198,19 +196,17 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Colours */}
             <section id="colors" aria-labelledby="colors-heading" className="scroll-mt-28">
-              <h2 id="colors-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="colors-heading" className="type-display-md">
                 {dict.styleGuide.colors}
               </h2>
 
-              <h3 className="mt-6 text-sm font-bold uppercase tracking-wider text-text-muted">
+              <h3 className="mt-6 text-sm font-bold text-text-muted">
                 {dict.styleGuide.brandScale}
               </h3>
               <ul className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-11">
                 {brandScale.map((entry) => (
                   <li key={entry.shade}>
-                    <div
-                      className={`h-14 rounded-sm border border-border-subtle ${entry.className}`}
-                    />
+                    <div className={`h-14 border border-border-subtle ${entry.className}`} />
                     <p className="mt-1 text-center text-[0.6875rem] text-text-muted">
                       {entry.shade}
                     </p>
@@ -218,15 +214,13 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
                 ))}
               </ul>
 
-              <h3 className="mt-8 text-sm font-bold uppercase tracking-wider text-text-muted">
+              <h3 className="mt-8 text-sm font-bold text-text-muted">
                 {dict.styleGuide.carbonScale}
               </h3>
               <ul className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-11">
                 {carbonScale.map((entry) => (
                   <li key={entry.shade}>
-                    <div
-                      className={`h-14 rounded-sm border border-border-subtle ${entry.className}`}
-                    />
+                    <div className={`h-14 border border-border-subtle ${entry.className}`} />
                     <p className="mt-1 text-center text-[0.6875rem] text-text-muted">
                       {entry.shade}
                     </p>
@@ -234,12 +228,17 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
                 ))}
               </ul>
 
-              <h3 className="mt-8 text-sm font-bold uppercase tracking-wider text-text-muted">
+              <h3 className="mt-8 text-sm font-bold text-text-muted">
                 {dict.styleGuide.semanticTokens}
               </h3>
               {/* max-w-full is required: without it a wide table stretches the
                   container instead of scrolling inside it. */}
-              <div className="mt-3 max-w-full overflow-x-auto">
+              <div
+                className="mt-3 max-w-full overflow-x-auto"
+                tabIndex={0}
+                role="region"
+                aria-label={dict.styleGuide.tokenTableCaption}
+              >
                 <table className="w-full min-w-lg border-collapse text-sm">
                   <caption className="sr-only">{dict.styleGuide.tokenTableCaption}</caption>
                   <thead>
@@ -256,7 +255,7 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
                     {semanticTokens.map((entry) => (
                       <tr key={entry.token} className="border-b border-border-subtle">
                         <td className="py-2.5 pr-4">
-                          <code className="rounded-xs bg-bg-muted px-1.5 py-0.5 text-xs text-text-primary">
+                          <code className="bg-bg-muted px-1.5 py-0.5 text-xs text-text-primary">
                             {entry.token}
                           </code>
                         </td>
@@ -270,23 +269,21 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Typography */}
             <section id="typography" aria-labelledby="type-heading" className="scroll-mt-28">
-              <h2 id="type-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="type-heading" className="type-display-md">
                 {dict.styleGuide.typography}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-text-muted">
                 {dict.styleGuide.typographyNote}
               </p>
 
-              <div className="mt-6 flex flex-col gap-5 rounded-md border border-border-subtle bg-surface p-6">
+              <div className="mt-6 flex flex-col gap-5 sheet p-6">
                 <div>
-                  <p className="text-xs text-text-muted">Display / 3rem / 800</p>
-                  <p className="font-display text-5xl font-extrabold uppercase">
-                    {dict.meta.keywords[0]}
-                  </p>
+                  <p className="text-xs text-text-muted">Display / clamp to 4.75rem / 900 italic</p>
+                  <p className="type-display-xl">{dict.meta.keywords[0]}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-text-muted">H2 / 1.875rem / 800</p>
-                  <h3 className="text-3xl font-extrabold uppercase">{sampleCategory}</h3>
+                  <p className="text-xs text-text-muted">H2 / clamp to 3.5rem / 900 italic</p>
+                  <h3 className="type-display-lg">{sampleCategory}</h3>
                 </div>
                 <div>
                   <p className="text-xs text-text-muted">H3 / 1.125rem / 700</p>
@@ -309,30 +306,25 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Spacing */}
             <section id="spacing" aria-labelledby="spacing-heading" className="scroll-mt-28">
-              <h2 id="spacing-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="spacing-heading" className="type-display-md">
                 {dict.styleGuide.spacing}
               </h2>
               <div className="mt-5 grid gap-6 sm:grid-cols-2">
                 <div>
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-text-muted">
+                  <h3 className="text-sm font-bold text-text-muted">
                     {dict.styleGuide.spacingScale}
                   </h3>
                   <ul className="mt-3 flex flex-col gap-2">
                     {[1, 2, 3, 4, 6, 8, 12, 16].map((step) => (
                       <li key={step} className="flex items-center gap-3">
                         <span className="w-10 text-xs text-text-muted">{step * 4}px</span>
-                        <span
-                          className="h-4 rounded-xs bg-accent"
-                          style={{ width: `${step * 4}px` }}
-                        />
+                        <span className="h-4 bg-accent" style={{ width: `${step * 4}px` }} />
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-text-muted">
-                    {dict.styleGuide.radii}
-                  </h3>
+                  <h3 className="text-sm font-bold text-text-muted">{dict.styleGuide.radii}</h3>
                   <ul className="mt-3 grid grid-cols-3 gap-3">
                     {radii.map((radius) => (
                       <li key={radius.name}>
@@ -349,12 +341,12 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Buttons */}
             <section id="buttons" aria-labelledby="buttons-heading" className="scroll-mt-28">
-              <h2 id="buttons-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="buttons-heading" className="type-display-md">
                 {dict.styleGuide.buttons}
               </h2>
-              <div className="mt-5 flex flex-col gap-6 rounded-md border border-border-subtle bg-surface p-6">
+              <div className="mt-5 flex flex-col gap-6 sheet p-6">
                 <div>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-wider text-text-muted">
+                  <p className="mb-3 text-sm font-bold text-text-muted">
                     {dict.styleGuide.variants}
                   </p>
                   <div className="flex flex-wrap items-center gap-3">
@@ -367,9 +359,7 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
                   </div>
                 </div>
                 <div>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-wider text-text-muted">
-                    {dict.styleGuide.sizes}
-                  </p>
+                  <p className="mb-3 text-sm font-bold text-text-muted">{dict.styleGuide.sizes}</p>
                   <div className="flex flex-wrap items-center gap-3">
                     <Button size="sm">Small</Button>
                     <Button size="md">Medium</Button>
@@ -380,10 +370,8 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
                   </div>
                 </div>
                 <div>
-                  <p className="mb-3 text-xs font-bold uppercase tracking-wider text-text-muted">
-                    {dict.styleGuide.onDark}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-3 rounded-sm bg-carbon-950 p-4">
+                  <p className="mb-3 text-sm font-bold text-text-muted">{dict.styleGuide.onDark}</p>
+                  <div className="flex flex-wrap items-center gap-3 bg-carbon-950 p-4">
                     <Button>Primary</Button>
                     <Button variant="on-dark">On dark</Button>
                   </div>
@@ -393,10 +381,10 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Forms */}
             <section id="forms" aria-labelledby="forms-heading" className="scroll-mt-28">
-              <h2 id="forms-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="forms-heading" className="type-display-md">
                 {dict.styleGuide.forms}
               </h2>
-              <div className="mt-5 grid gap-5 rounded-md border border-border-subtle bg-surface p-6 sm:grid-cols-2">
+              <div className="mt-5 grid gap-5 sheet p-6 sm:grid-cols-2">
                 <Field label={dict.styleGuide.sampleField} htmlFor="sg-text" required>
                   <Input id="sg-text" placeholder={dict.styleGuide.samplePlaceholder} />
                 </Field>
@@ -444,10 +432,10 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Badges */}
             <section id="badges" aria-labelledby="badges-heading" className="scroll-mt-28">
-              <h2 id="badges-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="badges-heading" className="type-display-md">
                 {dict.styleGuide.badges}
               </h2>
-              <div className="mt-5 flex flex-col gap-5 rounded-md border border-border-subtle bg-surface p-6">
+              <div className="mt-5 flex flex-col gap-5 sheet p-6">
                 <div className="flex flex-wrap items-center gap-2.5">
                   <Badge tone="accent">-16%</Badge>
                   <Badge tone="neutral">{dict.badges.new}</Badge>
@@ -466,10 +454,10 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Icons */}
             <section id="icons" aria-labelledby="icons-heading" className="scroll-mt-28">
-              <h2 id="icons-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="icons-heading" className="type-display-md">
                 {dict.styleGuide.icons}
               </h2>
-              <ul className="mt-5 grid grid-cols-4 gap-4 rounded-md border border-border-subtle bg-surface p-6 sm:grid-cols-6 lg:grid-cols-9">
+              <ul className="mt-5 grid grid-cols-4 gap-4 sheet p-6 sm:grid-cols-6 lg:grid-cols-9">
                 {iconSamples.map(({ Icon, name }) => (
                   <li key={name} className="flex flex-col items-center gap-1.5">
                     <Icon className="size-6 text-text-secondary" />
@@ -484,7 +472,7 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Product cards */}
             <section id="cards" aria-labelledby="cards-heading" className="scroll-mt-28">
-              <h2 id="cards-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="cards-heading" className="type-display-md">
                 {dict.styleGuide.cards}
               </h2>
               <ul className="mt-5 grid gap-5 sm:grid-cols-2">
@@ -498,15 +486,12 @@ export default async function StyleGuidePage({ params }: { params: Promise<PageP
 
             {/* Accessibility */}
             <section id="accessibility" aria-labelledby="a11y-heading" className="scroll-mt-28">
-              <h2 id="a11y-heading" className="text-xl font-extrabold uppercase tracking-tight">
+              <h2 id="a11y-heading" className="type-display-md">
                 {dict.styleGuide.accessibility}
               </h2>
               <ul className="mt-5 flex flex-col gap-4">
                 {dict.styleGuide.a11yItems.map((item) => (
-                  <li
-                    key={item.title}
-                    className="rounded-md border border-border-subtle bg-surface p-5"
-                  >
+                  <li key={item.title} className="sheet p-5">
                     <h3 className="flex items-center gap-2 text-sm font-bold text-text-primary">
                       <CheckIcon className="size-4 text-success" />
                       {item.title}

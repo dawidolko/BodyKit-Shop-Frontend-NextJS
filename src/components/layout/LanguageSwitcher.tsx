@@ -18,9 +18,7 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
   const pathname = usePathname();
 
   return (
-    <div
-      className={cn('flex items-center rounded-sm border border-border-subtle p-0.5', className)}
-    >
+    <div className={cn('flex items-center', className)}>
       <span className="sr-only" id="language-switcher-label">
         {dict.language.label}
       </span>
@@ -40,10 +38,10 @@ export function LanguageSwitcher({ locale, className }: { locale: Locale; classN
                     : `${code.toUpperCase()}: ${dict.language.switchTo(localeNames[code])}`
                 }
                 className={cn(
-                  'flex h-8 items-center rounded-xs px-2.5 text-xs font-bold uppercase tracking-wide transition-colors focus-ring',
+                  'type-display flex h-8 items-center px-2 text-xs uppercase transition-colors focus-ring',
                   isActive
-                    ? 'bg-accent text-text-on-brand'
-                    : 'text-text-secondary hover:bg-bg-muted hover:text-text-primary',
+                    ? 'text-text-primary underline decoration-accent decoration-2 underline-offset-4'
+                    : 'text-text-muted hover:text-text-primary',
                 )}
               >
                 {code}

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs, PageHeader } from '@/components/layout/Breadcrumbs';
 import { Picture } from '@/components/ui/Picture';
-import { ArrowRightIcon } from '@/components/ui/Icon';
 import { categories } from '@/lib/categories';
 import { getProductsByCategory } from '@/lib/products';
 import { absoluteLocaleUrl, canonicalUrl, ogImage, seoTitle } from '@/lib/site';
@@ -50,54 +49,46 @@ export default async function CategoriesPage({ params }: { params: Promise<Param
       />
       <PageHeader title={dict.catalog.title} description={dict.catalog.description} />
 
-      <div className="container-page pb-8">
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category, index) => {
-            const count = getProductsByCategory(category.slug).length;
-            return (
-              <li key={category.slug}>
-                <Link
-                  href={localePath(locale, `/categories/${category.slug}`)}
-                  className="group flex h-full flex-col overflow-hidden rounded-md border border-border-subtle bg-surface transition-[border-color,translate,box-shadow] duration-300 ease-out-quint hover:-translate-y-1 hover:border-border-brand hover:shadow-(--shadow-md) focus-ring"
-                >
-                  <div className="relative overflow-hidden bg-bg-muted">
-                    <Picture
-                      name={category.image}
-                      alt=""
-                      sizes="(min-width: 1024px) 28rem, (min-width: 640px) 45vw, 90vw"
-                      priority={index < 3}
-                      imgClassName="transition-transform duration-500 ease-out-quint group-hover:scale-105"
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-linear-to-t from-carbon-950/75 to-transparent"
-                    />
-                    <p className="absolute bottom-3 left-4 text-xs font-semibold uppercase tracking-wide text-carbon-300">
-                      {dict.catalog.productCount(count)}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-1 flex-col p-5">
-                    <h2 className="text-lg font-bold text-text-primary">
-                      {t(category.name, locale)}
-                    </h2>
-                    <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-text-muted">
-                      {t(category.description, locale)}
-                    </p>
-                    <span
-                      aria-hidden="true"
-                      className="mt-4 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-text-brand"
-                    >
-                      {dict.catalog.goToCategory}
-                      <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <ul className="grid gap-px md:grid-cols-2">
+        {categories.map((category, index) => {
+          const count = getProductsByCategory(category.slug).length;
+          return (
+            <li key={category.slug}>
+              <Link
+                href={localePath(locale, `/categories/${category.slug}`)}
+                className="group grid h-full bg-surface focus-visible:relative focus-visible:z-10 focus-visible:-outline-offset-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]"
+              >
+                <Picture
+                  name={category.image}
+                  alt=""
+                  sizes="(min-width: 768px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  priority={index < 2}
+                  className="h-full w-full"
+                  imgClassName="transition-transform duration-500 ease-out-quint group-hover:scale-[1.03]"
+                />
+                <div className="flex flex-col border-t-2 border-border-strong p-4 sm:border-l-2 sm:border-t-0 lg:p-5">
+                  <span className="type-data flex justify-between gap-3 text-sm text-text-muted">
+                    <span>{category.code}</span>
+                    <span>{dict.catalog.productCount(count)}</span>
+                  </span>
+                  <h2 className="type-display-md mt-3 text-text-primary">
+                    {t(category.name, locale)}
+                  </h2>
+                  <span className="mt-2 line-clamp-3 text-sm leading-relaxed text-text-muted">
+                    {t(category.description, locale)}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="mt-auto pt-3 text-sm font-bold text-text-brand underline underline-offset-4"
+                  >
+                    {dict.catalog.goToCategory}
+                  </span>
+                </div>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </>
   );
 }

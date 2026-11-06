@@ -1,42 +1,45 @@
 @import 'tailwindcss';
 
 /* =============================================================================
-   BodyKit Shop - Design System v1.0
-   Kierunek: carbon (grafit) + elektryczny pomaranczowy.
-   Wszystkie pary tekst/tlo spelniaja WCAG 2.2 AA (>=4.5:1 dla tekstu,
-   >=3:1 dla duzego tekstu i elementow UI) w obu motywach.
+   BodyKit design system: the tuning-garage parts catalogue.
+
+   Primer grey sheets, livery navy, racing red, a sky stripe and a little hazard
+   yellow. Every text and background pair below meets 4.5:1, and UI elements
+   meet 3:1, in both themes.
    ============================================================================= */
 
 @theme {
-  /* ---- Skala marki: elektryczny pomaranczowy ---- */
-  --color-brand-50: #fff4ed;
-  --color-brand-100: #ffe6d5;
-  --color-brand-200: #fec9aa;
-  --color-brand-300: #fda474;
-  --color-brand-400: #fb733c;
-  --color-brand-500: #ff6b1a;
-  --color-brand-600: #ea4c0d;
-  --color-brand-700: #c2360c;
-  --color-brand-800: #9a2d12;
-  --color-brand-900: #7c2912;
-  --color-brand-950: #431207;
+  /* The name "brand" stays so utilities keep working: this is the racing red. */
+  --color-brand-50: #fff0f1;
+  --color-brand-100: #ffdde0;
+  --color-brand-200: #ffbac1;
+  --color-brand-300: #ff8c99;
+  --color-brand-400: #f2526a;
+  --color-brand-500: #dc1f3e;
+  --color-brand-600: #c8102e;
+  --color-brand-700: #a30b25;
+  --color-brand-800: #860a1f;
+  --color-brand-900: #6e0b1e;
+  --color-brand-950: #3d030d;
 
-  /* ---- Carbon: neutralna baza z lekkim chlodnym odcieniem ---- */
-  --color-carbon-50: #f6f7f9;
-  --color-carbon-100: #eceef2;
-  --color-carbon-200: #d4d8e0;
-  --color-carbon-300: #aeb5c4;
-  --color-carbon-400: #828ca2;
-  --color-carbon-500: #636e87;
-  --color-carbon-600: #4e576e;
-  --color-carbon-700: #40475a;
-  --color-carbon-800: #373d4c;
-  --color-carbon-900: #1a1d26;
-  --color-carbon-950: #0f1115;
+  /* Livery navy, stepping up through blue-grey steel to primer. */
+  --color-carbon-50: #f2f4f7;
+  --color-carbon-100: #e6e9ee;
+  --color-carbon-200: #cdd3dc;
+  --color-carbon-300: #a9b4c4;
+  --color-carbon-400: #7f8da3;
+  --color-carbon-500: #5c6b82;
+  --color-carbon-600: #465469;
+  --color-carbon-700: #334157;
+  --color-carbon-800: #1f2f49;
+  --color-carbon-900: #122441;
+  --color-carbon-950: #0a1a33;
 
-  /* ---- Stany ----
-     Odcienie 700 sa na tyle ciemne, ze utrzymuja 4.5:1 takze na szarym tle
-     plakietek (--bg-muted), nie tylko na czystej bieli. */
+  --color-primer: #e9ebee;
+  --color-sky: #7cc8f2;
+  --color-hazard: #ffd100;
+
+  /* The 700 shades stay at 4.5:1 on the grey badge surface as well as on white. */
   --color-success-500: #16a34a;
   --color-success-600: #15803d;
   --color-success-700: #166534;
@@ -50,143 +53,146 @@
   --color-info-600: #0369a1;
   --color-info-700: #075985;
 
-  /* ---- Typografia ----
-     Zmienne --font-barlow* pochodza z next/font (layout.tsx), wiec pliki sa
-     hostowane lokalnie: bez zapytan do Google i bez skoku typografii. */
   --font-sans:
-    var(--font-barlow), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display:
-    var(--font-barlow-condensed), var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+    var(--font-bk-text), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-bk-display), var(--font-bk-text), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-bk-text), ui-monospace, monospace;
 
-  /* ---- Promienie: ostre, techniczne ---- */
-  --radius-xs: 2px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 16px;
-  --radius-2xl: 24px;
+  /* Type scale: a 1.5 ratio above the body size, so display type jumps hard. */
+  --text-display-xl: clamp(2.25rem, 1rem + 4.2vw, 4.75rem);
+  --text-display-lg: clamp(1.75rem, 1.2rem + 2.6vw, 3.5rem);
+  --text-display-md: clamp(1.3rem, 1.1rem + 1vw, 2rem);
 
-  /* ---- Cienie: neutralne, z ciepla poswiata dla akcentu ---- */
-  --shadow-xs: 0 1px 2px 0 rgb(15 17 21 / 0.06);
-  --shadow-sm: 0 2px 8px -2px rgb(15 17 21 / 0.1);
-  --shadow-md: 0 8px 24px -8px rgb(15 17 21 / 0.16);
-  --shadow-lg: 0 20px 48px -16px rgb(15 17 21 / 0.22);
-  --shadow-glow: 0 0 0 1px rgb(255 107 26 / 0.3), 0 8px 32px -8px rgb(255 107 26 / 0.35);
+  /* Pressed and cut parts have no radii: every corner is a sharp one. */
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
 
-  /* ---- Easing / czasy ---- */
+  /* Sheets sit flat on the bench, so only hard offset shadows exist. */
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 6px 6px 0 0 var(--color-carbon-950);
+  --shadow-glow: none;
+
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
-  /* ---- Breakpoint dla bardzo szerokich ekranow ---- */
   --breakpoint-3xl: 112rem;
 }
 
 /* =============================================================================
-   Tokeny semantyczne - motyw jasny (domyslny)
+   Semantic tokens: light theme, primer grey with white sheets
    ============================================================================= */
 :root {
   color-scheme: light;
 
-  --bg-base: #ffffff;
-  --bg-subtle: var(--color-carbon-50);
-  --bg-muted: var(--color-carbon-100);
-  --bg-inset: var(--color-carbon-100);
+  --bg-base: var(--color-primer);
+  --bg-subtle: #f4f5f7;
+  --bg-muted: #dfe2e7;
+  --bg-inset: #dfe2e7;
   --bg-inverse: var(--color-carbon-950);
-  --bg-overlay: rgb(15 17 21 / 0.55);
+  --bg-overlay: rgb(10 26 51 / 0.55);
 
   --surface: #ffffff;
   --surface-raised: #ffffff;
-  --surface-sunken: var(--color-carbon-50);
+  --surface-sunken: #f4f5f7;
 
-  /* carbon-900 na bieli = 15.8:1 */
-  --text-primary: var(--color-carbon-900);
-  /* carbon-600 na bieli = 7.4:1 */
-  --text-secondary: var(--color-carbon-600);
-  /* carbon-500 na bieli = 5.3:1 - nadal AA dla tekstu normalnego */
-  --text-muted: var(--color-carbon-500);
+  /* 14.5:1 on primer */
+  --text-primary: var(--color-carbon-950);
+  /* 8.6:1 on primer */
+  --text-secondary: var(--color-carbon-700);
+  /* 6.4:1 on primer, 5.9:1 on the muted badge surface */
+  --text-muted: var(--color-carbon-600);
   --text-inverse: #ffffff;
-  /* brand-700 na bieli = 5.49:1 - AA dla linkow tekstowych */
+  /* 6.7:1 on primer, 8:1 on white */
   --text-brand: var(--color-brand-700);
-  /* Bialy tekst na pomaranczu ma tylko 2.8-3.8:1, wiec na powierzchniach
-     brandowych uzywamy ciemnego atramentu: carbon-950 na brand-500 = 6.63:1. */
-  --text-on-brand: var(--color-carbon-950);
+  /* 5.9:1 on the accent */
+  --text-on-brand: #ffffff;
 
   --border-subtle: var(--color-carbon-200);
-  --border-default: var(--color-carbon-300);
-  --border-strong: var(--color-carbon-400);
-  --border-brand: var(--color-brand-500);
+  --border-default: var(--color-carbon-400);
+  --border-strong: var(--color-carbon-950);
+  --border-brand: var(--color-brand-600);
 
-  /* Powierzchnia akcentu (tlo przyciskow) - para z --text-on-brand */
-  --accent: var(--color-brand-500);
-  --accent-hover: var(--color-brand-400);
-  --accent-active: var(--color-brand-600);
+  --accent: var(--color-brand-600);
+  --accent-hover: var(--color-brand-700);
+  --accent-active: var(--color-brand-800);
   --accent-subtle: var(--color-brand-50);
-  --accent-ring: rgb(234 76 13 / 0.45);
-
-  /* Tekst/ikona w kolorze marki na jasnym tle - ciemniejszy odcien dla AA */
+  --accent-ring: rgb(200 16 46 / 0.45);
   --accent-fg: var(--color-brand-700);
 
-  --focus-ring: var(--color-brand-600);
+  --focus-ring: var(--color-carbon-950);
 
   --success-text: var(--color-success-700);
   --warning-text: var(--color-warning-700);
   --danger-text: var(--color-danger-700);
   --info-text: var(--color-info-700);
+
+  --section-cut: 2.5rem;
 }
 
 /* =============================================================================
-   Tokeny semantyczne - motyw ciemny
-   Aktywowany klasa .dark na <html> (ustawiana przez ThemeScript przed paintem).
+   Semantic tokens: dark theme, a blueprint sheet
+
+   .livery re-applies the same values to bands that stay navy in both themes,
+   which keeps the text, border and focus tokens correct inside them. Applied by
+   the .dark class on <html>, set by the theme script before first paint.
    ============================================================================= */
-.dark {
+.dark,
+.livery {
   color-scheme: dark;
 
   --bg-base: var(--color-carbon-950);
-  --bg-subtle: #14161c;
-  --bg-muted: var(--color-carbon-900);
-  --bg-inset: #0a0b0e;
+  --bg-subtle: #0e2140;
+  --bg-muted: #18335f;
+  --bg-inset: #071327;
   --bg-inverse: var(--color-carbon-50);
-  --bg-overlay: rgb(0 0 0 / 0.7);
+  --bg-overlay: rgb(4 11 24 / 0.7);
 
-  --surface: #14161c;
-  --surface-raised: #1a1d26;
-  --surface-sunken: #0a0b0e;
+  --surface: #10264a;
+  --surface-raised: #16305a;
+  --surface-sunken: #071327;
 
-  /* carbon-50 na carbon-950 = 16.9:1 */
+  /* 16:1 on the blueprint */
   --text-primary: var(--color-carbon-50);
-  /* carbon-300 na carbon-950 = 8.9:1 */
-  --text-secondary: var(--color-carbon-300);
-  /* carbon-400 na carbon-950 = 5.6:1 */
-  --text-muted: var(--color-carbon-400);
+  /* 11.3:1 on the blueprint */
+  --text-secondary: var(--color-carbon-200);
+  /* 8.3:1 on the blueprint, 6:1 on the muted badge surface */
+  --text-muted: var(--color-carbon-300);
   --text-inverse: var(--color-carbon-950);
-  /* brand-400 na carbon-950 = 6.86:1 */
-  --text-brand: var(--color-brand-400);
-  /* carbon-950 na brand-500 = 6.63:1 */
-  --text-on-brand: var(--color-carbon-950);
+  /* 9.4:1 on the blueprint, 6.8:1 on the muted badge surface */
+  --text-brand: var(--color-sky);
+  --text-on-brand: #ffffff;
 
-  --border-subtle: #262a35;
-  --border-default: #343a48;
-  --border-strong: #4a5262;
-  --border-brand: var(--color-brand-500);
+  --border-subtle: #2a4470;
+  --border-default: #4a648f;
+  --border-strong: var(--color-carbon-200);
+  --border-brand: var(--color-sky);
 
-  --accent: var(--color-brand-500);
-  --accent-hover: var(--color-brand-400);
-  --accent-active: var(--color-brand-600);
-  --accent-subtle: rgb(255 107 26 / 0.12);
-  --accent-ring: rgb(255 107 26 / 0.55);
+  --accent: var(--color-brand-600);
+  --accent-hover: var(--color-brand-700);
+  --accent-active: var(--color-brand-800);
+  --accent-subtle: #18335f;
+  --accent-ring: rgb(124 200 242 / 0.55);
+  --accent-fg: var(--color-sky);
 
-  --accent-fg: var(--color-brand-400);
-
-  --focus-ring: var(--color-brand-400);
+  --focus-ring: var(--color-sky);
 
   --success-text: #4ade80;
   --warning-text: #fbbf24;
-  --danger-text: #f87171;
-  --info-text: #38bdf8;
+  --danger-text: #fca5a5;
+  --info-text: var(--color-sky);
 }
 
-/* Udostepnij tokeny semantyczne jako klasy Tailwinda (bg-surface, text-primary, ...) */
+/* One step deeper than .livery, so navy bands still read as bands in this theme. */
+.dark {
+  --bg-base: #060f20;
+}
+
 @theme inline {
   --color-bg-base: var(--bg-base);
   --color-bg-subtle: var(--bg-subtle);
@@ -222,7 +228,7 @@
 }
 
 /* =============================================================================
-   Baza
+   Base
    ============================================================================= */
 @layer base {
   * {
@@ -232,9 +238,10 @@
   html {
     -webkit-text-size-adjust: 100%;
     scrollbar-gutter: stable;
+    /* Anchored targets must land clear of the sticky header row. */
+    scroll-padding-top: 5.5rem;
   }
 
-  /* Plynne przewijanie tylko dla uzytkownikow, ktorzy go nie wylaczyli */
   @media (prefers-reduced-motion: no-preference) {
     html {
       scroll-behavior: smooth;
@@ -245,21 +252,28 @@
     background-color: var(--bg-base);
     color: var(--text-primary);
     font-family: var(--font-sans);
-    font-feature-settings: 'cv02', 'cv03', 'cv04';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
 
+  /* Saira Wide is an italic-only face, so display type always leans forward. */
   h1,
-  h2,
+  h2 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
   h3,
   h4,
   h5,
   h6 {
-    font-family: var(--font-display);
+    font-family: var(--font-sans);
     font-weight: 700;
-    letter-spacing: -0.015em;
     text-wrap: balance;
   }
 
@@ -267,8 +281,6 @@
     text-wrap: pretty;
   }
 
-  /* Kod dziedziczylby przygaszony kolor akapitu, co na szarym tle spada
-     ponizej 4.5:1 - dlatego zawsze uzywa koloru tekstu glownego. */
   code,
   kbd,
   samp {
@@ -276,14 +288,11 @@
     color: var(--text-primary);
   }
 
-  /* Widoczny, spojny focus w calej aplikacji - wymog WCAG 2.4.7 / 2.4.13 */
   :focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
-    border-radius: var(--radius-xs);
   }
 
-  /* Nie usuwamy outline'u globalnie - tylko tam gdzie mysz go nie potrzebuje */
   :focus:not(:focus-visible) {
     outline: none;
   }
@@ -293,7 +302,6 @@
     color: var(--text-on-brand);
   }
 
-  /* Respektuj wybor uzytkownika: bez animacji = bez animacji */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -305,26 +313,31 @@
     }
   }
 
-  /* Tryb wysokiego kontrastu */
   @media (prefers-contrast: more) {
     :root {
       --border-subtle: var(--color-carbon-400);
       --border-default: var(--color-carbon-600);
       --text-muted: var(--color-carbon-700);
     }
-    .dark {
-      --border-subtle: var(--color-carbon-500);
-      --border-default: var(--color-carbon-400);
+    .dark,
+    .livery {
+      --border-subtle: var(--color-carbon-400);
+      --border-default: var(--color-carbon-300);
       --text-muted: var(--color-carbon-200);
     }
   }
 }
 
 /* =============================================================================
-   Komponenty wielokrotnego uzytku
+   Components
    ============================================================================= */
 @layer components {
-  /* Link pomijajacy nawigacje - widoczny dopiero po sfokusowaniu (WCAG 2.4.1) */
+  /* Layered, unlike the tokens above, so utilities can still recolour a band. */
+  .livery {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+  }
+
   .skip-link {
     position: fixed;
     top: 0;
@@ -335,14 +348,12 @@
     background-color: var(--accent);
     color: var(--text-on-brand);
     font-weight: 600;
-    border-radius: 0 0 var(--radius-md) var(--radius-md);
     transition: translate 200ms var(--ease-out-quint);
   }
   .skip-link:focus {
     translate: -50% 0;
   }
 
-  /* Wspolny pierscien fokusu - jedno miejsce zamiast powtarzania w kazdej klasie */
   .focus-ring {
     &:focus-visible {
       outline: 2px solid var(--focus-ring);
@@ -350,7 +361,6 @@
     }
   }
 
-  /* Kontener strony - stala maksymalna szerokosc i marginesy boczne */
   .container-page {
     width: 100%;
     max-width: 90rem;
@@ -363,30 +373,247 @@
     }
   }
 
-  /* Siatka carbonowa - subtelna tekstura techniczna w tle sekcji */
-  .bg-carbon-grid {
+  /* Display voice, used well below the heading sizes for names and prices. */
+  .type-display {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 800;
+    letter-spacing: -0.005em;
+  }
+  .type-display-xl,
+  .type-display-lg,
+  .type-display-md {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
+    overflow-wrap: break-word;
+  }
+  .type-display-xl {
+    font-size: var(--text-display-xl);
+  }
+  /* Polish words run longer, and this keeps the hero headline to four lines. */
+  :lang(pl) .type-display-xl {
+    font-size: calc(var(--text-display-xl) * 0.84);
+  }
+  .type-display-lg {
+    font-size: var(--text-display-lg);
+  }
+  .type-display-md {
+    font-size: var(--text-display-md);
+  }
+
+  /* Stamped data: condensed lining figures with a slashed zero. */
+  .type-data {
+    font-stretch: 75%;
+    font-feature-settings:
+      'tnum' 1,
+      'lnum' 1,
+      'zero' 1;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  /* A catalogue thumb index: the slanted tab that names each section. */
+  .index-tab {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.75rem;
+    padding: 0.2rem 1rem 0.2rem 0.75rem;
+    background-color: var(--accent);
+    color: var(--text-on-brand);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 0.6rem) 100%, 0 100%);
+  }
+
+  /* Three parallel livery bands. */
+  .stripes {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-brand-600) 0 42%,
+      transparent 42% 50%,
+      #ffffff 50% 70%,
+      transparent 70% 78%,
+      var(--color-sky) 78% 100%
+    );
+  }
+
+  /* Hazard tape: reserved for warnings and the footer's start line. */
+  .hazard-tape {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--color-hazard) 0 12px,
+      var(--color-carbon-950) 12px 24px
+    );
+  }
+
+  /* A white drawing sheet with a heavy head rule and one clipped corner. */
+  .sheet {
+    position: relative;
+    border-top: 3px solid var(--border-strong);
+    background-color: var(--surface);
+    clip-path: polygon(0 0, calc(100% - 1rem) 0, 100% 1rem, 100% 100%, 0 100%);
+  }
+
+  /* Angled section ends, cut at the same angle as the logo and the buttons. */
+  .cut-bottom {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - var(--section-cut)));
+  }
+  .cut-top {
+    clip-path: polygon(0 var(--section-cut), 100% 0, 100% 100%, 0 100%);
+  }
+
+  /* Drafting paper, on the page header bands and the footer title block. */
+  .drafting-grid {
     background-image:
       linear-gradient(var(--border-subtle) 1px, transparent 1px),
       linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
-    background-size: 48px 48px;
-    background-position: center;
-    mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 40%, transparent 100%);
+    background-size: 2rem 2rem;
   }
 
-  /* Ukosny akcent - motyw przewodni marki (splitter / dyfuzor) */
-  .clip-slant {
-    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 1.5rem), 0 100%);
+  /*
+   * Skewed on the element and straightened on the face, not cut with clip-path:
+   * a clip would remove the focus outline along with the corners.
+   */
+  .btn {
+    transform: skewX(-12deg);
   }
-  .clip-slant-reverse {
-    clip-path: polygon(0 1.5rem, 100% 0, 100% 100%, 0 100%);
+  .btn-face {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transform: skewX(12deg);
+  }
+
+  /* Hero callouts: a drawing leader from a ring on the part to its label. */
+  .callout {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .callout::before {
+    content: '';
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    background-color: rgb(200 16 46 / 0.9);
+  }
+  .callout-line {
+    flex: none;
+    width: var(--leader, 3rem);
+    height: 2px;
+    background-color: #ffffff;
+  }
+  .callout-label {
+    padding: 0.25rem 0.625rem;
+    background-color: var(--color-carbon-950);
+    transition: background-color 150ms;
+  }
+  .callout:hover .callout-label {
+    background-color: var(--color-brand-600);
+  }
+
+  /*
+   * The navy plate behind the hero copy. The slant lives on a pseudo-element so
+   * the copy stays upright, and it works at any plate height.
+   */
+  .hero-plate {
+    position: relative;
+    isolation: isolate;
+  }
+  @media (width >= 64rem) {
+    .hero-plate::before,
+    .hero-plate::after {
+      content: '';
+      position: absolute;
+      inset-block: -1px;
+      z-index: -1;
+      transform: skewX(-12deg);
+    }
+    .hero-plate::before {
+      inset-inline: -30% 0;
+      background-color: var(--color-carbon-950);
+    }
+    .hero-plate::after {
+      right: -3rem;
+      width: 3rem;
+      background-image: linear-gradient(
+        90deg,
+        var(--color-brand-600) 0 46%,
+        #ffffff 46% 72%,
+        var(--color-sky) 72% 100%
+      );
+      /* The single orchestrated moment: the livery bands draw down on load. */
+      animation: draw-bands 800ms var(--ease-in-out-quart) both;
+    }
+  }
+  @keyframes draw-bands {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0);
+    }
+  }
+
+  /* Gapless parts wall: columns stretch to fill the row, so images stay large. */
+  .part-wall {
+    display: grid;
+    gap: 1px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  }
+  .part-wall > li {
+    display: flex;
+    outline: 1px solid var(--border-subtle);
+  }
+
+  /* Filter chips: real checkboxes, styled through the label that wraps them. */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.25rem;
+    padding-inline: 0.75rem;
+    border: 1px solid var(--border-default);
+    background-color: var(--surface);
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 120ms,
+      color 120ms,
+      border-color 120ms;
+  }
+  .chip:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .chip:has(:checked) {
+    border-color: var(--text-primary);
+    background-color: var(--text-primary);
+    color: var(--bg-base);
+  }
+  .chip:has(:focus-visible) {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
   }
 }
 
 /* =============================================================================
-   Narzedzia
+   Utilities
    ============================================================================= */
 @layer utilities {
-  /* Tresc tylko dla czytnikow ekranu */
   .sr-only-focusable:not(:focus):not(:focus-within) {
     position: absolute;
     width: 1px;
@@ -399,7 +626,6 @@
     border-width: 0;
   }
 
-  /* Obcinanie tekstu do N linii */
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -413,7 +639,6 @@
     overflow: hidden;
   }
 
-  /* Ukrycie paska przewijania przy zachowaniu scrollowania */
   .no-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;

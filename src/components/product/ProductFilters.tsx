@@ -1,21 +1,26 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { ProductCard } from './ProductCard';
 import { Button } from '@/components/ui/Button';
 import { FilterIcon } from '@/components/ui/Icon';
+import { getPartNumber } from '@/lib/products';
 import type { Material, Product } from '@/lib/types';
-import { cn, formatPrice, t } from '@/lib/utils';
+import { cn, formatPrice, getMinPriceLabel, t } from '@/lib/utils';
 import { getDictionary } from '@/i18n';
-import { localeTags, type Locale } from '@/i18n/config';
+import { localePath, localeTags, type Locale } from '@/i18n/config';
 
 /** Sort keys are stable English identifiers - only the labels are translated. */
 type SortKey = 'featured' | 'priceAsc' | 'priceDesc' | 'rating' | 'name';
 
 const sortKeys: SortKey[] = ['featured', 'priceAsc', 'priceDesc', 'rating', 'name'];
 
+type ViewKey = 'wall' | 'list';
+
 /**
- * Product listing with material, make and availability filters.
+ * Product listing with material, make and availability filters, shown as an
+ * image wall or as a parts list with one row per part.
  *
  * Filtering happens in memory - the catalog is static and small, so there is
  * no need to reach for the URL or network requests.
@@ -29,6 +34,7 @@ export function ProductFilters({ products, locale }: { products: Product[]; loca
   const [makes, setMakes] = useState<string[]>([]);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [panelOpen, setPanelOpen] = useState(false);
+  const [view, setView] = useState<ViewKey>('wall');
 
   const availableMaterials = useMemo(() => {
     const set = new Set<Material>();
@@ -108,105 +114,135 @@ export function ProductFilters({ products, locale }: { products: Product[]; loca
   }, [filtered]);
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
-      {/* Filters */}
-      <div>
-        <div className="flex items-center justify-between lg:hidden">
-          <Button
-            variant="secondary"
-            onClick={() => setPanelOpen((open) => !open)}
-            aria-expanded={panelOpen}
-            aria-controls="filter-panel"
-          >
-            <FilterIcon className="size-4" />
-            {dict.catalog.filters}
-            {activeCount > 0 && (
-              <span className="ml-1 rounded-full bg-accent px-1.5 text-[0.6875rem] text-text-on-brand">
-                {activeCount}
-              </span>
-            )}
-          </Button>
-        </div>
-
-        <div
-          id="filter-panel"
-          className={cn('mt-4 flex-col gap-7 lg:mt-0 lg:flex', panelOpen ? 'flex' : 'hidden')}
-        >
-          <fieldset>
-            <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">
-              {dict.catalog.material}
-            </legend>
-            <div className="mt-3 flex flex-col gap-2.5">
-              {availableMaterials.map((material) => (
-                <label key={material} className="flex cursor-pointer items-center gap-3 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={materials.includes(material)}
-                    onChange={() => toggleMaterial(material)}
-                    className="size-4.5 rounded-xs accent-accent focus-ring"
-                  />
-                  <span className="text-text-secondary">{dict.materials[material]}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">
-              {dict.catalog.carMake}
-            </legend>
-            <div className="mt-3 flex flex-col gap-2.5">
-              {availableMakes.map((make) => (
-                <label key={make} className="flex cursor-pointer items-center gap-3 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={makes.includes(make)}
-                    onChange={() => toggleMake(make)}
-                    className="size-4.5 rounded-xs accent-accent focus-ring"
-                  />
-                  <span className="text-text-secondary">{make}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend className="text-xs font-bold uppercase tracking-wider text-text-primary">
-              {dict.catalog.availability}
-            </legend>
-            <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={inStockOnly}
-                onChange={(event) => setInStockOnly(event.target.checked)}
-                className="size-4.5 rounded-xs accent-accent focus-ring"
-              />
-              <span className="text-text-secondary">{dict.catalog.inStockOnly}</span>
-            </label>
-          </fieldset>
-
-          {activeCount > 0 && (
-            <Button variant="ghost" size="sm" onClick={reset} className="self-start">
-              {dict.catalog.clearFilters} ({activeCount})
+    <div>
+      <div className="border-b-2 border-border-strong bg-surface">
+        <div className="container-page py-3">
+          <div className="lg:hidden">
+            <Button
+              variant="secondary"
+              onClick={() => setPanelOpen((open) => !open)}
+              aria-expanded={panelOpen}
+              aria-controls="filter-panel"
+              className="ml-1.5"
+            >
+              <FilterIcon className="size-4" />
+              {dict.catalog.filters}
+              {activeCount > 0 && <span className="type-data">({activeCount})</span>}
             </Button>
-          )}
+          </div>
+
+          <div
+            id="filter-panel"
+            className={cn(
+              'mt-3 flex-col gap-4 lg:mt-0 lg:flex lg:flex-row lg:flex-wrap lg:items-start lg:gap-x-10',
+              panelOpen ? 'flex' : 'hidden',
+            )}
+          >
+            <fieldset>
+              <legend className="text-sm font-bold text-text-primary">
+                {dict.catalog.material}
+              </legend>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {availableMaterials.map((material) => (
+                  <label key={material} className="chip">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={materials.includes(material)}
+                      onChange={() => toggleMaterial(material)}
+                    />
+                    {dict.materials[material]}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend className="text-sm font-bold text-text-primary">
+                {dict.catalog.carMake}
+              </legend>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {availableMakes.map((make) => (
+                  <label key={make} className="chip">
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      checked={makes.includes(make)}
+                      onChange={() => toggleMake(make)}
+                    />
+                    {make}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend className="text-sm font-bold text-text-primary">
+                {dict.catalog.availability}
+              </legend>
+              <div className="mt-1.5 flex flex-wrap items-center gap-3">
+                <label className="chip">
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={inStockOnly}
+                    onChange={(event) => setInStockOnly(event.target.checked)}
+                  />
+                  {dict.catalog.inStockOnly}
+                </label>
+                {activeCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={reset}
+                    className="min-h-9 text-sm font-semibold text-text-brand underline underline-offset-4 focus-ring"
+                  >
+                    {dict.catalog.clearFilters} ({activeCount})
+                  </button>
+                )}
+              </div>
+            </fieldset>
+          </div>
         </div>
       </div>
 
-      {/* Results */}
-      <div>
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-subtle pb-4">
-          <p aria-live="polite" className="text-sm text-text-secondary">
-            <span className="font-semibold text-text-primary">
-              {dict.catalog.productCount(filtered.length)}
+      <div className="container-page flex flex-wrap items-center justify-between gap-x-6 gap-y-2 py-3">
+        <p aria-live="polite" className="text-sm text-text-secondary">
+          <span className="font-bold text-text-primary">
+            {dict.catalog.productCount(filtered.length)}
+          </span>
+          {priceRange && (
+            <span className="text-text-muted">
+              {' '}
+              ({formatPrice(priceRange.min, locale)} – {formatPrice(priceRange.max, locale)})
             </span>
-            {priceRange && (
-              <span className="text-text-muted">
-                {' '}
-                · {formatPrice(priceRange.min, locale)} – {formatPrice(priceRange.max, locale)}
-              </span>
-            )}
-          </p>
+          )}
+        </p>
+
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <div role="group" aria-label={dict.catalog.viewLabel} className="flex">
+            {(
+              [
+                ['wall', dict.catalog.viewWall],
+                ['list', dict.catalog.viewList],
+              ] as const
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={view === key}
+                onClick={() => setView(key)}
+                className={cn(
+                  'min-h-9 border border-border-default px-3 text-sm font-semibold transition-colors focus-ring',
+                  key === 'list' && '-ml-px',
+                  view === key
+                    ? 'border-text-primary bg-text-primary text-bg-base'
+                    : 'bg-surface text-text-secondary hover:text-text-primary',
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
 
           <div className="flex items-center gap-2">
             <label htmlFor="sort" className="text-sm text-text-muted">
@@ -216,7 +252,7 @@ export function ProductFilters({ products, locale }: { products: Product[]; loca
               id="sort"
               value={sort}
               onChange={(event) => setSort(event.target.value as SortKey)}
-              className="h-9 rounded-sm border border-border-default bg-surface px-3 text-sm text-text-primary focus-ring"
+              className="h-9 border border-border-default bg-surface px-3 text-sm text-text-primary focus-ring"
             >
               {sortKeys.map((key) => (
                 <option key={key} value={key}>
@@ -226,32 +262,90 @@ export function ProductFilters({ products, locale }: { products: Product[]; loca
             </select>
           </div>
         </div>
+      </div>
 
-        {filtered.length > 0 ? (
-          <ul className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((product, index) => (
-              <li key={product.slug} className="flex">
-                <ProductCard
-                  product={product}
-                  locale={locale}
-                  dict={dict}
-                  priority={index < 3}
-                  headingLevel={2}
-                  className="w-full"
-                />
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="mt-10 rounded-md border border-dashed border-border-default p-10 text-center">
+      {filtered.length === 0 && (
+        <div className="container-page">
+          <div className="border-2 border-dashed border-border-default p-10 text-center">
             <p className="text-base font-semibold text-text-primary">{dict.catalog.noResults}</p>
             <p className="mt-2 text-sm text-text-muted">{dict.catalog.noResultsHint}</p>
             <Button variant="secondary" onClick={reset} className="mt-5">
               {dict.catalog.clearFilters}
             </Button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {filtered.length > 0 && view === 'wall' && (
+        <ul className="part-wall">
+          {filtered.map((product, index) => (
+            <li key={product.slug}>
+              <ProductCard
+                product={product}
+                locale={locale}
+                dict={dict}
+                priority={index < 3}
+                headingLevel={2}
+                className="w-full"
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {filtered.length > 0 && view === 'list' && (
+        <div className="container-page">
+          <div
+            className="overflow-x-auto"
+            tabIndex={0}
+            role="region"
+            aria-label={dict.catalog.viewList}
+          >
+            <table className="w-full min-w-[40rem] border-collapse bg-surface text-sm">
+              <caption className="sr-only">{dict.catalog.viewList}</caption>
+              <thead>
+                <tr className="border-b-2 border-border-strong text-left">
+                  <th scope="col" className="px-3 py-2 font-bold">
+                    {dict.product.partNumber}
+                  </th>
+                  <th scope="col" className="px-3 py-2 font-bold">
+                    {dict.catalog.columnPart}
+                  </th>
+                  <th scope="col" className="px-3 py-2 font-bold">
+                    {dict.product.fitsLabel}
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-right font-bold">
+                    {dict.catalog.columnPrice}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((product) => (
+                  <tr key={product.slug} className="border-b border-border-subtle">
+                    <td className="type-data whitespace-nowrap px-3 py-2.5">
+                      {getPartNumber(product)}
+                    </td>
+                    <td className="px-3 py-2.5">
+                      <Link
+                        href={localePath(locale, `/products/${product.slug}`)}
+                        className="type-display text-text-primary underline-offset-4 hover:underline focus-ring"
+                      >
+                        {t(product.name, locale)}
+                      </Link>
+                    </td>
+                    <td className="px-3 py-2.5 text-text-secondary">
+                      {product.fitment.map((fit) => `${fit.make} ${fit.model}`).join(', ')}
+                    </td>
+                    <td className="type-display whitespace-nowrap px-3 py-2.5 text-right">
+                      {getMinPriceLabel(product, locale, dict)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

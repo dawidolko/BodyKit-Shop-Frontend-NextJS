@@ -5,55 +5,47 @@ import { localePath, type Locale } from '@/i18n/config';
 
 export function ProcessSection({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   return (
-    <section aria-labelledby="process-heading" className="container-page py-20">
-      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-        <div className="relative">
+    <section aria-labelledby="process-heading" className="livery cut-top mt-14 pt-10">
+      <div className="grid items-stretch lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="max-lg:order-2 lg:[clip-path:polygon(0_0,100%_0,calc(100%-6rem)_100%,0_100%)]">
           <Picture
             name="hero-garage"
             alt={dict.home.processImageAlt}
-            sizes="(min-width: 1024px) 40rem, 90vw"
-            className="rounded-lg border border-border-subtle"
-          />
-          {/* Slanted accent echoing the splitter shape in the logo. */}
-          <div
-            aria-hidden="true"
-            className="absolute -bottom-4 -right-4 -z-10 h-32 w-32 bg-accent/20 clip-slant"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="h-full w-full"
           />
         </div>
 
-        <div>
-          <p className="text-xs font-bold uppercase tracking-widest text-text-brand">
-            {dict.home.processEyebrow}
-          </p>
-          <h2 id="process-heading" className="mt-2 text-3xl font-extrabold uppercase sm:text-4xl">
+        <div className="px-4 pb-8 pt-10 md:px-6 lg:max-w-[41rem] lg:py-12 lg:pl-4">
+          <p className="index-tab">{dict.home.processEyebrow}</p>
+          <h2 id="process-heading" className="type-display-lg mt-2">
             {dict.home.processHeading}
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-text-secondary">
+          <p className="mt-4 max-w-prose leading-relaxed text-text-secondary">
             {dict.home.processLead}
           </p>
-
-          <ol className="mt-8 flex flex-col gap-6">
-            {dict.home.processSteps.map((step) => (
-              <li key={step.number} className="flex gap-5">
-                <span
-                  aria-hidden="true"
-                  className="font-display text-2xl font-extrabold text-accent-fg"
-                >
-                  {step.number}
-                </span>
-                <div>
-                  <h3 className="text-base font-bold text-text-primary">{step.title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-text-muted">{step.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-
-          <LinkButton href={localePath(locale, '/help')} variant="secondary" className="mt-8">
-            {dict.home.processCta}
-          </LinkButton>
         </div>
       </div>
+
+      <ol className="container-page py-10">
+        {dict.home.processSteps.map((step) => (
+          <li
+            key={step.number}
+            className="grid grid-cols-[3.5rem_1fr] gap-x-4 gap-y-1 border-t border-border-default py-4 md:grid-cols-[6rem_minmax(0,22rem)_1fr] md:gap-x-8"
+          >
+            <span aria-hidden="true" className="type-display-md text-sky max-md:row-span-2">
+              {step.number}
+            </span>
+            <h3 className="text-lg font-bold leading-snug text-text-primary">{step.title}</h3>
+            <p className="max-w-prose leading-relaxed text-text-secondary">{step.text}</p>
+          </li>
+        ))}
+        <li className="border-t border-border-default pt-6">
+          <LinkButton href={localePath(locale, '/help')} variant="on-dark" className="ml-1.5">
+            {dict.home.processCta}
+          </LinkButton>
+        </li>
+      </ol>
     </section>
   );
 }

@@ -121,9 +121,9 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
 
   if (isHydrated && detailedLines.length === 0) {
     return (
-      <div className="container-page pb-16">
-        <div className="rounded-md border border-dashed border-border-default px-6 py-16 text-center">
-          <p className="text-lg font-bold text-text-primary">{dict.checkout.emptyCart}</p>
+      <div className="container-page pt-6">
+        <div className="border-2 border-dashed border-border-default px-6 py-16 text-center">
+          <p className="type-display-md text-text-primary">{dict.checkout.emptyCart}</p>
           <p className="mt-2 text-sm text-text-muted">{dict.checkout.emptyCartHint}</p>
           <Button
             variant="primary"
@@ -138,15 +138,15 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div className="container-page pb-16">
-      <div className="grid items-start gap-8 lg:grid-cols-[1fr_22rem]">
-        <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-10">
+    <div className="container-page pt-6">
+      <div className="grid items-start gap-8 lg:grid-cols-[1fr_24rem]">
+        <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-6">
           {submitted && errorEntries.length > 0 && (
             <div
               ref={summaryRef}
               tabIndex={-1}
               role="alert"
-              className="rounded-sm border border-danger bg-danger/5 p-4 focus-ring"
+              className="border-l-4 border-danger bg-surface p-4 focus-ring"
             >
               <p className="text-sm font-bold text-danger">
                 {dict.checkout.errorSummary(errorEntries.length)}
@@ -154,7 +154,10 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
               <ul className="mt-2 flex list-disc flex-col gap-1 pl-5 text-sm text-text-secondary">
                 {errorEntries.map(([name, message]) => (
                   <li key={name}>
-                    <a href={`#${name}`} className="underline hover:text-danger focus-ring">
+                    <a
+                      href={`#${name}`}
+                      className="inline-flex min-h-6 items-center underline hover:text-danger focus-ring"
+                    >
                       {message}
                     </a>
                   </li>
@@ -163,8 +166,8 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
             </div>
           )}
 
-          <fieldset className="flex flex-col gap-5">
-            <legend className="mb-2 text-lg font-bold uppercase tracking-wide">
+          <fieldset className="sheet flex flex-col gap-5 px-4 pb-6 pt-16 sm:px-6">
+            <legend className="type-display absolute left-0 top-3 bg-text-primary py-1 pl-4 pr-7 text-lg text-bg-base [clip-path:polygon(0_0,100%_0,calc(100%-0.75rem)_100%,0_100%)] sm:pl-6">
               {dict.checkout.step1}
             </legend>
             <div className="grid gap-5 sm:grid-cols-2">
@@ -235,8 +238,8 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
             </div>
           </fieldset>
 
-          <fieldset className="flex flex-col gap-5">
-            <legend className="mb-2 text-lg font-bold uppercase tracking-wide">
+          <fieldset className="sheet flex flex-col gap-5 px-4 pb-6 pt-16 sm:px-6">
+            <legend className="type-display absolute left-0 top-3 bg-text-primary py-1 pl-4 pr-7 text-lg text-bg-base [clip-path:polygon(0_0,100%_0,calc(100%-0.75rem)_100%,0_100%)] sm:pl-6">
               {dict.checkout.step2}
             </legend>
             <Field label={dict.checkout.street} htmlFor="street" required error={errors.street}>
@@ -282,16 +285,16 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
             </div>
           </fieldset>
 
-          <fieldset className="flex flex-col gap-4">
-            <legend className="mb-2 text-lg font-bold uppercase tracking-wide">
+          <fieldset className="sheet flex flex-col gap-4 px-4 pb-6 pt-16 sm:px-6">
+            <legend className="type-display absolute left-0 top-3 bg-text-primary py-1 pl-4 pr-7 text-lg text-bg-base [clip-path:polygon(0_0,100%_0,calc(100%-0.75rem)_100%,0_100%)] sm:pl-6">
               {dict.checkout.step3}
             </legend>
             {deliveryOptions.map((option) => (
               <label
                 key={option.id}
-                className={`flex cursor-pointer items-center gap-4 rounded-sm border p-4 transition-colors ${
+                className={`flex cursor-pointer items-center gap-4 border p-4 transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-(--focus-ring) ${
                   delivery === option.id
-                    ? 'border-border-brand bg-accent-subtle'
+                    ? 'border-border-strong bg-bg-muted shadow-[inset_4px_0_0_var(--accent)]'
                     : 'border-border-subtle hover:border-border-strong'
                 }`}
               >
@@ -311,15 +314,15 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
                     {dict.checkout.deliveryOptions[option.id].time}
                   </span>
                 </span>
-                <span className="text-sm font-bold text-text-primary">
+                <span className="type-display text-sm text-text-primary">
                   {option.price === 0 ? dict.cart.free : formatPrice(option.price, locale)}
                 </span>
               </label>
             ))}
           </fieldset>
 
-          <fieldset className="flex flex-col gap-4">
-            <legend className="mb-2 text-lg font-bold uppercase tracking-wide">
+          <fieldset className="sheet flex flex-col gap-4 px-4 pb-6 pt-16 sm:px-6">
+            <legend className="type-display absolute left-0 top-3 bg-text-primary py-1 pl-4 pr-7 text-lg text-bg-base [clip-path:polygon(0_0,100%_0,calc(100%-0.75rem)_100%,0_100%)] sm:pl-6">
               {dict.checkout.step4}
             </legend>
 
@@ -332,7 +335,7 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
             />
 
             {wantsInvoice && (
-              <div className="grid gap-5 rounded-sm border border-border-subtle p-4 sm:grid-cols-2">
+              <div className="grid gap-5 border border-border-subtle p-4 sm:grid-cols-2">
                 <Field
                   label={dict.checkout.company}
                   htmlFor="company"
@@ -393,25 +396,22 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
               )}
             </div>
 
-            <Button type="submit" size="lg" className="mt-2 w-full sm:w-auto">
+            <Button type="submit" size="lg" className="mx-1.5 mt-2 sm:mr-auto">
               {dict.checkout.submit}
             </Button>
           </fieldset>
         </form>
 
         {/* Order summary */}
-        <aside
-          aria-labelledby="order-summary"
-          className="rounded-md border border-border-subtle bg-surface p-6 lg:sticky lg:top-28"
-        >
-          <h2 id="order-summary" className="text-lg font-bold uppercase tracking-wide">
+        <aside aria-labelledby="order-summary" className="livery p-6 lg:sticky lg:top-20">
+          <h2 id="order-summary" className="type-display-md">
             {dict.checkout.yourOrder}
           </h2>
 
           <ul className="mt-5 flex flex-col gap-4">
             {detailedLines.map((line) => (
               <li key={`${line.productSlug}-${line.variantId}`} className="flex gap-3">
-                <div className="w-14 shrink-0 overflow-hidden rounded-sm">
+                <div className="w-14 shrink-0 overflow-hidden">
                   <Picture
                     name={line.product.images[0] ?? 'shot-detail-1'}
                     alt=""
@@ -451,7 +451,7 @@ export function CheckoutForm({ locale }: { locale: Locale }) {
             </div>
             <div className="mt-1 flex justify-between border-t border-border-subtle pt-3">
               <dt className="text-base font-bold text-text-primary">{dict.cart.grandTotal}</dt>
-              <dd className="text-xl font-extrabold text-text-primary">
+              <dd className="type-display text-2xl text-text-primary">
                 {formatPrice(total, locale)}
               </dd>
             </div>

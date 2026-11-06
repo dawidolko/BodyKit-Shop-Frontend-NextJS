@@ -1,3 +1,4 @@
+import { preload } from 'react-dom';
 import { asset, cn } from '@/lib/utils';
 import manifest from '@/lib/image-manifest.json';
 
@@ -22,6 +23,12 @@ type PictureProps = {
   imgClassName?: string;
   /** Above-the-fold hero loads eagerly, everything else lazily. */
   priority?: boolean;
+  /**
+   * Adds a preload hint to the document head. Use it once per page, on the
+   * image expected to be the largest paint: without the hint the browser finds
+   * a <picture> source only after the stylesheet has been fetched.
+   */
+  preloaded?: boolean;
 };
 
 /**
@@ -40,6 +47,7 @@ export function Picture({
   className,
   imgClassName,
   priority = false,
+  preloaded = false,
 }: PictureProps) {
   const entry = images[name];
 
@@ -64,6 +72,16 @@ export function Picture({
     entry.widths
       .map((width) => `${asset(`/images/${name}-${width}.${extension}`)} ${width}w`)
       .join(', ');
+
+  if (preloaded) {
+    preload(asset(`/images/${name}-${largest}.avif`), {
+      as: 'image',
+      type: 'image/avif',
+      imageSrcSet: srcSet('avif'),
+      imageSizes: sizes,
+      fetchPriority: 'high',
+    });
+  }
 
   return (
     <picture

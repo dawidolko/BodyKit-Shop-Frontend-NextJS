@@ -109,13 +109,9 @@ export default async function PackagesPage({ params }: { params: Promise<PagePar
                   </ul>
 
                   <dl className="mt-5 border-t border-border-subtle pt-4 text-xs">
-                    <dt className="font-bold uppercase tracking-wider text-text-muted">
-                      {dict.packages.fits}
-                    </dt>
+                    <dt className="font-bold text-text-muted">{dict.packages.fits}</dt>
                     <dd className="mt-1 text-text-secondary">{copy.fits}</dd>
-                    <dt className="mt-3 font-bold uppercase tracking-wider text-text-muted">
-                      {dict.packages.fitting}
-                    </dt>
+                    <dt className="mt-3 font-bold text-text-muted">{dict.packages.fitting}</dt>
                     <dd className="mt-1 text-text-secondary">{copy.note}</dd>
                   </dl>
 

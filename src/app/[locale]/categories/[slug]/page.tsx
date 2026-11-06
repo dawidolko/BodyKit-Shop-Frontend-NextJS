@@ -98,11 +98,14 @@ export default async function CategoryPage({ params }: { params: Promise<Params>
         locale={locale}
         dict={dict}
       />
-      <PageHeader title={name} description={description} />
+      <PageHeader
+        title={name}
+        description={description}
+        code={category.code}
+        image={category.image}
+      />
 
-      <div className="container-page pb-8">
-        <ProductFilters products={products} locale={locale} />
-      </div>
+      <ProductFilters products={products} locale={locale} />
     </>
   );
 }

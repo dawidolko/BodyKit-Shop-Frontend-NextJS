@@ -2,15 +2,17 @@ import Link from 'next/link';
 import { Picture } from '@/components/ui/Picture';
 import { Badge } from '@/components/ui/Badge';
 import { Rating } from './Rating';
+import { getPartNumber } from '@/lib/products';
 import type { Product } from '@/lib/types';
 import { cn, discountPercent, formatPrice, getMinPriceLabel, t } from '@/lib/utils';
 import type { Dictionary } from '@/i18n';
 import { localePath, type Locale } from '@/i18n/config';
 
 /**
- * Product tile used across listings.
+ * Parts-wall tile: photo edge to edge, then the catalogue data a buyer checks
+ * first, part number, fitment and price.
  *
- * The whole card is one click target thanks to a stretched link (::after), yet
+ * The whole tile is one click target thanks to a stretched link (::after), yet
  * the accessibility tree still sees a single link carrying the full product
  * name.
  *
@@ -25,6 +27,7 @@ export function ProductCard({
   dict,
   priority = false,
   headingLevel = 3,
+  lead = false,
   className,
 }: {
   product: Product;
@@ -32,6 +35,8 @@ export function ProductCard({
   dict: Dictionary;
   priority?: boolean;
   headingLevel?: 2 | 3;
+  /** The large tile that opens a parts wall. */
+  lead?: boolean;
   className?: string;
 }) {
   const Heading = `h${headingLevel}` as 'h2' | 'h3';
@@ -39,34 +44,34 @@ export function ProductCard({
   const cover = product.images[0] ?? 'shot-detail-1';
   const anyInStock = product.variants.some((variant) => variant.inStock);
   const name = t(product.name, locale);
+  const firstFit = product.fitment[0];
 
   return (
     <article
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-md border border-border-subtle',
-        'bg-surface transition-[border-color,box-shadow,translate] duration-300 ease-out-quint',
-        'hover:-translate-y-1 hover:border-border-brand hover:shadow-(--shadow-md)',
-        'focus-within:border-border-brand',
+        'group relative flex flex-col bg-surface',
+        'has-[a:focus-visible]:z-10 has-[a:focus-visible]:outline-2',
+        'has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-(--focus-ring)',
         className,
       )}
     >
-      <div className="relative overflow-hidden bg-bg-muted">
+      <div className={cn('relative overflow-hidden bg-bg-muted', lead && 'flex-1')}>
         <Picture
           name={cover}
           alt={dict.product.imageAlt(name)}
-          ratio={1}
-          sizes="(min-width: 1280px) 22rem, (min-width: 768px) 33vw, 50vw"
+          ratio={4 / 3}
+          sizes={lead ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1024px) 26rem, 50vw'}
           priority={priority}
-          imgClassName="transition-transform duration-500 ease-out-quint group-hover:scale-[1.04]"
+          className={cn('max-h-[26rem] w-full', lead && 'h-full lg:max-h-none')}
         />
 
         {(product.badges.length > 0 || discount) && (
-          <div className="absolute left-3 top-3 flex flex-col items-start gap-1.5">
+          <div className="absolute left-0 top-3 flex flex-col items-start gap-1">
             {discount && <Badge tone="accent">-{discount}%</Badge>}
             {product.badges
               .filter((badge) => badge !== 'sale')
               .map((badge) => (
-                <Badge key={badge} tone="on-image">
+                <Badge key={badge} tone={badge === 'lastUnits' ? 'hazard' : 'on-image'}>
                   {dict.badges[badge]}
                 </Badge>
               ))}
@@ -74,52 +79,65 @@ export function ProductCard({
         )}
 
         {!anyInStock && (
-          <p className="absolute inset-x-0 bottom-0 bg-bg-inverse/90 py-1.5 text-center text-xs font-semibold uppercase tracking-wide text-text-inverse">
+          <p className="absolute inset-x-0 bottom-0 bg-carbon-950 py-1.5 text-center text-xs font-semibold text-carbon-50">
             {dict.product.unavailable}
           </p>
         )}
+
+        <span
+          aria-hidden="true"
+          className="stripes absolute inset-x-0 bottom-0 h-1.5 origin-left scale-x-0 transition-transform duration-300 ease-out-quint group-hover:scale-x-100"
+        />
       </div>
 
-      <div className="flex flex-1 flex-col p-4">
-        <Rating
-          value={product.rating}
-          count={product.reviewCount}
-          dict={dict}
-          size="sm"
-          className="mb-2"
-        />
+      <div className="flex flex-col gap-1.5 border-t-2 border-border-strong p-3 sm:p-4">
+        <div className="flex items-baseline justify-between gap-3 text-xs text-text-muted">
+          <span className="type-data text-[0.8125rem]">
+            <span className="sr-only">{dict.product.partNumber} </span>
+            {getPartNumber(product)}
+          </span>
+          <Rating value={product.rating} dict={dict} size="sm" showCount={false} />
+        </div>
 
-        <Heading className="text-base font-bold leading-snug text-text-primary">
+        <Heading
+          className={cn(
+            'type-display leading-[1.15] text-text-primary',
+            lead ? 'text-xl sm:text-2xl' : 'text-sm sm:text-base',
+          )}
+        >
           <Link
             href={localePath(locale, `/products/${product.slug}`)}
-            className="rounded-xs after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-focus-within:underline"
+            className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none group-hover:underline"
           >
             {name}
           </Link>
         </Heading>
 
-        <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-text-muted">
-          {t(product.shortDescription, locale)}
-        </p>
-
-        <div className="mt-auto flex items-end justify-between pt-4">
-          <p className="flex flex-col">
-            {product.compareAtPrice && (
-              <span className="text-xs text-text-muted line-through">
-                {formatPrice(product.compareAtPrice, locale)}
-              </span>
-            )}
-            <span className="text-lg font-bold text-text-primary">
-              {getMinPriceLabel(product, locale, dict)}
-            </span>
+        {lead && (
+          <p className="line-clamp-2 max-w-prose text-sm leading-relaxed text-text-muted">
+            {t(product.shortDescription, locale)}
           </p>
-          <span
-            aria-hidden="true"
-            className="text-xs font-semibold uppercase tracking-wide text-text-muted transition-colors group-hover:text-text-brand"
-          >
-            {dict.product.view}
+        )}
+
+        {firstFit && (
+          <p className="text-xs leading-snug text-text-muted">
+            {dict.product.fitsLabel} {firstFit.make} {firstFit.model}
+            {product.fitment.length > 1 && (
+              <> {dict.product.moreModels(product.fitment.length - 1)}</>
+            )}
+          </p>
+        )}
+
+        <p className="mt-1 flex flex-wrap items-baseline gap-x-2">
+          <span className="type-display text-base text-text-primary sm:text-lg">
+            {getMinPriceLabel(product, locale, dict)}
           </span>
-        </div>
+          {product.compareAtPrice && (
+            <span className="text-xs text-text-muted line-through">
+              {formatPrice(product.compareAtPrice, locale)}
+            </span>
+          )}
+        </p>
       </div>
     </article>
   );

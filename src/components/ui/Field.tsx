@@ -2,10 +2,10 @@ import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 const controlBase =
-  'w-full rounded-sm border bg-surface px-4 text-sm text-text-primary ' +
+  'w-full border-b-2 border-x-0 border-t-0 bg-surface-sunken px-3 text-base text-text-primary ' +
   'placeholder:text-text-muted transition-colors duration-150 ' +
   'border-border-default hover:border-border-strong ' +
-  'focus-visible:border-border-brand focus-ring ' +
+  'focus-visible:border-border-strong focus-ring ' +
   'disabled:cursor-not-allowed disabled:opacity-60 ' +
   'aria-[invalid=true]:border-danger';
 
@@ -101,7 +101,7 @@ export function Checkbox({
         type="checkbox"
         id={id}
         className={cn(
-          'mt-0.5 size-5 shrink-0 cursor-pointer rounded-xs border border-border-default',
+          'mt-0.5 size-5 shrink-0 cursor-pointer border border-border-default',
           'accent-accent',
           'focus-ring',
         )}

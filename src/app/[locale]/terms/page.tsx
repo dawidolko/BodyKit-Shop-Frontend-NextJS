@@ -226,7 +226,7 @@ export default async function TermsPage({ params }: { params: Promise<PageParams
       <PageHeader title={dict.terms.title} description={dict.terms.description} />
 
       <div className="container-page pb-16">
-        <div className="mb-8 rounded-sm border border-warning/40 bg-warning/5 p-4">
+        <div className="mb-8 border-l-4 border-hazard bg-surface p-4">
           <p className="text-sm leading-relaxed text-text-secondary">
             <strong className="font-bold text-text-primary">{dict.terms.demoStrong}</strong>{' '}
             {dict.terms.demoNotice}
@@ -234,16 +234,14 @@ export default async function TermsPage({ params }: { params: Promise<PageParams
         </div>
 
         <div className="grid gap-10 lg:grid-cols-[16rem_1fr]">
-          <nav aria-label={dict.terms.tocLabel} className="lg:sticky lg:top-28 lg:self-start">
-            <p className="text-xs font-bold uppercase tracking-wider text-text-muted">
-              {dict.terms.tableOfContents}
-            </p>
+          <nav aria-label={dict.terms.tocLabel} className="lg:sticky lg:top-20 lg:self-start">
+            <p className="text-sm font-bold text-text-muted">{dict.terms.tableOfContents}</p>
             <ol className="mt-4 flex flex-col gap-2">
               {sections.map((section) => (
                 <li key={section.id}>
                   <a
                     href={`#${section.id}`}
-                    className="rounded-xs text-sm text-text-secondary transition-colors hover:text-text-brand focus-ring"
+                    className="text-sm text-text-secondary transition-colors hover:text-text-brand focus-ring"
                   >
                     {section.title}
                   </a>

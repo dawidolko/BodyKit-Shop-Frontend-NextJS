@@ -50,20 +50,18 @@ export default async function AboutPage({ params }: { params: Promise<PageParams
       <Breadcrumbs items={[{ href: PATH, label: dict.nav.about }]} locale={locale} dict={dict} />
       <PageHeader title={dict.about.title} description={dict.about.description} />
 
-      <div className="container-page pb-8">
-        <Picture
-          name="about-workshop"
-          alt={dict.about.imageAlt}
-          sizes="(min-width: 1536px) 88rem, 95vw"
-          priority
-          className="rounded-lg border border-border-subtle"
-        />
-      </div>
+      <Picture
+        name="about-workshop"
+        alt={dict.about.imageAlt}
+        sizes="100vw"
+        priority
+        className="max-h-[32rem] w-full"
+      />
 
       <section aria-labelledby="story-heading" className="container-page py-12">
         <div className="grid gap-12 lg:grid-cols-[1fr_20rem]">
           <div className="max-w-2xl">
-            <h2 id="story-heading" className="text-2xl font-extrabold uppercase tracking-tight">
+            <h2 id="story-heading" className="type-display-md">
               {dict.about.storyHeading}
             </h2>
             <div className="mt-5 flex flex-col gap-4 text-base leading-relaxed text-text-secondary">
@@ -72,9 +70,7 @@ export default async function AboutPage({ params }: { params: Promise<PageParams
               ))}
             </div>
 
-            <h2 className="mt-12 text-2xl font-extrabold uppercase tracking-tight">
-              {dict.about.valuesHeading}
-            </h2>
+            <h2 className="mt-12 type-display-md">{dict.about.valuesHeading}</h2>
             <ul className="mt-6 flex flex-col gap-6">
               {dict.about.values.map((value) => (
                 <li key={value.title} className="flex gap-4">
@@ -88,17 +84,13 @@ export default async function AboutPage({ params }: { params: Promise<PageParams
             </ul>
           </div>
 
-          <aside className="lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-md border border-border-subtle bg-surface p-6">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-text-muted">
-                {dict.about.milestonesHeading}
-              </h2>
+          <aside className="lg:sticky lg:top-20 lg:self-start">
+            <div className="sheet p-6">
+              <h2 className="text-sm font-bold text-text-muted">{dict.about.milestonesHeading}</h2>
               <ol className="mt-5 flex flex-col gap-5">
                 {dict.about.milestones.map((milestone) => (
                   <li key={milestone.year} className="flex gap-4">
-                    <span className="font-display text-lg font-extrabold text-accent-fg">
-                      {milestone.year}
-                    </span>
+                    <span className="type-display text-lg text-accent-fg">{milestone.year}</span>
                     <span className="text-sm leading-relaxed text-text-secondary">
                       {milestone.text}
                     </span>
@@ -107,7 +99,7 @@ export default async function AboutPage({ params }: { params: Promise<PageParams
               </ol>
             </div>
 
-            <div className="mt-5 rounded-md border border-border-subtle bg-bg-subtle p-6">
+            <div className="mt-5 sheet p-6">
               <p className="text-sm leading-relaxed text-text-secondary">{dict.about.asideText}</p>
               <LinkButton
                 href={localePath(locale, '/contact')}

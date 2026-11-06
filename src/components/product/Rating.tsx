@@ -22,20 +22,24 @@ export function Rating({
   className?: string;
 }) {
   const rounded = Math.round(value);
-  const starSize = size === 'sm' ? 'size-3.5' : 'size-4';
+  const compact = size === 'sm';
 
   return (
     <div className={cn('flex items-center gap-1.5', className)}>
-      <span className="flex gap-0.5 text-accent-fg" aria-hidden="true">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <StarIcon
-            key={star}
-            filled={star <= rounded}
-            className={cn(starSize, star > rounded && 'text-border-default')}
-          />
-        ))}
-      </span>
-      <span className={cn('text-text-muted', size === 'sm' ? 'text-xs' : 'text-sm')}>
+      {compact ? (
+        <StarIcon filled className="size-3.5 text-accent-fg" />
+      ) : (
+        <span className="flex gap-0.5 text-accent-fg" aria-hidden="true">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <StarIcon
+              key={star}
+              filled={star <= rounded}
+              className={cn('size-4', star > rounded && 'text-border-default')}
+            />
+          ))}
+        </span>
+      )}
+      <span className={cn('text-text-muted', compact ? 'text-xs' : 'text-sm')}>
         <span className="sr-only">{dict.product.rating} </span>
         {value.toFixed(1)}
         {showCount && count !== undefined && (

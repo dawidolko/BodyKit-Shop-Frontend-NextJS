@@ -3,9 +3,9 @@ import type { SVGProps } from 'react';
 type IconProps = SVGProps<SVGSVGElement> & { title?: string };
 
 /**
- * Zestaw ikon interfejsu. Wszystkie rysowane sa currentColor, wiec dziedzicza
- * kolor tekstu i dzialaja w obu motywach bez dodatkowej konfiguracji.
- * Ikona bez `title` jest dekoracyjna i ukryta przed czytnikami ekranu.
+ * Interface icons. All are drawn with currentColor, so they inherit the text
+ * colour and work in both themes without extra configuration. An icon without
+ * a `title` is decorative and hidden from screen readers.
  */
 function Svg({ title, children, ...rest }: IconProps) {
   return (

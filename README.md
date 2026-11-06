@@ -28,10 +28,10 @@ Cart state lives in `localStorage`, the catalog is compiled into the bundle, and
 - 🛒 **Cart & checkout** — Cart state persisted in `localStorage`, with a full checkout flow and validation that runs entirely in the browser
 - 🌗 **Themes** — Light and dark, with a toggle, persisted choice and system preference detection
 - ♿ **Accessibility** — WCAG 2.2 AA, zero axe-core violations across every route in both locales and both themes
-- 🔎 **SEO** — Per-page metadata, `sitemap.xml` with language alternates, `robots.txt`, JSON-LD (Store, Product, FAQ, BreadcrumbList)
+- 🔎 **SEO** — Per-page metadata, `sitemap.xml` with language alternates, `robots.txt`, JSON-LD (Organization, WebSite, ItemList, FAQ, BreadcrumbList)
 - 🖼️ **Images** — AVIF + WebP at three widths, LQIP placeholders, `srcset` driven by a build-time manifest
 - ⚡ **Performance** — Self-hosted fonts, no third-party requests, a 1920 px hero at 112 kB in AVIF
-- 🎨 **Design system** — A documented style guide route covering tokens, colour contrast and components
+- 🎨 **Design system** — A parts-catalogue identity with a documented style guide route covering tokens, colour contrast and components
 - ✅ **Quality** — TypeScript `strict`, ESLint, Prettier and an accessibility audit in CI
 
 ---
@@ -50,15 +50,15 @@ Cart state lives in `localStorage`, the catalog is compiled into the bundle, and
 
 ## 🧩 Modules
 
-| Module             | Description                                                         | Stack                                          |
-| ------------------ | ------------------------------------------------------------------- | ---------------------------------------------- |
-| **Catalog**        | Products, categories and localized content in the data layer        | `src/lib/products.ts`, `src/lib/categories.ts` |
-| **Cart**           | Client-side cart state persisted to `localStorage`                  | `src/lib/cart.tsx`                             |
-| **Product UI**     | Card, gallery, filters and add-to-cart                              | `src/components/product`                       |
-| **Checkout**       | Multi-field checkout with full validation, no network calls         | `src/components/checkout`                      |
-| **SEO**            | Structured data emitters for Store, Product, FAQ and BreadcrumbList | `src/components/seo`                           |
-| **i18n**           | Locale config, dictionaries and the language switcher               | `src/i18n`                                     |
-| **Image pipeline** | Fetch, crop, convert and manifest generation                        | `scripts/`, `src/lib/image-manifest.json`      |
+| Module             | Description                                                                 | Stack                                          |
+| ------------------ | --------------------------------------------------------------------------- | ---------------------------------------------- |
+| **Catalog**        | Products, categories and localized content in the data layer                | `src/lib/products.ts`, `src/lib/categories.ts` |
+| **Cart**           | Client-side cart state persisted to `localStorage`                          | `src/lib/cart.tsx`                             |
+| **Product UI**     | Card, gallery, filters and add-to-cart                                      | `src/components/product`                       |
+| **Checkout**       | Multi-field checkout with full validation, no network calls                 | `src/components/checkout`                      |
+| **SEO**            | Structured data for Organization, WebSite, ItemList, FAQ and BreadcrumbList | `src/components/seo`                           |
+| **i18n**           | Locale config, dictionaries and the language switcher                       | `src/i18n`                                     |
+| **Image pipeline** | Fetch, crop, convert and manifest generation                                | `scripts/`, `src/lib/image-manifest.json`      |
 
 ---
 
@@ -70,7 +70,7 @@ Cart state lives in `localStorage`, the catalog is compiled into the bundle, and
 - **React 19** — Server and Client Components
 - **TypeScript 5.7** — `strict` mode
 - **Tailwind CSS 4** — CSS-based configuration via `@tailwindcss/postcss`
-- **next/font** — Barlow and Barlow Condensed, self-hosted
+- **next/font** — Saira wide italic and Saira text, self-hosted WOFF2 subsets with Polish glyphs
 
 ### Tooling & Quality
 
@@ -181,25 +181,33 @@ TypeScript will point at each spot that still needs attention.
 
 ## 🎨 Design System
 
-The visual direction is **carbon plus electric orange**: a dark technical base with a single strong accent, tight radii (2–10 px) and condensed display type.
+The site is drawn as a **tuning-garage parts catalogue**, not a marketing page. It takes its language from race livery and workshop paperwork: primer-grey sheets, navy bands, racing red, a sky stripe, wide italic display type and one 12 degree lean shared by the logo, the buttons, the hero plate and the section cuts. Hazard tape appears only on the footer's start line and on low-stock tags.
+
+How that shows up in the structure:
+
+- **Header** — a sticky navy row with a real search field and a cart plate, plus a catalog index that keeps all eight categories one click away.
+- **Home** — the hero photo carries part callouts like an exploded diagram, then the page goes straight to a gapless parts wall, a category mosaic and a fitting procedure table.
+- **Catalog** — filter chips across the full width, with a switch between the image wall and a parts list. Every part has a catalogue number, such as `BK-SPL-001`, built from its category code.
+- **Product** — the gallery runs edge to edge, and fitment is a proper table of make, model and years.
+- **Checkout and footer** — numbered sheet tabs for the checkout steps, and a footer ruled like the title block of an engineering drawing.
 
 ### Colour
 
-| Role           | Light                               | Dark                 |
-| -------------- | ----------------------------------- | -------------------- |
-| Primary text   | `carbon-900` — 16.8:1               | `carbon-50` — 17.6:1 |
-| Secondary text | `carbon-600` — 7.2:1                | `carbon-300` — 9.2:1 |
-| Muted text     | `carbon-500` — 5.1:1                | `carbon-400` — 5.6:1 |
-| Link / accent  | `brand-700` — 5.5:1                 | `brand-400` — 6.9:1  |
-| Text on accent | `carbon-950` on `brand-500` — 6.6:1 | same pair            |
+| Role           | Light                        | Dark                  |
+| -------------- | ---------------------------- | --------------------- |
+| Primary text   | `carbon-950` — 14.5:1        | `carbon-50` — 17.4:1  |
+| Secondary text | `carbon-700` — 8.6:1         | `carbon-200` — 12.7:1 |
+| Muted text     | `carbon-600` — 6.4:1         | `carbon-300` — 9.1:1  |
+| Link / accent  | `brand-700` — 6.7:1          | `sky` — 10.4:1        |
+| Text on accent | white on `brand-600` — 5.9:1 | same pair             |
 
-One decision worth explaining: **brand surfaces use dark ink, not white.** White on `brand-500` measures 2.8:1, which fails even the large-text threshold. Dark carbon on the same orange reaches 6.6:1 — and reads sharper.
+The light theme sits on primer grey with white sheets on top. The dark theme is a blueprint: deep navy, with sky blue taking over links and accents because red text on navy would not reach 4.5:1. Bands marked `.livery` stay navy in both themes and carry their own text, border and focus tokens.
 
 Every value was computed and then confirmed by an axe-core scan.
 
 ### Typography
 
-Barlow for body text, Barlow Condensed for headings, both self-hosted through `next/font` — no requests to Google and no layout shift while fonts load.
+Saira carries everything: wide italic (700–900) for headings and prices, upright (400–700) for body text, and condensed with lining figures and a slashed zero for part numbers. Both files are WOFF2 subsets covering Latin and Polish, 19 kB and 39 kB, stored in `src/fonts` under the SIL Open Font License and loaded through `next/font/local`. Only the display face is preloaded, and nothing is requested from a third party.
 
 Full token and component documentation: [`/en/style-guide`](https://bodykit.dawidolko.pl/en/style-guide/).
 
@@ -218,12 +226,10 @@ npm run audit:a11y
 What that covers in practice:
 
 - **Contrast** — every text/background pair at 4.5:1 or better, UI elements at 3:1, in both themes.
-- **Focus** — one shared `.focus-ring` class, a 2 px ring with a 2 px offset, shown only for `:focus-visible`.
+- **Focus** — one shared `.focus-ring` class, a 2 px ring with a 2 px offset, shown only for `:focus-visible`. Buttons lean with a skew rather than a clip, so the ring is never cut off.
 - **Keyboard** — skip link, `Escape` closes panels and restores focus, disclosures expose `aria-expanded`.
 - **Forms** — labels bound to controls, errors announced through `role="alert"`, and a failed submit moves focus to a summary that links to each broken field.
 - **Language** — `<html lang>` matches the rendered locale, and `hreflang` links pair the two versions.
-
-An accessibility panel in the corner of every page changes text size, contrast, font and motion, and remembers the choice on the device. It sits on top of the markup and does not replace accessible markup.
 
 - **Motion** — `prefers-reduced-motion` collapses every animation to 0.01 ms.
 - **High contrast** — `prefers-contrast: more` strengthens borders and muted text.

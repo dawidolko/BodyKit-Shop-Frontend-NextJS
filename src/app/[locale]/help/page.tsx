@@ -230,16 +230,14 @@ export default async function HelpPage({ params }: { params: Promise<PageParams>
       <div className="container-page pb-16">
         <div className="grid gap-10 lg:grid-cols-[16rem_1fr]">
           {/* Table of contents */}
-          <nav aria-label={dict.help.onThisPage} className="lg:sticky lg:top-28 lg:self-start">
-            <p className="text-xs font-bold uppercase tracking-wider text-text-muted">
-              {dict.help.onThisPage}
-            </p>
+          <nav aria-label={dict.help.onThisPage} className="lg:sticky lg:top-20 lg:self-start">
+            <p className="text-sm font-bold text-text-muted">{dict.help.onThisPage}</p>
             <ul className="mt-4 flex flex-col gap-2">
               {groups.map((group) => (
                 <li key={group.id}>
                   <a
                     href={`#${group.id}`}
-                    className="rounded-xs text-sm text-text-secondary transition-colors hover:text-text-brand focus-ring"
+                    className="text-sm text-text-secondary transition-colors hover:text-text-brand focus-ring"
                   >
                     {group.title}
                   </a>
@@ -247,7 +245,7 @@ export default async function HelpPage({ params }: { params: Promise<PageParams>
               ))}
             </ul>
 
-            <div className="mt-8 rounded-md border border-border-subtle bg-bg-subtle p-5">
+            <div className="mt-8 sheet p-5">
               <p className="text-sm font-semibold text-text-primary">{dict.help.noQuestion}</p>
               <p className="mt-2 text-sm leading-relaxed text-text-muted">
                 {dict.help.noQuestionText}
@@ -267,19 +265,13 @@ export default async function HelpPage({ params }: { params: Promise<PageParams>
           <div className="flex flex-col gap-12">
             {groups.map((group) => (
               <section key={group.id} id={group.id} aria-labelledby={`${group.id}-heading`}>
-                <h2
-                  id={`${group.id}-heading`}
-                  className="text-xl font-extrabold uppercase tracking-tight"
-                >
+                <h2 id={`${group.id}-heading`} className="type-display-md">
                   {group.title}
                 </h2>
 
                 <div className="mt-5 flex flex-col gap-3">
                   {group.items.map((item) => (
-                    <details
-                      key={item.q}
-                      className="group rounded-md border border-border-subtle bg-surface open:border-border-brand"
-                    >
+                    <details key={item.q} className="group sheet open:border-border-brand">
                       <summary className="flex cursor-pointer items-start justify-between gap-4 p-5 text-sm font-semibold text-text-primary marker:content-none focus-ring">
                         {item.q}
                         <span
@@ -298,11 +290,8 @@ export default async function HelpPage({ params }: { params: Promise<PageParams>
               </section>
             ))}
 
-            <section
-              aria-labelledby="more-help"
-              className="rounded-md border border-border-subtle bg-bg-subtle p-6"
-            >
-              <h2 id="more-help" className="text-lg font-bold uppercase tracking-wide">
+            <section aria-labelledby="more-help" className="sheet p-6">
+              <h2 id="more-help" className="type-display-md">
                 {dict.help.usefulLinks}
               </h2>
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">

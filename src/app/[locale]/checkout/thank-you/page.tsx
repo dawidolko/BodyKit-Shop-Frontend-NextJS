@@ -46,20 +46,18 @@ export default async function ThankYouPage({ params }: { params: Promise<Params>
           <CheckIcon className="size-8" />
         </span>
 
-        <h1 className="mt-6 text-3xl font-extrabold uppercase tracking-tight sm:text-4xl">
-          {dict.thankYou.title}
-        </h1>
+        <h1 className="mt-6 type-display-lg">{dict.thankYou.title}</h1>
 
         <p className="mt-4 text-base leading-relaxed text-text-secondary">{dict.thankYou.lead}</p>
 
-        <p className="mx-auto mt-6 inline-flex flex-col rounded-md border border-border-subtle bg-surface px-8 py-4">
+        <p className="mx-auto mt-6 inline-flex flex-col sheet px-8 py-4">
           <span className="text-xs uppercase tracking-wider text-text-muted">
             {dict.thankYou.orderNumber}
           </span>
-          <span className="mt-1 font-mono text-lg font-bold text-text-primary">BK-2026-04812</span>
+          <span className="mt-1 type-data text-xl text-text-primary">BK-2026-04812</span>
         </p>
 
-        <div className="mt-8 rounded-sm border border-warning/40 bg-warning/5 p-4">
+        <div className="mt-8 border-l-4 border-hazard bg-surface p-4">
           <p className="text-sm leading-relaxed text-text-secondary">
             <strong className="font-bold text-text-primary">{dict.thankYou.demoNoteStrong}</strong>{' '}
             {dict.thankYou.demoNote}
@@ -71,11 +69,11 @@ export default async function ThankYouPage({ params }: { params: Promise<Params>
         {dict.thankYou.steps.map((step, index) => {
           const Icon = stepIcons[index] ?? MailIcon;
           return (
-            <li key={step.title} className="rounded-md border border-border-subtle bg-surface p-6">
-              <span className="flex size-11 items-center justify-center rounded-sm bg-accent-subtle text-accent-fg">
+            <li key={step.title} className="sheet p-6">
+              <span className="flex size-11 items-center justify-center bg-accent-subtle text-accent-fg">
                 <Icon className="size-5" />
               </span>
-              <p className="mt-4 text-xs font-bold uppercase tracking-wider text-text-muted">
+              <p className="mt-4 text-sm font-bold text-text-muted">
                 {dict.thankYou.step} {index + 1}
               </p>
               <h2 className="mt-1 text-base font-bold text-text-primary">{step.title}</h2>

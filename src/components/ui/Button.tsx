@@ -6,36 +6,31 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'inverse' | 'on-da
 type Size = 'sm' | 'md' | 'lg';
 
 const base =
-  'inline-flex items-center justify-center gap-2 font-semibold tracking-wide uppercase ' +
-  'transition-[background-color,color,border-color,translate,box-shadow] duration-200 ' +
-  'ease-out-quint rounded-sm focus-ring ' +
+  'btn inline-flex items-center justify-center font-display font-extrabold italic ' +
+  'transition-[background-color,color,border-color,translate] duration-150 ' +
+  'ease-out-quint focus-ring ' +
   'disabled:pointer-events-none disabled:opacity-50 ' +
   'active:translate-y-px';
 
 const variants: Record<Variant, string> = {
-  // Dark ink on orange - 6.63:1, verified for both themes.
-  primary:
-    'bg-accent text-text-on-brand hover:bg-accent-hover active:bg-accent-active ' +
-    'shadow-[0_2px_0_0_var(--accent-active)] hover:shadow-[0_1px_0_0_var(--accent-active)]',
+  primary: 'bg-accent text-text-on-brand hover:bg-accent-hover active:bg-accent-active',
   secondary:
-    'border border-border-default bg-surface text-text-primary ' +
-    'hover:border-border-brand hover:text-text-brand',
+    'border-2 border-border-strong bg-transparent text-text-primary ' +
+    'hover:bg-text-primary hover:text-bg-base',
   ghost: 'text-text-secondary hover:bg-bg-muted hover:text-text-primary',
-  // For sections with a dark background (hero, banners) - the colours do not
-  // depend on the theme, because the surface behind is dark either way.
+  /* The surface behind is navy in both themes, so colours skip the theme tokens. */
   'on-dark':
-    'border border-carbon-600 bg-carbon-950/40 text-carbon-50 backdrop-blur-sm ' +
-    'hover:border-brand-500 hover:bg-carbon-950/70 hover:text-brand-400',
-  // A fixed dark surface in both themes - the --danger-text token lightens in
-  // dark mode, which would drop white text to 2.8:1.
+    'border-2 border-carbon-50 bg-transparent text-carbon-50 ' +
+    'hover:bg-carbon-50 hover:text-carbon-950',
+  /* Fixed in both themes: the --danger-text token lightens in dark mode. */
   danger: 'bg-danger-600 text-white hover:bg-danger-700',
   inverse: 'bg-bg-inverse text-text-inverse hover:bg-carbon-700 dark:hover:bg-carbon-200',
 };
 
 const sizes: Record<Size, string> = {
-  sm: 'h-9 px-4 text-xs',
-  md: 'h-11 px-6 text-sm',
-  lg: 'h-13 px-8 text-base',
+  sm: 'min-h-9 px-4 text-xs',
+  md: 'min-h-11 px-6 text-sm',
+  lg: 'min-h-13 px-8 text-base',
 };
 
 type CommonProps = {
@@ -58,7 +53,7 @@ export function Button({
 }: ButtonProps) {
   return (
     <button type={type} className={cn(base, variants[variant], sizes[size], className)} {...rest}>
-      {children}
+      <span className="btn-face">{children}</span>
     </button>
   );
 }
@@ -74,7 +69,7 @@ export function LinkButton({
 }: LinkButtonProps) {
   return (
     <Link href={href} className={cn(base, variants[variant], sizes[size], className)} {...rest}>
-      {children}
+      <span className="btn-face">{children}</span>
     </Link>
   );
 }

@@ -90,8 +90,9 @@ export function SearchClient({ locale }: { locale: Locale }) {
     <>
       <form
         role="search"
+        aria-label={dict.search.label}
         onSubmit={(event) => event.preventDefault()}
-        className="container-page pb-8"
+        className="container-page pb-8 pt-6"
       >
         <label htmlFor="search-input" className="sr-only">
           {dict.search.label}
@@ -105,7 +106,7 @@ export function SearchClient({ locale }: { locale: Locale }) {
             onChange={(event) => setQuery(event.target.value)}
             placeholder={dict.search.placeholder}
             autoComplete="off"
-            className="h-14 w-full rounded-sm border border-border-default bg-surface pl-12 pr-4 text-base text-text-primary placeholder:text-text-muted focus-visible:border-border-brand focus-ring"
+            className="h-14 w-full border-2 border-border-strong bg-surface pl-12 pr-4 text-base text-text-primary placeholder:text-text-muted focus-ring"
           />
         </div>
         <p className="mt-2 text-xs text-text-muted">
@@ -132,9 +133,9 @@ export function SearchClient({ locale }: { locale: Locale }) {
             </p>
 
             {results.length > 0 ? (
-              <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <ul className="part-wall mt-6">
                 {results.map((product, index) => (
-                  <li key={product.slug} className="flex">
+                  <li key={product.slug}>
                     <ProductCard
                       product={product}
                       locale={locale}
@@ -147,7 +148,7 @@ export function SearchClient({ locale }: { locale: Locale }) {
                 ))}
               </ul>
             ) : (
-              <div className="mt-10 rounded-md border border-dashed border-border-default p-10 text-center">
+              <div className="mt-10 border-2 border-dashed border-border-default p-10 text-center">
                 <p className="text-base font-semibold text-text-primary">
                   {dict.search.noResults(query.trim())}
                 </p>
@@ -162,7 +163,7 @@ export function SearchClient({ locale }: { locale: Locale }) {
           </>
         ) : (
           <section aria-labelledby="browse-heading">
-            <h2 id="browse-heading" className="text-lg font-bold uppercase tracking-wide">
+            <h2 id="browse-heading" className="type-display-md">
               {dict.search.browseByCategory}
             </h2>
             <ul className="mt-5 flex flex-wrap gap-2.5">
@@ -170,8 +171,9 @@ export function SearchClient({ locale }: { locale: Locale }) {
                 <li key={category.slug}>
                   <Link
                     href={localePath(locale, `/categories/${category.slug}`)}
-                    className="inline-flex items-center rounded-sm border border-border-default px-4 py-2.5 text-sm font-medium text-text-secondary transition-colors hover:border-border-brand hover:text-text-brand focus-ring"
+                    className="inline-flex items-center gap-2 border border-border-default bg-surface px-4 py-2.5 text-sm font-semibold text-text-secondary transition-colors hover:border-border-strong hover:text-text-primary focus-ring"
                   >
+                    <span className="type-data text-text-muted">{category.code}</span>
                     {t(category.name, locale)}
                   </Link>
                 </li>

@@ -38,6 +38,9 @@ export const pl: Dictionary = {
     mobileNav: 'Nawigacja mobilna',
     mainNav: 'Nawigacja główna',
     categoriesLabel: 'Kategorie',
+    catalogIndex: 'Indeks katalogu',
+    allParts: 'Wszystkie części',
+    quickSearch: 'Szybkie wyszukiwanie',
     skipToContent: 'Przejdź do treści',
     breadcrumb: 'Ścieżka nawigacyjna',
     homeLabel: 'Strona główna',
@@ -102,11 +105,19 @@ export const pl: Dictionary = {
     ctaBannerText:
       'Napisz markę, model i rocznik — odpiszemy z listą pasujących elementów i podpowiemy, co ma sens montować razem.',
     ctaBannerButton: 'Zapytaj o dopasowanie',
+    shopByMake: 'Szukaj po marce',
     processImageAlt:
       'Samochód sportowy w hali warsztatowej przygotowany do montażu elementów karoserii',
   },
 
   product: {
+    partNumber: 'Nr kat.',
+    fitsLabel: 'Pasuje do',
+    moreModels: (count: number) => `+${count} więcej`,
+    make: 'Marka',
+    model: 'Model',
+    yearsColumn: 'Roczniki',
+    category: 'Kategoria',
     available: 'Dostępny',
     unavailable: 'Chwilowo niedostępny',
     outOfStockShort: 'Niedostępny',
@@ -174,6 +185,11 @@ export const pl: Dictionary = {
     availability: 'Dostępność',
     inStockOnly: 'Tylko dostępne od ręki',
     clearFilters: 'Wyczyść filtry',
+    viewLabel: 'Widok',
+    viewWall: 'Ściana zdjęć',
+    viewList: 'Lista części',
+    columnPart: 'Część',
+    columnPrice: 'Cena',
     sortBy: 'Sortuj:',
     sortOptions: {
       featured: 'Polecane',
@@ -604,10 +620,10 @@ export const pl: Dictionary = {
     sections: 'Sekcje',
     brandMark: 'Znak marki',
     brandMarkNote:
-      'Monogram zbudowany jest z ukośnego splittera. Ten sam kąt wraca w narzędziu .clip-slant i w kaflach kategorii.',
+      'Znak to numer startowy na tablicy pochylonej o 12 stopni. Ten sam kąt wraca w przyciskach, w płycie hero i w ukośnych cięciach sekcji.',
     colors: 'Kolory',
-    brandScale: 'Marka — elektryczny pomarańcz',
-    carbonScale: 'Carbon — baza neutralna',
+    brandScale: 'Czerwień wyścigowa',
+    carbonScale: 'Od granatu do podkładu',
     semanticTokens: 'Tokeny semantyczne',
     tokenUsage: {
       '--bg-base': 'Tło strony',
@@ -616,7 +632,7 @@ export const pl: Dictionary = {
       '--text-secondary': 'Tekst uzupełniający (>=7:1)',
       '--text-muted': 'Podpisy i metadane (>=5:1)',
       '--accent': 'Tło elementów akcji',
-      '--text-on-brand': 'Tekst na akcencie (6.6:1)',
+      '--text-on-brand': 'Tekst na akcencie (5.9:1)',
       '--border-subtle': 'Linie rozdzielające',
       '--focus-ring': 'Pierścień fokusu',
     },
@@ -625,7 +641,7 @@ export const pl: Dictionary = {
     usage: 'Zastosowanie',
     typography: 'Typografia',
     typographyNote:
-      'Nagłówki: Barlow Condensed (700–800). Tekst: Barlow (400–600). Obie rodziny ładowane lokalnie przez next/font.',
+      'Nagłówki i ceny: Saira szeroka kursywa (700–900). Tekst: Saira (400–700), zwężona w numerach katalogowych. Obie to lokalne podzbiory ładowane przez next/font.',
     spacing: 'Odstępy i promienie',
     spacingScale: 'Skala odstępów',
     radii: 'Promienie',
@@ -658,7 +674,7 @@ export const pl: Dictionary = {
     a11yItems: [
       {
         title: 'Kontrast',
-        text: 'Każda para tekst/tło osiąga minimum 4.5:1, a elementy interfejsu 3:1. Biały tekst na pomarańczu dawał tylko 2.8:1, dlatego na powierzchniach akcentu używamy ciemnego atramentu (6.6:1).',
+        text: 'Każda para tekst/tło osiąga minimum 4.5:1, a elementy interfejsu 3:1. Biały tekst na czerwieni wyścigowej osiąga 5.9:1, więc powierzchnie akcentu niosą biały tekst.',
       },
       {
         title: 'Fokus',

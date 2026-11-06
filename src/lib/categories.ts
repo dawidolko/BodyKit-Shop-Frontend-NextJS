@@ -7,6 +7,7 @@ import type { Category } from './types';
 export const categories: Category[] = [
   {
     slug: 'front-splitters',
+    code: 'SPL',
     name: {
       en: 'Front splitters',
       pl: 'Splittery przednie',
@@ -23,6 +24,7 @@ export const categories: Category[] = [
   },
   {
     slug: 'spoilers',
+    code: 'SPO',
     name: {
       en: 'Spoilers and wings',
       pl: 'Spoilery i skrzydła',
@@ -39,6 +41,7 @@ export const categories: Category[] = [
   },
   {
     slug: 'rear-diffusers',
+    code: 'DIF',
     name: {
       en: 'Rear diffusers',
       pl: 'Dyfuzory tylne',
@@ -55,6 +58,7 @@ export const categories: Category[] = [
   },
   {
     slug: 'side-skirts',
+    code: 'SKT',
     name: {
       en: 'Side skirt extensions',
       pl: 'Nakładki progowe',
@@ -71,6 +75,7 @@ export const categories: Category[] = [
   },
   {
     slug: 'wheels',
+    code: 'WHL',
     name: {
       en: 'Wheels and spacers',
       pl: 'Felgi i dystanse',
@@ -87,6 +92,7 @@ export const categories: Category[] = [
   },
   {
     slug: 'exhausts',
+    code: 'EXH',
     name: {
       en: 'Exhaust systems',
       pl: 'Układy wydechowe',
@@ -103,6 +109,7 @@ export const categories: Category[] = [
   },
   {
     slug: 'suspension',
+    code: 'SUS',
     name: {
       en: 'Suspension',
       pl: 'Zawieszenie',
@@ -119,6 +126,7 @@ export const categories: Category[] = [
   },
   {
     slug: 'carbon-parts',
+    code: 'CBN',
     name: {
       en: 'Carbon parts',
       pl: 'Elementy karbonowe',

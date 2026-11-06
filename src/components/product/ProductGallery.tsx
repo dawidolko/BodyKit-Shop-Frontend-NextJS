@@ -25,19 +25,25 @@ export function ProductGallery({
   const current = images[active] ?? images[0]!;
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="overflow-hidden rounded-md border border-border-subtle bg-bg-muted">
+    <div className="flex h-full flex-col">
+      <div className="min-h-0 flex-1 bg-bg-muted">
         <Picture
           name={current}
           alt={dict.product.galleryAlt(productName, active + 1, images.length)}
           ratio={1}
-          sizes="(min-width: 1024px) 36rem, 92vw"
+          sizes="(min-width: 1024px) 58vw, 100vw"
           priority
+          preloaded={active === 0}
+          className="h-full w-full"
         />
       </div>
 
       {images.length > 1 && (
-        <div role="radiogroup" aria-label={dict.product.gallery} className="flex gap-3">
+        <div
+          role="radiogroup"
+          aria-label={dict.product.gallery}
+          className="grid grid-flow-col gap-px bg-border-subtle"
+        >
           {images.map((image, index) => (
             <button
               key={image + index}
@@ -47,13 +53,12 @@ export function ProductGallery({
               aria-label={dict.product.showImage(index + 1)}
               onClick={() => setActive(index)}
               className={cn(
-                'w-20 shrink-0 overflow-hidden rounded-sm border-2 transition-colors focus-ring',
-                index === active
-                  ? 'border-border-brand'
-                  : 'border-border-subtle hover:border-border-strong',
+                'relative overflow-hidden focus-visible:z-10 focus-visible:-outline-offset-4',
+                "after:absolute after:inset-x-0 after:bottom-0 after:h-1.5 after:content-['']",
+                index === active ? 'after:bg-accent' : 'opacity-80 hover:opacity-100',
               )}
             >
-              <Picture name={image} alt="" ratio={1} sizes="5rem" />
+              <Picture name={image} alt="" ratio={3} sizes="20vw" className="w-full" />
             </button>
           ))}
         </div>

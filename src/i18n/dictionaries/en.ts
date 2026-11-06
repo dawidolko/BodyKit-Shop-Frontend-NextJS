@@ -37,6 +37,9 @@ export const en = {
     mobileNav: 'Mobile navigation',
     mainNav: 'Main navigation',
     categoriesLabel: 'Categories',
+    catalogIndex: 'Catalog index',
+    allParts: 'All parts',
+    quickSearch: 'Quick search',
     skipToContent: 'Skip to content',
     breadcrumb: 'Breadcrumb',
     homeLabel: 'Home',
@@ -101,6 +104,7 @@ export const en = {
     ctaBannerText:
       'Send us the make, model and year — we will reply with a list of matching parts and tell you which ones work well together.',
     ctaBannerButton: 'Ask about fitment',
+    shopByMake: 'Shop by make',
     processImageAlt: 'Sports car in a workshop bay prepared for body part installation',
   },
 
@@ -132,6 +136,13 @@ export const en = {
     showImage: (index: number) => `Show image ${index}`,
     imageAlt: (name: string) => `${name} — product photo`,
     view: 'View',
+    partNumber: 'Part no.',
+    fitsLabel: 'Fits',
+    moreModels: (count: number) => `+${count} more`,
+    make: 'Make',
+    model: 'Model',
+    yearsColumn: 'Model years',
+    category: 'Category',
     from: 'from',
     rating: 'Rating:',
     reviews: (count: number) => `${count} ${count === 1 ? 'review' : 'reviews'}`,
@@ -158,6 +169,11 @@ export const en = {
     availability: 'Availability',
     inStockOnly: 'In stock only',
     clearFilters: 'Clear filters',
+    viewLabel: 'View',
+    viewWall: 'Image wall',
+    viewList: 'Parts list',
+    columnPart: 'Part',
+    columnPrice: 'Price',
     sortBy: 'Sort:',
     sortOptions: {
       featured: 'Featured',
@@ -558,10 +574,10 @@ export const en = {
     sections: 'Sections',
     brandMark: 'Brand mark',
     brandMarkNote:
-      'The monogram is built from an angled splitter. The same angle returns in the .clip-slant utility and in the category tiles.',
+      'The mark is a door number on a plate leaning 12 degrees. The same angle returns in the buttons, the hero plate and the section cuts.',
     colors: 'Colours',
-    brandScale: 'Brand — electric orange',
-    carbonScale: 'Carbon — neutral base',
+    brandScale: 'Racing red',
+    carbonScale: 'Livery navy to primer',
     semanticTokens: 'Semantic tokens',
     tokenUsage: {
       '--bg-base': 'Page background',
@@ -570,7 +586,7 @@ export const en = {
       '--text-secondary': 'Supporting text (>=7:1)',
       '--text-muted': 'Captions and metadata (>=5:1)',
       '--accent': 'Action element surface',
-      '--text-on-brand': 'Text on the accent (6.6:1)',
+      '--text-on-brand': 'Text on the accent (5.9:1)',
       '--border-subtle': 'Divider lines',
       '--focus-ring': 'Focus ring',
     },
@@ -579,7 +595,7 @@ export const en = {
     usage: 'Usage',
     typography: 'Typography',
     typographyNote:
-      'Headings: Barlow Condensed (700–800). Body: Barlow (400–600). Both families are self-hosted through next/font.',
+      'Headings and prices: Saira wide italic (700–900). Body: Saira (400–700), condensed for part numbers. Both are self-hosted subsets through next/font.',
     spacing: 'Spacing and radii',
     spacingScale: 'Spacing scale',
     radii: 'Radii',
@@ -612,7 +628,7 @@ export const en = {
     a11yItems: [
       {
         title: 'Contrast',
-        text: 'Every text/background pair reaches at least 4.5:1 and UI elements 3:1. White on orange gave only 2.8:1, which is why brand surfaces use dark ink instead (6.6:1).',
+        text: 'Every text/background pair reaches at least 4.5:1 and UI elements 3:1. White on the racing red reaches 5.9:1, so brand surfaces carry white text.',
       },
       {
         title: 'Focus',

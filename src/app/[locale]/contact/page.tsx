@@ -75,21 +75,19 @@ export default async function ContactPage({ params }: { params: Promise<PagePara
           </section>
 
           <aside className="flex flex-col gap-5">
-            <div className="rounded-md border border-border-subtle bg-surface p-6">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-text-muted">
-                {dict.contact.directContact}
-              </h2>
+            <div className="sheet p-6">
+              <h2 className="text-sm font-bold text-text-muted">{dict.contact.directContact}</h2>
               <div className="mt-4 flex flex-col gap-3">
                 <a
                   href={`tel:${site.phoneHref}`}
-                  className="flex items-center gap-3 rounded-xs text-sm font-medium text-text-primary hover:text-text-brand focus-ring"
+                  className="flex items-center gap-3 text-sm font-medium text-text-primary hover:text-text-brand focus-ring"
                 >
                   <PhoneIcon className="size-4 text-text-muted" />
                   {site.phone}
                 </a>
                 <a
                   href={`mailto:${site.email}`}
-                  className="flex items-center gap-3 rounded-xs text-sm font-medium text-text-primary hover:text-text-brand focus-ring"
+                  className="flex items-center gap-3 text-sm font-medium text-text-primary hover:text-text-brand focus-ring"
                 >
                   <MailIcon className="size-4 text-text-muted" />
                   {site.email}
@@ -97,17 +95,13 @@ export default async function ContactPage({ params }: { params: Promise<PagePara
               </div>
 
               <div className="mt-5 border-t border-border-subtle pt-4">
-                <p className="text-xs font-bold uppercase tracking-wider text-text-muted">
-                  {dict.contact.openingHours}
-                </p>
+                <p className="text-sm font-bold text-text-muted">{dict.contact.openingHours}</p>
                 <p className="mt-2 text-sm text-text-secondary">{dict.contact.hoursValue}</p>
                 <p className="mt-1 text-xs text-text-muted">{dict.contact.hoursNote}</p>
               </div>
 
               <address className="mt-5 border-t border-border-subtle pt-4 text-sm not-italic leading-relaxed text-text-secondary">
-                <p className="text-xs font-bold uppercase tracking-wider text-text-muted">
-                  {dict.contact.address}
-                </p>
+                <p className="text-sm font-bold text-text-muted">{dict.contact.address}</p>
                 <p className="mt-2">
                   {site.name}
                   <br />
@@ -118,8 +112,8 @@ export default async function ContactPage({ params }: { params: Promise<PagePara
               </address>
             </div>
 
-            <div className="rounded-md border border-border-subtle bg-bg-subtle p-6">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-text-muted">
+            <div className="sheet p-6">
+              <h2 className="text-sm font-bold text-text-muted">
                 {dict.contact.departmentsHeading}
               </h2>
               <ul className="mt-4 flex flex-col gap-4">
@@ -136,7 +130,7 @@ export default async function ContactPage({ params }: { params: Promise<PagePara
                       </p>
                       <a
                         href={`mailto:${department.email}`}
-                        className="mt-1 inline-block rounded-xs text-xs font-medium text-text-brand underline focus-ring"
+                        className="mt-1 inline-block text-xs font-medium text-text-brand underline focus-ring"
                       >
                         {department.email}
                       </a>

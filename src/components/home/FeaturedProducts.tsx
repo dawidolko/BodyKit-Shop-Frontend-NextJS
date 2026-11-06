@@ -1,48 +1,47 @@
 import Link from 'next/link';
 import { ProductCard } from '@/components/product/ProductCard';
-import { ArrowRightIcon } from '@/components/ui/Icon';
 import { getFeaturedProducts } from '@/lib/products';
 import type { Dictionary } from '@/i18n';
 import { localePath, type Locale } from '@/i18n/config';
 
+/*
+ * Nine parts on purpose: the lead tile takes four cells of a four-column grid,
+ * so eight more fill three full rows on desktop and pair up on a phone.
+ */
+const WALL_SIZE = 9;
+
 export function FeaturedProducts({ locale, dict }: { locale: Locale; dict: Dictionary }) {
-  const featured = getFeaturedProducts(8);
+  const [lead, ...rest] = getFeaturedProducts(WALL_SIZE);
 
   return (
-    <section
-      aria-labelledby="featured-heading"
-      className="border-y border-border-subtle bg-bg-subtle"
-    >
-      <div className="container-page py-20">
-        <header className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-text-brand">
-              {dict.home.featuredEyebrow}
-            </p>
-            <h2
-              id="featured-heading"
-              className="mt-2 text-3xl font-extrabold uppercase sm:text-4xl"
-            >
-              {dict.home.featuredHeading}
-            </h2>
-          </div>
-          <Link
-            href={localePath(locale, '/search')}
-            className="group flex items-center gap-2 rounded-xs text-sm font-semibold uppercase tracking-wide text-text-secondary transition-colors hover:text-text-brand focus-ring"
-          >
-            {dict.home.featuredLink}
-            <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-        </header>
+    <section aria-labelledby="featured-heading">
+      <header className="container-page flex flex-wrap items-end justify-between gap-x-6 gap-y-2 pb-5 pt-10">
+        <div>
+          <p className="index-tab">{dict.home.featuredEyebrow}</p>
+          <h2 id="featured-heading" className="type-display-lg mt-2">
+            {dict.home.featuredHeading}
+          </h2>
+        </div>
+        <Link
+          href={localePath(locale, '/search')}
+          className="font-semibold text-text-brand underline underline-offset-4 focus-ring"
+        >
+          {dict.home.featuredLink}
+        </Link>
+      </header>
 
-        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((product) => (
-            <li key={product.slug} className="flex">
-              <ProductCard product={product} locale={locale} dict={dict} className="w-full" />
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul className="grid grid-cols-2 gap-px bg-border-subtle lg:grid-cols-4">
+        {lead && (
+          <li className="col-span-2 flex lg:row-span-2">
+            <ProductCard product={lead} locale={locale} dict={dict} lead className="w-full" />
+          </li>
+        )}
+        {rest.map((product) => (
+          <li key={product.slug} className="flex">
+            <ProductCard product={product} locale={locale} dict={dict} className="w-full" />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

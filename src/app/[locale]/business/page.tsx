@@ -59,18 +59,16 @@ export default async function BusinessPage({ params }: { params: Promise<PagePar
       <Breadcrumbs items={[{ href: PATH, label: dict.nav.business }]} locale={locale} dict={dict} />
       <PageHeader title={dict.business.title} description={dict.business.description} />
 
-      <div className="container-page pb-8">
-        <Picture
-          name="business-fleet"
-          alt={dict.business.imageAlt}
-          sizes="(min-width: 1536px) 88rem, 95vw"
-          priority
-          className="rounded-lg border border-border-subtle"
-        />
-      </div>
+      <Picture
+        name="business-fleet"
+        alt={dict.business.imageAlt}
+        sizes="100vw"
+        priority
+        className="max-h-[32rem] w-full"
+      />
 
       <section aria-labelledby="tiers-heading" className="container-page py-12">
-        <h2 id="tiers-heading" className="text-2xl font-extrabold uppercase tracking-tight">
+        <h2 id="tiers-heading" className="type-display-md">
           {dict.business.tiersHeading}
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-text-secondary">
@@ -88,7 +86,7 @@ export default async function BusinessPage({ params }: { params: Promise<PagePar
                 }`}
               >
                 {featured && (
-                  <p className="mb-3 inline-flex self-start rounded-xs bg-accent px-2 py-1 text-[0.6875rem] font-bold uppercase tracking-wider text-text-on-brand">
+                  <p className="mb-3 inline-flex self-start bg-accent px-2 py-1 text-[0.6875rem] font-bold uppercase tracking-wider text-text-on-brand">
                     {dict.business.mostPopular}
                   </p>
                 )}
@@ -97,7 +95,7 @@ export default async function BusinessPage({ params }: { params: Promise<PagePar
                 <p className="mt-4 font-display text-4xl font-extrabold text-accent-fg">
                   {tier.discount}
                 </p>
-                <p className="text-xs uppercase tracking-wider text-text-muted">
+                <p className="text-sm font-semibold text-text-muted">
                   {dict.business.discountLabel}
                 </p>
 
@@ -120,7 +118,7 @@ export default async function BusinessPage({ params }: { params: Promise<PagePar
         className="border-y border-border-subtle bg-bg-subtle"
       >
         <div className="container-page py-14">
-          <h2 id="benefits-heading" className="text-2xl font-extrabold uppercase tracking-tight">
+          <h2 id="benefits-heading" className="type-display-md">
             {dict.business.benefitsHeading}
           </h2>
           <ul className="mt-8 grid gap-8 sm:grid-cols-3">
@@ -128,7 +126,7 @@ export default async function BusinessPage({ params }: { params: Promise<PagePar
               const Icon = benefitIcons[index] ?? ShieldIcon;
               return (
                 <li key={benefit.title}>
-                  <span className="flex size-11 items-center justify-center rounded-sm bg-accent-subtle text-accent-fg">
+                  <span className="flex size-11 items-center justify-center bg-accent-subtle text-accent-fg">
                     <Icon className="size-5" />
                   </span>
                   <h3 className="mt-4 text-base font-bold text-text-primary">{benefit.title}</h3>
@@ -142,7 +140,7 @@ export default async function BusinessPage({ params }: { params: Promise<PagePar
 
       <section aria-labelledby="apply-heading" className="container-page py-16">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 id="apply-heading" className="text-2xl font-extrabold uppercase tracking-tight">
+          <h2 id="apply-heading" className="type-display-md">
             {dict.business.applyHeading}
           </h2>
           <ol className="mt-8 flex flex-col gap-5 text-left">
