@@ -38,9 +38,13 @@ Cart state lives in `localStorage`, the catalog is compiled into the bundle, and
 
 ## 🖼️ Screenshots
 
-| Home page                                                                                       | Shop                                                                                    |
-| ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| ![The BodyKit Shop home page with the hero and featured categories](docs/screenshots/home.webp) | ![The shop listing with product cards and category filters](docs/screenshots/shop.webp) |
+| Desktop                                                                                                           | Phone                                                                                              |
+| ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| ![The BodyKit Shop home page with the navy hero plate, part callouts and catalog index](docs/readme/desktop.webp) | ![The home page on a phone, with the photo above the navy headline plate](docs/readme/mobile.webp) |
+
+| Home page                                                                                 | Shop                                                                                |
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| ![The BodyKit Shop home page with the hero and catalog index](docs/screenshots/home.webp) | ![A category page with filter chips and the parts wall](docs/screenshots/shop.webp) |
 
 | Contact                                                                                     |     |
 | ------------------------------------------------------------------------------------------- | --- |
