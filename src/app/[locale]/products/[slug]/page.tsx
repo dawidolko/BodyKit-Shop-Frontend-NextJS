@@ -11,8 +11,15 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { CheckIcon, ShieldIcon, TruckIcon, WrenchIcon } from '@/components/ui/Icon';
 import { getCategory } from '@/lib/categories';
 import { getProduct, getRelatedProducts, products } from '@/lib/products';
-import { absoluteLocaleUrl, absoluteUrl, canonicalUrl, site } from '@/lib/site';
-import { discountPercent, formatPrice, priceToNumber, shippingLabel, t } from '@/lib/utils';
+import {
+  absoluteLocaleUrl,
+  canonicalUrl,
+  ogImage,
+  seoDescription,
+  seoTitle,
+  site,
+} from '@/lib/site';
+import { discountPercent, formatPrice, shippingLabel, t } from '@/lib/utils';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localePath, localeTags } from '@/i18n/config';
 
@@ -28,13 +35,15 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const product = getProduct(slug);
   if (!product) return {};
 
-  const cover = product.images[0] ?? 'shot-detail-1';
   const name = t(product.name, locale);
-  const description = t(product.shortDescription, locale);
+  const description = seoDescription(
+    t(product.shortDescription, locale),
+    t(product.description, locale),
+  );
   const path = `/products/${product.slug}`;
 
   return {
-    title: name,
+    title: seoTitle(name, locale),
     description,
     alternates: {
       canonical: canonicalUrl(locale, path),
@@ -43,11 +52,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       ),
     },
     openGraph: {
+      images: [ogImage],
       type: 'website',
       title: `${name} — ${site.name}`,
       description,
       url: absoluteLocaleUrl(locale, path),
-      images: [{ url: `/images/${cover}-900.webp`, width: 900, height: 900, alt: name }],
     },
   };
 }
@@ -64,36 +73,36 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
   const related = getRelatedProducts(product);
   const discount = discountPercent(product.price, product.compareAtPrice);
   const anyInStock = product.variants.some((variant) => variant.inStock);
-  const prices = product.variants.map((variant) => product.price + variant.priceDelta);
 
   const name = t(product.name, locale);
   const description = t(product.description, locale);
   const path = `/products/${product.slug}`;
 
+  /*
+   * A catalogue page rather than Product markup: this is a demo store, so the
+   * prices, stock and ratings are not real data search engines should show.
+   */
   const schema = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
+    '@type': 'WebPage',
     name,
     description,
-    sku: product.slug,
-    category: category ? t(category.name, locale) : undefined,
-    image: product.images.map((image) => absoluteUrl(`/images/${image}-900.webp`)),
-    brand: { '@type': 'Brand', name: site.name },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: product.rating.toFixed(1),
-      reviewCount: product.reviewCount,
-      bestRating: '5',
-      worstRating: '1',
-    },
-    offers: {
-      '@type': 'AggregateOffer',
-      priceCurrency: 'PLN',
-      lowPrice: priceToNumber(Math.min(...prices)),
-      highPrice: priceToNumber(Math.max(...prices)),
-      offerCount: product.variants.length,
-      availability: anyInStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      url: absoluteLocaleUrl(locale, path),
+    url: absoluteLocaleUrl(locale, path),
+    inLanguage: localeTags[locale],
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { name: dict.catalog.title, item: absoluteLocaleUrl(locale, '/categories') },
+        ...(category
+          ? [
+              {
+                name: t(category.name, locale),
+                item: absoluteLocaleUrl(locale, `/categories/${category.slug}`),
+              },
+            ]
+          : []),
+        { name, item: absoluteLocaleUrl(locale, path) },
+      ].map((entry, index) => ({ '@type': 'ListItem', position: index + 1, ...entry })),
     },
   };
 

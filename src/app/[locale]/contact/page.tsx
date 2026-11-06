@@ -4,7 +4,7 @@ import { Breadcrumbs, PageHeader } from '@/components/layout/Breadcrumbs';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { MailIcon, PhoneIcon, TruckIcon, WrenchIcon } from '@/components/ui/Icon';
-import { absoluteLocaleUrl, canonicalUrl, site } from '@/lib/site';
+import { absoluteLocaleUrl, canonicalUrl, ogImage, seoTitle, site } from '@/lib/site';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localeTags } from '@/i18n/config';
 
@@ -29,7 +29,7 @@ export async function generateMetadata({
   const dict = getDictionary(locale);
 
   return {
-    title: dict.contact.title,
+    title: seoTitle(dict.contact.title, locale),
     description: dict.contact.description,
     alternates: {
       canonical: canonicalUrl(locale, PATH),
@@ -38,6 +38,7 @@ export async function generateMetadata({
       ),
     },
     openGraph: {
+      images: [ogImage],
       url: absoluteLocaleUrl(locale, PATH),
       title: `${dict.contact.title} — ${site.name}`,
       description: dict.contact.description,
@@ -56,25 +57,6 @@ export default async function ContactPage({ params }: { params: Promise<PagePara
     '@type': 'ContactPage',
     name: `${dict.contact.title} — ${site.name}`,
     url: absoluteLocaleUrl(locale, PATH),
-    mainEntity: {
-      '@type': 'Organization',
-      name: site.name,
-      email: site.email,
-      telephone: site.phone,
-      address: {
-        '@type': 'PostalAddress',
-        streetAddress: site.address.street,
-        postalCode: site.address.postalCode,
-        addressLocality: site.address.city,
-        addressCountry: site.address.country,
-      },
-      contactPoint: dict.contact.departments.map((department) => ({
-        '@type': 'ContactPoint',
-        contactType: department.title,
-        email: department.email,
-        availableLanguage: [...locales],
-      })),
-    },
   };
 
   return (

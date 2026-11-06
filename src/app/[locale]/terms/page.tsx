@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Breadcrumbs, PageHeader } from '@/components/layout/Breadcrumbs';
-import { absoluteLocaleUrl, canonicalUrl, site } from '@/lib/site';
+import { absoluteLocaleUrl, canonicalUrl, ogImage, seoTitle, site } from '@/lib/site';
 import { formatDate } from '@/lib/utils';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localeTags, type Locale } from '@/i18n/config';
@@ -192,8 +192,8 @@ export async function generateMetadata({
   const dict = getDictionary(locale);
 
   return {
-    title: dict.terms.title,
-    description: dict.terms.description,
+    title: seoTitle(dict.terms.title, locale),
+    description: dict.terms.metaDescription,
     alternates: {
       canonical: canonicalUrl(locale, PATH),
       languages: Object.fromEntries(
@@ -201,9 +201,10 @@ export async function generateMetadata({
       ),
     },
     openGraph: {
+      images: [ogImage],
       url: absoluteLocaleUrl(locale, PATH),
       title: `${dict.terms.title} — ${site.name}`,
-      description: dict.terms.description,
+      description: dict.terms.metaDescription,
     },
   };
 }

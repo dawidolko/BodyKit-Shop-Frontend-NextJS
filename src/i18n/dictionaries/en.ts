@@ -289,6 +289,8 @@ export const en = {
   },
 
   about: {
+    metaDescription:
+      'From our own cars to a catalogue of fitment-checked body kits: why BodyKit Shop exists and how we verify parts before they reach a workshop.',
     title: 'About BodyKit Shop',
     description:
       'We started with our own cars and the frustration of a body kit that would not sit flush against the bumper. Today we run a shop where fitment is documented, not promised.',
@@ -537,6 +539,8 @@ export const en = {
   },
 
   terms: {
+    metaDescription:
+      'Conditions of sale, returns, complaints and personal data processing at BodyKit Shop, set out in plain language for every order.',
     title: 'Terms and privacy policy',
     description: 'Conditions of sale, returns and personal data processing.',
     demoStrong: 'Demonstration document.',

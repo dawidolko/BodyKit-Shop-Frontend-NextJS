@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { Breadcrumbs, PageHeader } from '@/components/layout/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { LinkButton } from '@/components/ui/Button';
-import { absoluteLocaleUrl, canonicalUrl, site } from '@/lib/site';
+import { absoluteLocaleUrl, canonicalUrl, ogImage, seoTitle, site } from '@/lib/site';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localePath, localeTags, type Locale } from '@/i18n/config';
 
@@ -185,7 +185,7 @@ export async function generateMetadata({
   const dict = getDictionary(locale);
 
   return {
-    title: dict.help.title,
+    title: seoTitle(dict.help.title, locale),
     description: dict.help.description,
     alternates: {
       canonical: canonicalUrl(locale, PATH),
@@ -194,6 +194,7 @@ export async function generateMetadata({
       ),
     },
     openGraph: {
+      images: [ogImage],
       url: absoluteLocaleUrl(locale, PATH),
       title: `${dict.help.title} — ${site.name}`,
       description: dict.help.description,

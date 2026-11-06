@@ -5,8 +5,15 @@ import { ProductFilters } from '@/components/product/ProductFilters';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { categories, getCategory } from '@/lib/categories';
 import { getProductsByCategory } from '@/lib/products';
-import { absoluteLocaleUrl, canonicalUrl, site } from '@/lib/site';
-import { priceToNumber, t } from '@/lib/utils';
+import {
+  absoluteLocaleUrl,
+  canonicalUrl,
+  ogImage,
+  seoTitle,
+  site,
+  seoDescription,
+} from '@/lib/site';
+import { t } from '@/lib/utils';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localeTags } from '@/i18n/config';
 
@@ -25,11 +32,11 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   if (!category) return {};
 
   const name = t(category.name, locale);
-  const description = t(category.description, locale).slice(0, 160);
+  const description = seoDescription(t(category.description, locale), t(category.tagline, locale));
   const path = `/categories/${category.slug}`;
 
   return {
-    title: name,
+    title: seoTitle(name, locale),
     description,
     alternates: {
       canonical: canonicalUrl(locale, path),
@@ -38,6 +45,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
       ),
     },
     openGraph: {
+      images: [ogImage],
       title: `${name} — ${site.name}`,
       description,
       url: absoluteLocaleUrl(locale, path),
@@ -77,13 +85,6 @@ export default async function CategoryPage({ params }: { params: Promise<Params>
     name,
     description,
     url: absoluteLocaleUrl(locale, path),
-    offers: {
-      '@type': 'AggregateOffer',
-      priceCurrency: 'PLN',
-      lowPrice: priceToNumber(Math.min(...products.map((product) => product.price))),
-      highPrice: priceToNumber(Math.max(...products.map((product) => product.price))),
-      offerCount: products.length,
-    },
   };
 
   return (

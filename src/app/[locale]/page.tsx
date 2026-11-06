@@ -6,7 +6,7 @@ import { FeaturedProducts } from '@/components/home/FeaturedProducts';
 import { ProcessSection } from '@/components/home/ProcessSection';
 import { CtaBanner } from '@/components/home/CtaBanner';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { site, absoluteUrl, absoluteLocaleUrl, canonicalUrl } from '@/lib/site';
+import { absoluteLocaleUrl, absoluteUrl, canonicalUrl, ogImage, site } from '@/lib/site';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localeTags } from '@/i18n/config';
 
@@ -22,7 +22,7 @@ export async function generateMetadata({
   const dict = getDictionary(locale);
 
   return {
-    title: dict.meta.siteTitle,
+    title: { absolute: dict.meta.siteTitle },
     description: dict.meta.siteDescription,
     alternates: {
       canonical: canonicalUrl(locale, '/'),
@@ -31,6 +31,7 @@ export async function generateMetadata({
       ),
     },
     openGraph: {
+      images: [ogImage],
       url: absoluteLocaleUrl(locale, '/'),
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
@@ -46,24 +47,12 @@ export default async function HomePage({ params }: { params: Promise<PageParams>
 
   const organization = {
     '@context': 'https://schema.org',
-    '@type': 'Store',
-    '@id': absoluteUrl('/#store'),
+    '@type': 'Organization',
+    '@id': absoluteUrl('/#organization'),
     name: site.name,
     description: dict.meta.siteDescription,
     url: absoluteLocaleUrl(locale, '/'),
-    image: absoluteUrl('/og-default.png'),
     logo: absoluteUrl('/icon-512.png'),
-    telephone: site.phone,
-    email: site.email,
-    priceRange: '$$',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: site.address.street,
-      postalCode: site.address.postalCode,
-      addressLocality: site.address.city,
-      addressCountry: site.address.country,
-    },
-    openingHours: site.openingHours,
   };
 
   const website = {
@@ -73,14 +62,6 @@ export default async function HomePage({ params }: { params: Promise<PageParams>
     name: site.name,
     url: absoluteLocaleUrl(locale, '/'),
     inLanguage: localeTags[locale],
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${absoluteLocaleUrl(locale, '/search')}?q={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
-    },
   };
 
   return (

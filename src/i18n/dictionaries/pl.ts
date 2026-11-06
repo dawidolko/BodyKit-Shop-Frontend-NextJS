@@ -323,6 +323,8 @@ export const pl: Dictionary = {
   },
 
   about: {
+    metaDescription:
+      'Od własnych aut do katalogu dokładek ze sprawdzonym dopasowaniem: dlaczego powstał BodyKit Shop i jak weryfikujemy części przed wysyłką.',
     title: 'O BodyKit Shop',
     description:
       'Zaczęliśmy od własnych aut i frustracji, że zamówiona dokładka nie przylegała do zderzaka. Dziś prowadzimy sklep, w którym dopasowanie jest opisane, a nie obiecane.',
@@ -583,6 +585,8 @@ export const pl: Dictionary = {
   },
 
   terms: {
+    metaDescription:
+      'Warunki sprzedaży, zwrotów, reklamacji i przetwarzania danych osobowych w BodyKit Shop, opisane prostym językiem dla każdego zamówienia.',
     title: 'Regulamin i polityka prywatności',
     description: 'Warunki sprzedaży, zwrotów i przetwarzania danych osobowych.',
     demoStrong: 'Dokument demonstracyjny.',

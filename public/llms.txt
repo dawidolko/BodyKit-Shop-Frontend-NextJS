@@ -1,0 +1,20 @@
+# BodyKit Shop
+
+> BodyKit Shop is a demo car tuning storefront by Dawid Olko: body kits, spoilers, wheels, exhausts and carbon parts, in English and Polish. The catalog is sample data and there is no real checkout.
+
+## Catalog
+
+- [All categories](https://bodykit.dawidolko.pl/en/categories/): the full catalog grouped by part type
+- [Packages](https://bodykit.dawidolko.pl/en/packages/): matched sets of parts for a chosen style
+- [Front splitters](https://bodykit.dawidolko.pl/en/categories/front-splitters/): front aero parts in ABS, FRP and carbon
+- [Spoilers and wings](https://bodykit.dawidolko.pl/en/categories/spoilers/): lips, ducktails and wings
+
+## About
+
+- [About the shop](https://bodykit.dawidolko.pl/en/about/): why the project exists and how fitment is described
+- [Help centre](https://bodykit.dawidolko.pl/en/help/): delivery, returns and fitting questions
+- [Polish version](https://bodykit.dawidolko.pl/pl/): the same site in Polish
+
+## Author
+
+- [Dawid Olko](https://dawidolko.pl): Fullstack / AI Developer who built this site

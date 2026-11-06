@@ -6,19 +6,25 @@ import { ThemeSync, themeInitScript } from '@/components/layout/ThemeToggle';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartProvider } from '@/lib/cart';
-import { site, absoluteLocaleUrl, canonicalUrl } from '@/lib/site';
+import { site, absoluteLocaleUrl, canonicalUrl, ogImage } from '@/lib/site';
+import { CONTENT_SECURITY_POLICY } from '@/lib/csp';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localeTags, ogLocales, type Locale } from '@/i18n/config';
 
+/*
+ * Only the heading face is preloaded, in its latin subset. latin-ext stays
+ * declared and loads on demand, so Polish glyphs still come from these files.
+ */
 const barlow = Barlow({
-  subsets: ['latin', 'latin-ext'],
+  subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-barlow',
   display: 'swap',
+  preload: false,
 });
 
 const barlowCondensed = Barlow_Condensed({
-  subsets: ['latin', 'latin-ext'],
+  subsets: ['latin'],
   weight: ['600', '700', '800'],
   variable: '--font-barlow-condensed',
   display: 'swap',
@@ -62,21 +68,15 @@ export async function generateMetadata({
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
       url: absoluteLocaleUrl(locale, '/'),
-      images: [
-        {
-          url: '/og-default.png',
-          width: 1200,
-          height: 630,
-          alt: dict.meta.siteTitle,
-        },
-      ],
+      images: [ogImage],
     },
     twitter: {
       card: 'summary_large_image',
       title: dict.meta.siteTitle,
       description: dict.meta.siteDescription,
-      images: ['/og-default.png'],
+      images: [ogImage.url],
     },
+    referrer: 'strict-origin-when-cross-origin',
     robots: {
       index: true,
       follow: true,
@@ -109,6 +109,7 @@ export default async function LocaleLayout({
     // would leave crawlers and assistive technology reading the wrong language.
     <html lang={localeTags[typedLocale]} className={fontVariables}>
       <head>
+        <meta httpEquiv="Content-Security-Policy" content={CONTENT_SECURITY_POLICY} />
         <script src="/a11y/a11y-panel.js" data-accent="#1d4ed8" defer></script>
         {/* Applies the theme before first paint. Without it the page would
             flash a light background before React adds the .dark class. */}

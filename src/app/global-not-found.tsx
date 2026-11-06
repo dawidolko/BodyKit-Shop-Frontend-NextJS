@@ -8,16 +8,19 @@ import { defaultLocale, localePath, localeTags } from '@/i18n/config';
 import { Barlow, Barlow_Condensed } from 'next/font/google';
 import './globals.css';
 import { themeInitScript } from '@/components/layout/ThemeToggle';
+import { CONTENT_SECURITY_POLICY } from '@/lib/csp';
 
 const barlow = Barlow({
-  subsets: ['latin', 'latin-ext'],
+  subsets: ['latin'],
+  preload: false,
   weight: ['400', '500', '600', '700'],
   variable: '--font-barlow',
   display: 'swap',
 });
 
 const barlowCondensed = Barlow_Condensed({
-  subsets: ['latin', 'latin-ext'],
+  subsets: ['latin'],
+  preload: false,
   weight: ['600', '700', '800'],
   variable: '--font-barlow-condensed',
   display: 'swap',
@@ -26,9 +29,10 @@ const barlowCondensed = Barlow_Condensed({
 const fontVariables = `${barlow.variable} ${barlowCondensed.variable}`;
 
 /**
- * This file sits outside the [locale] segment, so there is no locale param to
- * read - Next.js renders it for unmatched paths at any depth. It falls back to
- * the default locale, and every link points into that locale's routes.
+ * A global 404 rather than app/not-found.tsx, whose stylesheet and fonts would
+ * also load on the root redirect page and hold up the redirect. There is no
+ * locale param to read here, so it falls back to the default locale, and every
+ * link points into that locale's routes.
  */
 const dict = getDictionary(defaultLocale);
 
@@ -36,15 +40,17 @@ export const metadata: Metadata = {
   title: dict.notFound.title,
   description: dict.notFound.lead,
   robots: { index: false, follow: true },
+  referrer: 'strict-origin-when-cross-origin',
 };
 
-export default function NotFound() {
+export default function GlobalNotFound() {
   return (
     // Outside the [locale] segment nothing supplies a document shell, so this
     // page renders its own. Without it React would hydrate a fragment against
     // a full document and bail out with a mismatch.
     <html lang={localeTags[defaultLocale]} className={fontVariables}>
       <head>
+        <meta httpEquiv="Content-Security-Policy" content={CONTENT_SECURITY_POLICY} />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className="flex min-h-dvh flex-col">

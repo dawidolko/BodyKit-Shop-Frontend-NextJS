@@ -6,7 +6,7 @@ import { Picture } from '@/components/ui/Picture';
 import { ArrowRightIcon } from '@/components/ui/Icon';
 import { categories } from '@/lib/categories';
 import { getProductsByCategory } from '@/lib/products';
-import { absoluteLocaleUrl, canonicalUrl } from '@/lib/site';
+import { absoluteLocaleUrl, canonicalUrl, ogImage, seoTitle } from '@/lib/site';
 import { t } from '@/lib/utils';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localePath, localeTags } from '@/i18n/config';
@@ -19,13 +19,19 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const dict = getDictionary(locale);
 
   return {
-    title: dict.catalog.title,
+    title: seoTitle(dict.catalog.title, locale),
     description: dict.catalog.description,
     alternates: {
       canonical: canonicalUrl(locale, '/categories'),
       languages: Object.fromEntries(
         locales.map((code) => [localeTags[code], absoluteLocaleUrl(code, '/categories')]),
       ),
+    },
+    openGraph: {
+      images: [ogImage],
+      url: absoluteLocaleUrl(locale, '/categories'),
+      title: seoTitle(dict.catalog.title, locale).absolute,
+      description: dict.catalog.description,
     },
   };
 }

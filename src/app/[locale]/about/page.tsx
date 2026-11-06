@@ -4,7 +4,7 @@ import { Breadcrumbs, PageHeader } from '@/components/layout/Breadcrumbs';
 import { Picture } from '@/components/ui/Picture';
 import { LinkButton } from '@/components/ui/Button';
 import { CheckIcon } from '@/components/ui/Icon';
-import { absoluteLocaleUrl, canonicalUrl, site } from '@/lib/site';
+import { absoluteLocaleUrl, canonicalUrl, ogImage, seoTitle, site } from '@/lib/site';
 import { getDictionary } from '@/i18n';
 import { isLocale, locales, localePath, localeTags } from '@/i18n/config';
 
@@ -22,8 +22,8 @@ export async function generateMetadata({
   const dict = getDictionary(locale);
 
   return {
-    title: dict.about.title,
-    description: dict.about.description,
+    title: seoTitle(dict.about.title, locale),
+    description: dict.about.metaDescription,
     alternates: {
       canonical: canonicalUrl(locale, PATH),
       languages: Object.fromEntries(
@@ -31,9 +31,10 @@ export async function generateMetadata({
       ),
     },
     openGraph: {
+      images: [ogImage],
       url: absoluteLocaleUrl(locale, PATH),
       title: `${dict.about.title} — ${site.name}`,
-      description: dict.about.description,
+      description: dict.about.metaDescription,
     },
   };
 }
