@@ -109,6 +109,7 @@ export default async function LocaleLayout({
     // would leave crawlers and assistive technology reading the wrong language.
     <html lang={localeTags[typedLocale]} className={fontVariables}>
       <head>
+        <script src="/a11y/a11y-panel.js" data-accent="#1d4ed8" defer></script>
         {/* Applies the theme before first paint. Without it the page would
             flash a light background before React adds the .dark class. */}
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
