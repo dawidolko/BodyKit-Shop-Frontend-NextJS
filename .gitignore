@@ -35,7 +35,7 @@ yarn-error.log*
 .vscode/*
 !.vscode/extensions.json
 
-# obrazy pobierane skryptem (zrodla), zoptymalizowane trafiaja do public/
+# images fetched by a script (sources); optimized versions go to public/
 /.image-cache/
 
 # Machine-local Claude settings
