@@ -66,6 +66,14 @@ Cart state lives in `localStorage`, the catalog is compiled into the bundle, and
 
 ---
 
+## 🎬 Demo
+
+<p align="center">
+  <img src="docs/readme/demo.webp" alt="BodyKit: a short scroll through the live site" width="80%">
+</p>
+
+---
+
 ## 🛠️ Technology Stack
 
 ### Frontend
